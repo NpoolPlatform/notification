@@ -1,0 +1,6 @@
+commonLabels:
+  # app: notification
+
+resources:
+- 01-notification.yaml
+- 02-ingress.yaml
