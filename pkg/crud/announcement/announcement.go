@@ -7,6 +7,7 @@ import (
 	"github.com/NpoolPlatform/notification/message/npool"
 	"github.com/NpoolPlatform/notification/pkg/db"
 	"github.com/NpoolPlatform/notification/pkg/db/ent"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/announcement"
 
 	"github.com/google/uuid"
 
@@ -103,5 +104,36 @@ func Update(ctx context.Context, in *npool.UpdateAnnouncementRequest) (*npool.Up
 }
 
 func GetAnnouncementsByApp(ctx context.Context, in *npool.GetAnnouncementsByAppRequest) (*npool.GetAnnouncementsByAppResponse, error) {
-	return nil, nil
+	cli, err := db.Client()
+	if err != nil {
+		return nil, xerrors.Errorf("fail get db client: %v", err)
+	}
+
+	appID, err := uuid.Parse(in.GetAppID())
+	if err != nil {
+		return nil, xerrors.Errorf("invalid app id: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, dbTimeout)
+	defer cancel()
+
+	infos, err := cli.
+		Announcement.
+		Query().
+		Where(
+			announcement.AppID(appID),
+		).
+		All(ctx)
+	if err != nil {
+		return nil, xerrors.Errorf("fail query announcement: %v", err)
+	}
+
+	announcements := []*npool.Announcement{}
+	for _, info := range infos {
+		announcements = append(announcements, dbRowToAnnouncement(info))
+	}
+
+	return &npool.GetAnnouncementsByAppResponse{
+		Infos: announcements,
+	}, nil
 }

@@ -57,4 +57,11 @@ func TestCRUD(t *testing.T) {
 		assert.Equal(t, resp1.Info.ID, announcement.ID)
 		assertAnnouncement(t, resp1.Info, &announcement)
 	}
+
+	resp2, err := GetAnnouncementsByApp(context.Background(), &npool.GetAnnouncementsByAppRequest{
+		AppID: announcement.AppID,
+	})
+	if assert.Nil(t, err) {
+		assert.NotEqual(t, len(resp2.Infos), 0)
+	}
 }
