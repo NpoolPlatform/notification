@@ -4,6 +4,30 @@
 ## Table of Contents
 
 - [npool/notification.proto](#npool/notification.proto)
+    - [Announcement](#notification.v1.Announcement)
+    - [CheckReadUserRequest](#notification.v1.CheckReadUserRequest)
+    - [CheckReadUserResponse](#notification.v1.CheckReadUserResponse)
+    - [CreateAnnouncementRequest](#notification.v1.CreateAnnouncementRequest)
+    - [CreateAnnouncementResponse](#notification.v1.CreateAnnouncementResponse)
+    - [CreateMailRequest](#notification.v1.CreateMailRequest)
+    - [CreateMailResponse](#notification.v1.CreateMailResponse)
+    - [CreateNotificationRequest](#notification.v1.CreateNotificationRequest)
+    - [CreateNotificationResponse](#notification.v1.CreateNotificationResponse)
+    - [CreateReadUserRequest](#notification.v1.CreateReadUserRequest)
+    - [CreateReadUserResponse](#notification.v1.CreateReadUserResponse)
+    - [GetAnnouncementsByAppRequest](#notification.v1.GetAnnouncementsByAppRequest)
+    - [GetAnnouncementsByAppResponse](#notification.v1.GetAnnouncementsByAppResponse)
+    - [GetNotificationsByAppUserRequest](#notification.v1.GetNotificationsByAppUserRequest)
+    - [GetNotificationsByAppUserResponse](#notification.v1.GetNotificationsByAppUserResponse)
+    - [Mail](#notification.v1.Mail)
+    - [ReadUser](#notification.v1.ReadUser)
+    - [UpdateAnnouncementRequest](#notification.v1.UpdateAnnouncementRequest)
+    - [UpdateAnnouncementResponse](#notification.v1.UpdateAnnouncementResponse)
+    - [UpdateMailRequest](#notification.v1.UpdateMailRequest)
+    - [UpdateMailResponse](#notification.v1.UpdateMailResponse)
+    - [UpdateNotificationRequest](#notification.v1.UpdateNotificationRequest)
+    - [UpdateNotificationResponse](#notification.v1.UpdateNotificationResponse)
+    - [UserNotification](#notification.v1.UserNotification)
     - [VersionResponse](#notification.v1.VersionResponse)
   
     - [Notification](#notification.v1.Notification)
@@ -16,6 +40,386 @@
 <p align="right"><a href="#top">Top</a></p>
 
 ## npool/notification.proto
+
+
+
+<a name="notification.v1.Announcement"></a>
+
+### Announcement
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ID | [string](#string) |  |  |
+| AppID | [string](#string) |  |  |
+| Title | [string](#string) |  |  |
+| Content | [string](#string) |  |  |
+| CreateAt | [uint32](#uint32) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.CheckReadUserRequest"></a>
+
+### CheckReadUserRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [ReadUser](#notification.v1.ReadUser) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.CheckReadUserResponse"></a>
+
+### CheckReadUserResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [ReadUser](#notification.v1.ReadUser) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.CreateAnnouncementRequest"></a>
+
+### CreateAnnouncementRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [Announcement](#notification.v1.Announcement) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.CreateAnnouncementResponse"></a>
+
+### CreateAnnouncementResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [Announcement](#notification.v1.Announcement) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.CreateMailRequest"></a>
+
+### CreateMailRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [Mail](#notification.v1.Mail) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.CreateMailResponse"></a>
+
+### CreateMailResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [Mail](#notification.v1.Mail) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.CreateNotificationRequest"></a>
+
+### CreateNotificationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [UserNotification](#notification.v1.UserNotification) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.CreateNotificationResponse"></a>
+
+### CreateNotificationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [UserNotification](#notification.v1.UserNotification) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.CreateReadUserRequest"></a>
+
+### CreateReadUserRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [ReadUser](#notification.v1.ReadUser) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.CreateReadUserResponse"></a>
+
+### CreateReadUserResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [ReadUser](#notification.v1.ReadUser) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.GetAnnouncementsByAppRequest"></a>
+
+### GetAnnouncementsByAppRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| AppID | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.GetAnnouncementsByAppResponse"></a>
+
+### GetAnnouncementsByAppResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Infos | [Announcement](#notification.v1.Announcement) | repeated |  |
+
+
+
+
+
+
+<a name="notification.v1.GetNotificationsByAppUserRequest"></a>
+
+### GetNotificationsByAppUserRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| AppID | [string](#string) |  |  |
+| UserID | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.GetNotificationsByAppUserResponse"></a>
+
+### GetNotificationsByAppUserResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Infos | [UserNotification](#notification.v1.UserNotification) | repeated |  |
+
+
+
+
+
+
+<a name="notification.v1.Mail"></a>
+
+### Mail
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ID | [string](#string) |  |  |
+| FromUserID | [string](#string) |  |  |
+| ToUserID | [string](#string) |  |  |
+| Title | [string](#string) |  |  |
+| Content | [string](#string) |  |  |
+| AlreadyRead | [bool](#bool) |  |  |
+| CreateAt | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.ReadUser"></a>
+
+### ReadUser
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ID | [string](#string) |  |  |
+| AppID | [string](#string) |  |  |
+| AnnouncementID | [string](#string) |  |  |
+| UserID | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.UpdateAnnouncementRequest"></a>
+
+### UpdateAnnouncementRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [Announcement](#notification.v1.Announcement) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.UpdateAnnouncementResponse"></a>
+
+### UpdateAnnouncementResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [Announcement](#notification.v1.Announcement) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.UpdateMailRequest"></a>
+
+### UpdateMailRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [Mail](#notification.v1.Mail) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.UpdateMailResponse"></a>
+
+### UpdateMailResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [Mail](#notification.v1.Mail) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.UpdateNotificationRequest"></a>
+
+### UpdateNotificationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [UserNotification](#notification.v1.UserNotification) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.UpdateNotificationResponse"></a>
+
+### UpdateNotificationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Info | [UserNotification](#notification.v1.UserNotification) |  |  |
+
+
+
+
+
+
+<a name="notification.v1.UserNotification"></a>
+
+### UserNotification
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ID | [string](#string) |  |  |
+| AppID | [string](#string) |  |  |
+| UserID | [string](#string) |  |  |
+| Title | [string](#string) |  |  |
+| Content | [string](#string) |  |  |
+| AlreadyRead | [bool](#bool) |  |  |
+| CreateAt | [string](#string) |  |  |
+
+
+
 
 
 
@@ -48,6 +452,16 @@ Service Name
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | Version | [.google.protobuf.Empty](#google.protobuf.Empty) | [VersionResponse](#notification.v1.VersionResponse) | Method Version |
+| CreateAnnouncement | [CreateAnnouncementRequest](#notification.v1.CreateAnnouncementRequest) | [CreateAnnouncementResponse](#notification.v1.CreateAnnouncementResponse) |  |
+| UpdateAnnouncement | [UpdateAnnouncementRequest](#notification.v1.UpdateAnnouncementRequest) | [UpdateAnnouncementResponse](#notification.v1.UpdateAnnouncementResponse) |  |
+| GetAnnouncementsByApp | [GetAnnouncementsByAppRequest](#notification.v1.GetAnnouncementsByAppRequest) | [GetAnnouncementsByAppResponse](#notification.v1.GetAnnouncementsByAppResponse) |  |
+| CreateNotification | [CreateNotificationRequest](#notification.v1.CreateNotificationRequest) | [CreateNotificationResponse](#notification.v1.CreateNotificationResponse) |  |
+| UpdateNotification | [UpdateNotificationRequest](#notification.v1.UpdateNotificationRequest) | [UpdateNotificationResponse](#notification.v1.UpdateNotificationResponse) |  |
+| GetNotificationsByAppUser | [GetNotificationsByAppUserRequest](#notification.v1.GetNotificationsByAppUserRequest) | [GetNotificationsByAppUserResponse](#notification.v1.GetNotificationsByAppUserResponse) |  |
+| CreateReadUser | [CreateReadUserRequest](#notification.v1.CreateReadUserRequest) | [CreateReadUserResponse](#notification.v1.CreateReadUserResponse) |  |
+| CheckReadUser | [CheckReadUserRequest](#notification.v1.CheckReadUserRequest) | [CheckReadUserResponse](#notification.v1.CheckReadUserResponse) |  |
+| CreateMail | [CreateMailRequest](#notification.v1.CreateMailRequest) | [CreateMailResponse](#notification.v1.CreateMailResponse) |  |
+| UpdateMail | [UpdateMailRequest](#notification.v1.UpdateMailRequest) | [UpdateMailResponse](#notification.v1.UpdateMailResponse) |  |
 
  
 

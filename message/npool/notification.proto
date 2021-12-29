@@ -115,33 +115,34 @@ message GetAnnouncementsByAppRequest {
     string AppID = 10;
 }
 
-message GetAnnouncementsByAppRequest {
+message GetAnnouncementsByAppResponse {
     repeated Announcement Infos = 10;
 }
 
-message Notification {
+message UserNotification {
     string ID = 10;
     string AppID = 20;
     string UserID = 30;
     string Title = 40;
     string Content = 50;
-    string CreateAt = 60;
+    bool AlreadyRead = 60;
+    string CreateAt = 70;
 }
 
 message CreateNotificationRequest {
-    Notification Info = 10;
+    UserNotification Info = 10;
 }
 
 message CreateNotificationResponse {
-    Notification Info = 10;
+    UserNotification Info = 10;
 }
 
 message UpdateNotificationRequest {
-    Notification Info = 10;
+    UserNotification Info = 10;
 }
 
 message UpdateNotificationResponse {
-    Notification Info = 10;
+    UserNotification Info = 10;
 }
 
 message GetNotificationsByAppUserRequest {
@@ -149,8 +150,8 @@ message GetNotificationsByAppUserRequest {
     string UserID = 20;
 }
 
-message GetNotificationsByAppUserRequest {
-    repeated Notification Infos = 10;
+message GetNotificationsByAppUserResponse {
+    repeated UserNotification Infos = 10;
 }
 
 message ReadUser {
@@ -158,4 +159,46 @@ message ReadUser {
     string AppID = 20;
     string AnnouncementID = 30;
     string UserID = 40;
+}
+
+message CreateReadUserRequest {
+    ReadUser Info = 10;
+}
+
+message CreateReadUserResponse {
+    ReadUser Info = 10;
+}
+
+message CheckReadUserRequest {
+    ReadUser Info = 10;
+}
+
+message CheckReadUserResponse {
+    ReadUser Info = 10;
+}
+
+message Mail {
+    string ID = 10;
+    string FromUserID = 20;
+    string ToUserID = 30;
+    string Title = 40;
+    string Content = 50;
+    bool AlreadyRead = 60;
+    string CreateAt = 70;
+}
+
+message CreateMailRequest {
+    Mail Info = 10;
+}
+
+message CreateMailResponse {
+    Mail Info = 20;
+}
+
+message UpdateMailRequest {
+    Mail Info = 10;
+}
+
+message UpdateMailResponse {
+    Mail Info = 10;
 }
