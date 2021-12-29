@@ -3,13 +3,13 @@ package readuser
 import (
 	"context"
 
-	"github.com/NpoolPlatform/message/npool"
+	"github.com/NpoolPlatform/notification/message/npool"
 )
 
-func CreateReadUser(ctx context.Context, in *npool.CreateReadUserRequest) (*npool.CreateReadUserResponse, error) {
+func Create(ctx context.Context, in *npool.CreateReadUserRequest) (*npool.CreateReadUserResponse, error) {
 	return nil, nil
 }
 
-func CheckReadUser(ctx context.Context, in *npool.CheckReadUserRequest) (*npool.CheckReadUserResponse, error) {
+func Check(ctx context.Context, in *npool.CheckReadUserRequest) (*npool.CheckReadUserResponse, error) {
 	return nil, nil
 }

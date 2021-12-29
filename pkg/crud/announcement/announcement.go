@@ -3,14 +3,14 @@ package announcement
 import (
 	"context"
 
-	"github.com/NpoolPlatform/message/npool"
+	"github.com/NpoolPlatform/notification/message/npool"
 )
 
-func CreateAnnouncement(ctx context.Context, in *npool.CreateAnnouncementRequest) (*npool.CreateAnnouncementResponse, error) {
+func Create(ctx context.Context, in *npool.CreateAnnouncementRequest) (*npool.CreateAnnouncementResponse, error) {
 	return nil, nil
 }
 
-func UpdateAnnouncement(ctx context.Context, in *npool.UpdateAnnouncementRequest) (*npool.UpdateAnnouncementResponse, error) {
+func Update(ctx context.Context, in *npool.UpdateAnnouncementRequest) (*npool.UpdateAnnouncementResponse, error) {
 	return nil, nil
 }
 

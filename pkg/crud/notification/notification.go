@@ -3,14 +3,14 @@ package notification
 import (
 	"context"
 
-	"github.com/NpoolPlatform/message/npool"
+	"github.com/NpoolPlatform/notification/message/npool"
 )
 
-func CreateNotification(ctx context.Context, in *npool.CreateNotificationRequest) (*npool.CreateNotificationResponse, error) {
+func Create(ctx context.Context, in *npool.CreateNotificationRequest) (*npool.CreateNotificationResponse, error) {
 	return nil, nil
 }
 
-func UpdateNotification(ctx context.Context, in *npool.UpdateNotificationRequest) (*npool.UpdateNotificationResponse, error) {
+func Update(ctx context.Context, in *npool.UpdateNotificationRequest) (*npool.UpdateNotificationResponse, error) {
 	return nil, nil
 }
 

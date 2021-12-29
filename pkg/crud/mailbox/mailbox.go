@@ -3,7 +3,7 @@ package mailbox
 import (
 	"context"
 
-	"github.com/NpoolPlatform/message/npool"
+	"github.com/NpoolPlatform/notification/message/npool"
 )
 
 func CreateMail(ctx context.Context, in *npool.CreateMailRequest) (*npool.CreateMailResponse, error) {
