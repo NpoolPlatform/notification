@@ -306,6 +306,7 @@
 | AppID | [string](#string) |  |  |
 | AnnouncementID | [string](#string) |  |  |
 | UserID | [string](#string) |  |  |
+| CreateAt | [uint32](#uint32) |  |  |
 
 
 

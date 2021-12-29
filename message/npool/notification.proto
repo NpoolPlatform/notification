@@ -159,6 +159,7 @@ message ReadUser {
     string AppID = 20;
     string AnnouncementID = 30;
     string UserID = 40;
+    uint32 CreateAt = 50;
 }
 
 message CreateReadUserRequest {
