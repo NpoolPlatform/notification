@@ -12,8 +12,14 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// Empty is the client for interacting with the Empty builders.
-	Empty *EmptyClient
+	// Announcement is the client for interacting with the Announcement builders.
+	Announcement *AnnouncementClient
+	// MailBox is the client for interacting with the MailBox builders.
+	MailBox *MailBoxClient
+	// Notification is the client for interacting with the Notification builders.
+	Notification *NotificationClient
+	// ReadState is the client for interacting with the ReadState builders.
+	ReadState *ReadStateClient
 
 	// lazily loaded.
 	client     *Client
@@ -149,7 +155,10 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.Empty = NewEmptyClient(tx.config)
+	tx.Announcement = NewAnnouncementClient(tx.config)
+	tx.MailBox = NewMailBoxClient(tx.config)
+	tx.Notification = NewNotificationClient(tx.config)
+	tx.ReadState = NewReadStateClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -159,7 +168,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Empty.QueryXXX(), the query will be executed
+// applies a query, for example: Announcement.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

@@ -9,15 +9,54 @@ import (
 	"github.com/NpoolPlatform/notification/pkg/db/ent"
 )
 
-// The EmptyFunc type is an adapter to allow the use of ordinary
-// function as Empty mutator.
-type EmptyFunc func(context.Context, *ent.EmptyMutation) (ent.Value, error)
+// The AnnouncementFunc type is an adapter to allow the use of ordinary
+// function as Announcement mutator.
+type AnnouncementFunc func(context.Context, *ent.AnnouncementMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f EmptyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.EmptyMutation)
+func (f AnnouncementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AnnouncementMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EmptyMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AnnouncementMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The MailBoxFunc type is an adapter to allow the use of ordinary
+// function as MailBox mutator.
+type MailBoxFunc func(context.Context, *ent.MailBoxMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MailBoxFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.MailBoxMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MailBoxMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The NotificationFunc type is an adapter to allow the use of ordinary
+// function as Notification mutator.
+type NotificationFunc func(context.Context, *ent.NotificationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NotificationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.NotificationMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotificationMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ReadStateFunc type is an adapter to allow the use of ordinary
+// function as ReadState mutator.
+type ReadStateFunc func(context.Context, *ent.ReadStateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ReadStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ReadStateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ReadStateMutation", m)
 	}
 	return f(ctx, mv)
 }

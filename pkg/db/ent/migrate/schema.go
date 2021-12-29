@@ -8,19 +8,52 @@ import (
 )
 
 var (
-	// EmptiesColumns holds the columns for the "empties" table.
-	EmptiesColumns = []*schema.Column{
+	// AnnouncementsColumns holds the columns for the "announcements" table.
+	AnnouncementsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 	}
-	// EmptiesTable holds the schema information for the "empties" table.
-	EmptiesTable = &schema.Table{
-		Name:       "empties",
-		Columns:    EmptiesColumns,
-		PrimaryKey: []*schema.Column{EmptiesColumns[0]},
+	// AnnouncementsTable holds the schema information for the "announcements" table.
+	AnnouncementsTable = &schema.Table{
+		Name:       "announcements",
+		Columns:    AnnouncementsColumns,
+		PrimaryKey: []*schema.Column{AnnouncementsColumns[0]},
+	}
+	// MailBoxesColumns holds the columns for the "mail_boxes" table.
+	MailBoxesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// MailBoxesTable holds the schema information for the "mail_boxes" table.
+	MailBoxesTable = &schema.Table{
+		Name:       "mail_boxes",
+		Columns:    MailBoxesColumns,
+		PrimaryKey: []*schema.Column{MailBoxesColumns[0]},
+	}
+	// NotificationsColumns holds the columns for the "notifications" table.
+	NotificationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// NotificationsTable holds the schema information for the "notifications" table.
+	NotificationsTable = &schema.Table{
+		Name:       "notifications",
+		Columns:    NotificationsColumns,
+		PrimaryKey: []*schema.Column{NotificationsColumns[0]},
+	}
+	// ReadStatesColumns holds the columns for the "read_states" table.
+	ReadStatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// ReadStatesTable holds the schema information for the "read_states" table.
+	ReadStatesTable = &schema.Table{
+		Name:       "read_states",
+		Columns:    ReadStatesColumns,
+		PrimaryKey: []*schema.Column{ReadStatesColumns[0]},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		EmptiesTable,
+		AnnouncementsTable,
+		MailBoxesTable,
+		NotificationsTable,
+		ReadStatesTable,
 	}
 )
 

@@ -10,57 +10,57 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/notification/pkg/db/ent/empty"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/readstate"
 )
 
-// EmptyCreate is the builder for creating a Empty entity.
-type EmptyCreate struct {
+// ReadStateCreate is the builder for creating a ReadState entity.
+type ReadStateCreate struct {
 	config
-	mutation *EmptyMutation
+	mutation *ReadStateMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
 }
 
-// Mutation returns the EmptyMutation object of the builder.
-func (ec *EmptyCreate) Mutation() *EmptyMutation {
-	return ec.mutation
+// Mutation returns the ReadStateMutation object of the builder.
+func (rsc *ReadStateCreate) Mutation() *ReadStateMutation {
+	return rsc.mutation
 }
 
-// Save creates the Empty in the database.
-func (ec *EmptyCreate) Save(ctx context.Context) (*Empty, error) {
+// Save creates the ReadState in the database.
+func (rsc *ReadStateCreate) Save(ctx context.Context) (*ReadState, error) {
 	var (
 		err  error
-		node *Empty
+		node *ReadState
 	)
-	if len(ec.hooks) == 0 {
-		if err = ec.check(); err != nil {
+	if len(rsc.hooks) == 0 {
+		if err = rsc.check(); err != nil {
 			return nil, err
 		}
-		node, err = ec.sqlSave(ctx)
+		node, err = rsc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*EmptyMutation)
+			mutation, ok := m.(*ReadStateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
-			if err = ec.check(); err != nil {
+			if err = rsc.check(); err != nil {
 				return nil, err
 			}
-			ec.mutation = mutation
-			if node, err = ec.sqlSave(ctx); err != nil {
+			rsc.mutation = mutation
+			if node, err = rsc.sqlSave(ctx); err != nil {
 				return nil, err
 			}
 			mutation.id = &node.ID
 			mutation.done = true
 			return node, err
 		})
-		for i := len(ec.hooks) - 1; i >= 0; i-- {
-			if ec.hooks[i] == nil {
+		for i := len(rsc.hooks) - 1; i >= 0; i-- {
+			if rsc.hooks[i] == nil {
 				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
 			}
-			mut = ec.hooks[i](mut)
+			mut = rsc.hooks[i](mut)
 		}
-		if _, err := mut.Mutate(ctx, ec.mutation); err != nil {
+		if _, err := mut.Mutate(ctx, rsc.mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -68,8 +68,8 @@ func (ec *EmptyCreate) Save(ctx context.Context) (*Empty, error) {
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (ec *EmptyCreate) SaveX(ctx context.Context) *Empty {
-	v, err := ec.Save(ctx)
+func (rsc *ReadStateCreate) SaveX(ctx context.Context) *ReadState {
+	v, err := rsc.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -77,26 +77,26 @@ func (ec *EmptyCreate) SaveX(ctx context.Context) *Empty {
 }
 
 // Exec executes the query.
-func (ec *EmptyCreate) Exec(ctx context.Context) error {
-	_, err := ec.Save(ctx)
+func (rsc *ReadStateCreate) Exec(ctx context.Context) error {
+	_, err := rsc.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ec *EmptyCreate) ExecX(ctx context.Context) {
-	if err := ec.Exec(ctx); err != nil {
+func (rsc *ReadStateCreate) ExecX(ctx context.Context) {
+	if err := rsc.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (ec *EmptyCreate) check() error {
+func (rsc *ReadStateCreate) check() error {
 	return nil
 }
 
-func (ec *EmptyCreate) sqlSave(ctx context.Context) (*Empty, error) {
-	_node, _spec := ec.createSpec()
-	if err := sqlgraph.CreateNode(ctx, ec.driver, _spec); err != nil {
+func (rsc *ReadStateCreate) sqlSave(ctx context.Context) (*ReadState, error) {
+	_node, _spec := rsc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, rsc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{err.Error(), err}
 		}
@@ -107,25 +107,25 @@ func (ec *EmptyCreate) sqlSave(ctx context.Context) (*Empty, error) {
 	return _node, nil
 }
 
-func (ec *EmptyCreate) createSpec() (*Empty, *sqlgraph.CreateSpec) {
+func (rsc *ReadStateCreate) createSpec() (*ReadState, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Empty{config: ec.config}
+		_node = &ReadState{config: rsc.config}
 		_spec = &sqlgraph.CreateSpec{
-			Table: empty.Table,
+			Table: readstate.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: empty.FieldID,
+				Column: readstate.FieldID,
 			},
 		}
 	)
-	_spec.OnConflict = ec.conflict
+	_spec.OnConflict = rsc.conflict
 	return _node, _spec
 }
 
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Empty.Create().
+//	client.ReadState.Create().
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -133,36 +133,36 @@ func (ec *EmptyCreate) createSpec() (*Empty, *sqlgraph.CreateSpec) {
 //		).
 //		Exec(ctx)
 //
-func (ec *EmptyCreate) OnConflict(opts ...sql.ConflictOption) *EmptyUpsertOne {
-	ec.conflict = opts
-	return &EmptyUpsertOne{
-		create: ec,
+func (rsc *ReadStateCreate) OnConflict(opts ...sql.ConflictOption) *ReadStateUpsertOne {
+	rsc.conflict = opts
+	return &ReadStateUpsertOne{
+		create: rsc,
 	}
 }
 
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Empty.Create().
+//	client.ReadState.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 //
-func (ec *EmptyCreate) OnConflictColumns(columns ...string) *EmptyUpsertOne {
-	ec.conflict = append(ec.conflict, sql.ConflictColumns(columns...))
-	return &EmptyUpsertOne{
-		create: ec,
+func (rsc *ReadStateCreate) OnConflictColumns(columns ...string) *ReadStateUpsertOne {
+	rsc.conflict = append(rsc.conflict, sql.ConflictColumns(columns...))
+	return &ReadStateUpsertOne{
+		create: rsc,
 	}
 }
 
 type (
-	// EmptyUpsertOne is the builder for "upsert"-ing
-	//  one Empty node.
-	EmptyUpsertOne struct {
-		create *EmptyCreate
+	// ReadStateUpsertOne is the builder for "upsert"-ing
+	//  one ReadState node.
+	ReadStateUpsertOne struct {
+		create *ReadStateCreate
 	}
 
-	// EmptyUpsert is the "OnConflict" setter.
-	EmptyUpsert struct {
+	// ReadStateUpsert is the "OnConflict" setter.
+	ReadStateUpsert struct {
 		*sql.UpdateSet
 	}
 )
@@ -170,13 +170,13 @@ type (
 // UpdateNewValues updates the fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
-//	client.Empty.Create().
+//	client.ReadState.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
 //
-func (u *EmptyUpsertOne) UpdateNewValues() *EmptyUpsertOne {
+func (u *ReadStateUpsertOne) UpdateNewValues() *ReadStateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
 }
@@ -184,48 +184,48 @@ func (u *EmptyUpsertOne) UpdateNewValues() *EmptyUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.Empty.Create().
+//  client.ReadState.Create().
 //      OnConflict(sql.ResolveWithIgnore()).
 //      Exec(ctx)
 //
-func (u *EmptyUpsertOne) Ignore() *EmptyUpsertOne {
+func (u *ReadStateUpsertOne) Ignore() *ReadStateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
 }
 
 // DoNothing configures the conflict_action to `DO NOTHING`.
 // Supported only by SQLite and PostgreSQL.
-func (u *EmptyUpsertOne) DoNothing() *EmptyUpsertOne {
+func (u *ReadStateUpsertOne) DoNothing() *ReadStateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.DoNothing())
 	return u
 }
 
-// Update allows overriding fields `UPDATE` values. See the EmptyCreate.OnConflict
+// Update allows overriding fields `UPDATE` values. See the ReadStateCreate.OnConflict
 // documentation for more info.
-func (u *EmptyUpsertOne) Update(set func(*EmptyUpsert)) *EmptyUpsertOne {
+func (u *ReadStateUpsertOne) Update(set func(*ReadStateUpsert)) *ReadStateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
-		set(&EmptyUpsert{UpdateSet: update})
+		set(&ReadStateUpsert{UpdateSet: update})
 	}))
 	return u
 }
 
 // Exec executes the query.
-func (u *EmptyUpsertOne) Exec(ctx context.Context) error {
+func (u *ReadStateUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
-		return errors.New("ent: missing options for EmptyCreate.OnConflict")
+		return errors.New("ent: missing options for ReadStateCreate.OnConflict")
 	}
 	return u.create.Exec(ctx)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (u *EmptyUpsertOne) ExecX(ctx context.Context) {
+func (u *ReadStateUpsertOne) ExecX(ctx context.Context) {
 	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *EmptyUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *ReadStateUpsertOne) ID(ctx context.Context) (id int, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -234,7 +234,7 @@ func (u *EmptyUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *EmptyUpsertOne) IDX(ctx context.Context) int {
+func (u *ReadStateUpsertOne) IDX(ctx context.Context) int {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -242,23 +242,23 @@ func (u *EmptyUpsertOne) IDX(ctx context.Context) int {
 	return id
 }
 
-// EmptyCreateBulk is the builder for creating many Empty entities in bulk.
-type EmptyCreateBulk struct {
+// ReadStateCreateBulk is the builder for creating many ReadState entities in bulk.
+type ReadStateCreateBulk struct {
 	config
-	builders []*EmptyCreate
+	builders []*ReadStateCreate
 	conflict []sql.ConflictOption
 }
 
-// Save creates the Empty entities in the database.
-func (ecb *EmptyCreateBulk) Save(ctx context.Context) ([]*Empty, error) {
-	specs := make([]*sqlgraph.CreateSpec, len(ecb.builders))
-	nodes := make([]*Empty, len(ecb.builders))
-	mutators := make([]Mutator, len(ecb.builders))
-	for i := range ecb.builders {
+// Save creates the ReadState entities in the database.
+func (rscb *ReadStateCreateBulk) Save(ctx context.Context) ([]*ReadState, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(rscb.builders))
+	nodes := make([]*ReadState, len(rscb.builders))
+	mutators := make([]Mutator, len(rscb.builders))
+	for i := range rscb.builders {
 		func(i int, root context.Context) {
-			builder := ecb.builders[i]
+			builder := rscb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*EmptyMutation)
+				mutation, ok := m.(*ReadStateMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -269,12 +269,12 @@ func (ecb *EmptyCreateBulk) Save(ctx context.Context) ([]*Empty, error) {
 				nodes[i], specs[i] = builder.createSpec()
 				var err error
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, ecb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, rscb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
-					spec.OnConflict = ecb.conflict
+					spec.OnConflict = rscb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, ecb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, rscb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{err.Error(), err}
 						}
@@ -298,7 +298,7 @@ func (ecb *EmptyCreateBulk) Save(ctx context.Context) ([]*Empty, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, ecb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, rscb.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -306,8 +306,8 @@ func (ecb *EmptyCreateBulk) Save(ctx context.Context) ([]*Empty, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ecb *EmptyCreateBulk) SaveX(ctx context.Context) []*Empty {
-	v, err := ecb.Save(ctx)
+func (rscb *ReadStateCreateBulk) SaveX(ctx context.Context) []*ReadState {
+	v, err := rscb.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -315,14 +315,14 @@ func (ecb *EmptyCreateBulk) SaveX(ctx context.Context) []*Empty {
 }
 
 // Exec executes the query.
-func (ecb *EmptyCreateBulk) Exec(ctx context.Context) error {
-	_, err := ecb.Save(ctx)
+func (rscb *ReadStateCreateBulk) Exec(ctx context.Context) error {
+	_, err := rscb.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ecb *EmptyCreateBulk) ExecX(ctx context.Context) {
-	if err := ecb.Exec(ctx); err != nil {
+func (rscb *ReadStateCreateBulk) ExecX(ctx context.Context) {
+	if err := rscb.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
@@ -330,7 +330,7 @@ func (ecb *EmptyCreateBulk) ExecX(ctx context.Context) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Empty.CreateBulk(builders...).
+//	client.ReadState.CreateBulk(builders...).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -338,43 +338,43 @@ func (ecb *EmptyCreateBulk) ExecX(ctx context.Context) {
 //		).
 //		Exec(ctx)
 //
-func (ecb *EmptyCreateBulk) OnConflict(opts ...sql.ConflictOption) *EmptyUpsertBulk {
-	ecb.conflict = opts
-	return &EmptyUpsertBulk{
-		create: ecb,
+func (rscb *ReadStateCreateBulk) OnConflict(opts ...sql.ConflictOption) *ReadStateUpsertBulk {
+	rscb.conflict = opts
+	return &ReadStateUpsertBulk{
+		create: rscb,
 	}
 }
 
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Empty.Create().
+//	client.ReadState.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 //
-func (ecb *EmptyCreateBulk) OnConflictColumns(columns ...string) *EmptyUpsertBulk {
-	ecb.conflict = append(ecb.conflict, sql.ConflictColumns(columns...))
-	return &EmptyUpsertBulk{
-		create: ecb,
+func (rscb *ReadStateCreateBulk) OnConflictColumns(columns ...string) *ReadStateUpsertBulk {
+	rscb.conflict = append(rscb.conflict, sql.ConflictColumns(columns...))
+	return &ReadStateUpsertBulk{
+		create: rscb,
 	}
 }
 
-// EmptyUpsertBulk is the builder for "upsert"-ing
-// a bulk of Empty nodes.
-type EmptyUpsertBulk struct {
-	create *EmptyCreateBulk
+// ReadStateUpsertBulk is the builder for "upsert"-ing
+// a bulk of ReadState nodes.
+type ReadStateUpsertBulk struct {
+	create *ReadStateCreateBulk
 }
 
 // UpdateNewValues updates the fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.Empty.Create().
+//	client.ReadState.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
 //
-func (u *EmptyUpsertBulk) UpdateNewValues() *EmptyUpsertBulk {
+func (u *ReadStateUpsertBulk) UpdateNewValues() *ReadStateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
 }
@@ -382,46 +382,46 @@ func (u *EmptyUpsertBulk) UpdateNewValues() *EmptyUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Empty.Create().
+//	client.ReadState.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 //
-func (u *EmptyUpsertBulk) Ignore() *EmptyUpsertBulk {
+func (u *ReadStateUpsertBulk) Ignore() *ReadStateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
 }
 
 // DoNothing configures the conflict_action to `DO NOTHING`.
 // Supported only by SQLite and PostgreSQL.
-func (u *EmptyUpsertBulk) DoNothing() *EmptyUpsertBulk {
+func (u *ReadStateUpsertBulk) DoNothing() *ReadStateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.DoNothing())
 	return u
 }
 
-// Update allows overriding fields `UPDATE` values. See the EmptyCreateBulk.OnConflict
+// Update allows overriding fields `UPDATE` values. See the ReadStateCreateBulk.OnConflict
 // documentation for more info.
-func (u *EmptyUpsertBulk) Update(set func(*EmptyUpsert)) *EmptyUpsertBulk {
+func (u *ReadStateUpsertBulk) Update(set func(*ReadStateUpsert)) *ReadStateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
-		set(&EmptyUpsert{UpdateSet: update})
+		set(&ReadStateUpsert{UpdateSet: update})
 	}))
 	return u
 }
 
 // Exec executes the query.
-func (u *EmptyUpsertBulk) Exec(ctx context.Context) error {
+func (u *ReadStateUpsertBulk) Exec(ctx context.Context) error {
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
-			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the EmptyCreateBulk instead", i)
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the ReadStateCreateBulk instead", i)
 		}
 	}
 	if len(u.create.conflict) == 0 {
-		return errors.New("ent: missing options for EmptyCreateBulk.OnConflict")
+		return errors.New("ent: missing options for ReadStateCreateBulk.OnConflict")
 	}
 	return u.create.Exec(ctx)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (u *EmptyUpsertBulk) ExecX(ctx context.Context) {
+func (u *ReadStateUpsertBulk) ExecX(ctx context.Context) {
 	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}

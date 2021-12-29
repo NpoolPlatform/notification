@@ -6,5 +6,14 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Empty is the predicate function for empty builders.
-type Empty func(*sql.Selector)
+// Announcement is the predicate function for announcement builders.
+type Announcement func(*sql.Selector)
+
+// MailBox is the predicate function for mailbox builders.
+type MailBox func(*sql.Selector)
+
+// Notification is the predicate function for notification builders.
+type Notification func(*sql.Selector)
+
+// ReadState is the predicate function for readstate builders.
+type ReadState func(*sql.Selector)
