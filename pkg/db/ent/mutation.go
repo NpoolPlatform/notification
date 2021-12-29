@@ -1542,7 +1542,7 @@ type NotificationMutation struct {
 	id            *uuid.UUID
 	app_id        *uuid.UUID
 	user_id       *uuid.UUID
-	alread_read   *bool
+	already_read  *bool
 	title         *string
 	content       *string
 	create_at     *uint32
@@ -1714,40 +1714,40 @@ func (m *NotificationMutation) ResetUserID() {
 	m.user_id = nil
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (m *NotificationMutation) SetAlreadRead(b bool) {
-	m.alread_read = &b
+// SetAlreadyRead sets the "already_read" field.
+func (m *NotificationMutation) SetAlreadyRead(b bool) {
+	m.already_read = &b
 }
 
-// AlreadRead returns the value of the "alread_read" field in the mutation.
-func (m *NotificationMutation) AlreadRead() (r bool, exists bool) {
-	v := m.alread_read
+// AlreadyRead returns the value of the "already_read" field in the mutation.
+func (m *NotificationMutation) AlreadyRead() (r bool, exists bool) {
+	v := m.already_read
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAlreadRead returns the old "alread_read" field's value of the Notification entity.
+// OldAlreadyRead returns the old "already_read" field's value of the Notification entity.
 // If the Notification object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *NotificationMutation) OldAlreadRead(ctx context.Context) (v bool, err error) {
+func (m *NotificationMutation) OldAlreadyRead(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldAlreadRead is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldAlreadyRead is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldAlreadRead requires an ID field in the mutation")
+		return v, fmt.Errorf("OldAlreadyRead requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAlreadRead: %w", err)
+		return v, fmt.Errorf("querying old value for OldAlreadyRead: %w", err)
 	}
-	return oldValue.AlreadRead, nil
+	return oldValue.AlreadyRead, nil
 }
 
-// ResetAlreadRead resets all changes to the "alread_read" field.
-func (m *NotificationMutation) ResetAlreadRead() {
-	m.alread_read = nil
+// ResetAlreadyRead resets all changes to the "already_read" field.
+func (m *NotificationMutation) ResetAlreadyRead() {
+	m.already_read = nil
 }
 
 // SetTitle sets the "title" field.
@@ -2016,8 +2016,8 @@ func (m *NotificationMutation) Fields() []string {
 	if m.user_id != nil {
 		fields = append(fields, notification.FieldUserID)
 	}
-	if m.alread_read != nil {
-		fields = append(fields, notification.FieldAlreadRead)
+	if m.already_read != nil {
+		fields = append(fields, notification.FieldAlreadyRead)
 	}
 	if m.title != nil {
 		fields = append(fields, notification.FieldTitle)
@@ -2046,8 +2046,8 @@ func (m *NotificationMutation) Field(name string) (ent.Value, bool) {
 		return m.AppID()
 	case notification.FieldUserID:
 		return m.UserID()
-	case notification.FieldAlreadRead:
-		return m.AlreadRead()
+	case notification.FieldAlreadyRead:
+		return m.AlreadyRead()
 	case notification.FieldTitle:
 		return m.Title()
 	case notification.FieldContent:
@@ -2071,8 +2071,8 @@ func (m *NotificationMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldAppID(ctx)
 	case notification.FieldUserID:
 		return m.OldUserID(ctx)
-	case notification.FieldAlreadRead:
-		return m.OldAlreadRead(ctx)
+	case notification.FieldAlreadyRead:
+		return m.OldAlreadyRead(ctx)
 	case notification.FieldTitle:
 		return m.OldTitle(ctx)
 	case notification.FieldContent:
@@ -2106,12 +2106,12 @@ func (m *NotificationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUserID(v)
 		return nil
-	case notification.FieldAlreadRead:
+	case notification.FieldAlreadyRead:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAlreadRead(v)
+		m.SetAlreadyRead(v)
 		return nil
 	case notification.FieldTitle:
 		v, ok := value.(string)
@@ -2242,8 +2242,8 @@ func (m *NotificationMutation) ResetField(name string) error {
 	case notification.FieldUserID:
 		m.ResetUserID()
 		return nil
-	case notification.FieldAlreadRead:
-		m.ResetAlreadRead()
+	case notification.FieldAlreadyRead:
+		m.ResetAlreadyRead()
 		return nil
 	case notification.FieldTitle:
 		m.ResetTitle()

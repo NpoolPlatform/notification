@@ -105,10 +105,10 @@ func UserID(v uuid.UUID) predicate.Notification {
 	})
 }
 
-// AlreadRead applies equality check predicate on the "alread_read" field. It's identical to AlreadReadEQ.
-func AlreadRead(v bool) predicate.Notification {
+// AlreadyRead applies equality check predicate on the "already_read" field. It's identical to AlreadyReadEQ.
+func AlreadyRead(v bool) predicate.Notification {
 	return predicate.Notification(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlreadRead), v))
+		s.Where(sql.EQ(s.C(FieldAlreadyRead), v))
 	})
 }
 
@@ -299,17 +299,17 @@ func UserIDLTE(v uuid.UUID) predicate.Notification {
 	})
 }
 
-// AlreadReadEQ applies the EQ predicate on the "alread_read" field.
-func AlreadReadEQ(v bool) predicate.Notification {
+// AlreadyReadEQ applies the EQ predicate on the "already_read" field.
+func AlreadyReadEQ(v bool) predicate.Notification {
 	return predicate.Notification(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlreadRead), v))
+		s.Where(sql.EQ(s.C(FieldAlreadyRead), v))
 	})
 }
 
-// AlreadReadNEQ applies the NEQ predicate on the "alread_read" field.
-func AlreadReadNEQ(v bool) predicate.Notification {
+// AlreadyReadNEQ applies the NEQ predicate on the "already_read" field.
+func AlreadyReadNEQ(v bool) predicate.Notification {
 	return predicate.Notification(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAlreadRead), v))
+		s.Where(sql.NEQ(s.C(FieldAlreadyRead), v))
 	})
 }
 

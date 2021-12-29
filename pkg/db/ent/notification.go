@@ -20,8 +20,8 @@ type Notification struct {
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
-	// AlreadRead holds the value of the "alread_read" field.
-	AlreadRead bool `json:"alread_read,omitempty"`
+	// AlreadyRead holds the value of the "already_read" field.
+	AlreadyRead bool `json:"already_read,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Content holds the value of the "content" field.
@@ -39,7 +39,7 @@ func (*Notification) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case notification.FieldAlreadRead:
+		case notification.FieldAlreadyRead:
 			values[i] = new(sql.NullBool)
 		case notification.FieldCreateAt, notification.FieldUpdateAt, notification.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
@@ -80,11 +80,11 @@ func (n *Notification) assignValues(columns []string, values []interface{}) erro
 			} else if value != nil {
 				n.UserID = *value
 			}
-		case notification.FieldAlreadRead:
+		case notification.FieldAlreadyRead:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field alread_read", values[i])
+				return fmt.Errorf("unexpected type %T for field already_read", values[i])
 			} else if value.Valid {
-				n.AlreadRead = value.Bool
+				n.AlreadyRead = value.Bool
 			}
 		case notification.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -148,8 +148,8 @@ func (n *Notification) String() string {
 	builder.WriteString(fmt.Sprintf("%v", n.AppID))
 	builder.WriteString(", user_id=")
 	builder.WriteString(fmt.Sprintf("%v", n.UserID))
-	builder.WriteString(", alread_read=")
-	builder.WriteString(fmt.Sprintf("%v", n.AlreadRead))
+	builder.WriteString(", already_read=")
+	builder.WriteString(fmt.Sprintf("%v", n.AlreadyRead))
 	builder.WriteString(", title=")
 	builder.WriteString(n.Title)
 	builder.WriteString(", content=")

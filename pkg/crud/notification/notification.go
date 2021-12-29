@@ -65,6 +65,7 @@ func Create(ctx context.Context, in *npool.CreateNotificationRequest) (*npool.Cr
 		SetUserID(uuid.MustParse(in.GetInfo().GetUserID())).
 		SetTitle(in.GetInfo().GetTitle()).
 		SetContent(in.GetInfo().GetContent()).
+		SetAlreadyRead(false).
 		Save(ctx)
 	if err != nil {
 		return nil, xerrors.Errorf("fail create notification: %v", err)
@@ -98,6 +99,7 @@ func Update(ctx context.Context, in *npool.UpdateNotificationRequest) (*npool.Up
 		UpdateOneID(id).
 		SetTitle(in.GetInfo().GetTitle()).
 		SetContent(in.GetInfo().GetContent()).
+		SetAlreadyRead(in.GetInfo().GetAlreadyRead()).
 		Save(ctx)
 	if err != nil {
 		return nil, xerrors.Errorf("fail update notification: %v", err)

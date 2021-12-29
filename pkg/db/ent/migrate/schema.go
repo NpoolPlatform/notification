@@ -48,7 +48,7 @@ var (
 		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "user_id", Type: field.TypeUUID},
-		{Name: "alread_read", Type: field.TypeBool},
+		{Name: "already_read", Type: field.TypeBool},
 		{Name: "title", Type: field.TypeString},
 		{Name: "content", Type: field.TypeString},
 		{Name: "create_at", Type: field.TypeUint32},

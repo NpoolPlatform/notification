@@ -22,7 +22,7 @@ func (Notification) Fields() []ent.Field {
 			Unique(),
 		field.UUID("app_id", uuid.UUID{}),
 		field.UUID("user_id", uuid.UUID{}),
-		field.Bool("alread_read"),
+		field.Bool("already_read"),
 		field.String("title"),
 		field.String("content"),
 		field.Uint32("create_at").

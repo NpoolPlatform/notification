@@ -35,9 +35,9 @@ func (nc *NotificationCreate) SetUserID(u uuid.UUID) *NotificationCreate {
 	return nc
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (nc *NotificationCreate) SetAlreadRead(b bool) *NotificationCreate {
-	nc.mutation.SetAlreadRead(b)
+// SetAlreadyRead sets the "already_read" field.
+func (nc *NotificationCreate) SetAlreadyRead(b bool) *NotificationCreate {
+	nc.mutation.SetAlreadyRead(b)
 	return nc
 }
 
@@ -198,8 +198,8 @@ func (nc *NotificationCreate) check() error {
 	if _, ok := nc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "user_id"`)}
 	}
-	if _, ok := nc.mutation.AlreadRead(); !ok {
-		return &ValidationError{Name: "alread_read", err: errors.New(`ent: missing required field "alread_read"`)}
+	if _, ok := nc.mutation.AlreadyRead(); !ok {
+		return &ValidationError{Name: "already_read", err: errors.New(`ent: missing required field "already_read"`)}
 	}
 	if _, ok := nc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
@@ -265,13 +265,13 @@ func (nc *NotificationCreate) createSpec() (*Notification, *sqlgraph.CreateSpec)
 		})
 		_node.UserID = value
 	}
-	if value, ok := nc.mutation.AlreadRead(); ok {
+	if value, ok := nc.mutation.AlreadyRead(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: notification.FieldAlreadRead,
+			Column: notification.FieldAlreadyRead,
 		})
-		_node.AlreadRead = value
+		_node.AlreadyRead = value
 	}
 	if value, ok := nc.mutation.Title(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -391,15 +391,15 @@ func (u *NotificationUpsert) UpdateUserID() *NotificationUpsert {
 	return u
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (u *NotificationUpsert) SetAlreadRead(v bool) *NotificationUpsert {
-	u.Set(notification.FieldAlreadRead, v)
+// SetAlreadyRead sets the "already_read" field.
+func (u *NotificationUpsert) SetAlreadyRead(v bool) *NotificationUpsert {
+	u.Set(notification.FieldAlreadyRead, v)
 	return u
 }
 
-// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
-func (u *NotificationUpsert) UpdateAlreadRead() *NotificationUpsert {
-	u.SetExcluded(notification.FieldAlreadRead)
+// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
+func (u *NotificationUpsert) UpdateAlreadyRead() *NotificationUpsert {
+	u.SetExcluded(notification.FieldAlreadyRead)
 	return u
 }
 
@@ -541,17 +541,17 @@ func (u *NotificationUpsertOne) UpdateUserID() *NotificationUpsertOne {
 	})
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (u *NotificationUpsertOne) SetAlreadRead(v bool) *NotificationUpsertOne {
+// SetAlreadyRead sets the "already_read" field.
+func (u *NotificationUpsertOne) SetAlreadyRead(v bool) *NotificationUpsertOne {
 	return u.Update(func(s *NotificationUpsert) {
-		s.SetAlreadRead(v)
+		s.SetAlreadyRead(v)
 	})
 }
 
-// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
-func (u *NotificationUpsertOne) UpdateAlreadRead() *NotificationUpsertOne {
+// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
+func (u *NotificationUpsertOne) UpdateAlreadyRead() *NotificationUpsertOne {
 	return u.Update(func(s *NotificationUpsert) {
-		s.UpdateAlreadRead()
+		s.UpdateAlreadyRead()
 	})
 }
 
@@ -869,17 +869,17 @@ func (u *NotificationUpsertBulk) UpdateUserID() *NotificationUpsertBulk {
 	})
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (u *NotificationUpsertBulk) SetAlreadRead(v bool) *NotificationUpsertBulk {
+// SetAlreadyRead sets the "already_read" field.
+func (u *NotificationUpsertBulk) SetAlreadyRead(v bool) *NotificationUpsertBulk {
 	return u.Update(func(s *NotificationUpsert) {
-		s.SetAlreadRead(v)
+		s.SetAlreadyRead(v)
 	})
 }
 
-// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
-func (u *NotificationUpsertBulk) UpdateAlreadRead() *NotificationUpsertBulk {
+// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
+func (u *NotificationUpsertBulk) UpdateAlreadyRead() *NotificationUpsertBulk {
 	return u.Update(func(s *NotificationUpsert) {
-		s.UpdateAlreadRead()
+		s.UpdateAlreadyRead()
 	})
 }
 

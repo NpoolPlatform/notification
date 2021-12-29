@@ -39,9 +39,9 @@ func (nu *NotificationUpdate) SetUserID(u uuid.UUID) *NotificationUpdate {
 	return nu
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (nu *NotificationUpdate) SetAlreadRead(b bool) *NotificationUpdate {
-	nu.mutation.SetAlreadRead(b)
+// SetAlreadyRead sets the "already_read" field.
+func (nu *NotificationUpdate) SetAlreadyRead(b bool) *NotificationUpdate {
+	nu.mutation.SetAlreadyRead(b)
 	return nu
 }
 
@@ -212,11 +212,11 @@ func (nu *NotificationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: notification.FieldUserID,
 		})
 	}
-	if value, ok := nu.mutation.AlreadRead(); ok {
+	if value, ok := nu.mutation.AlreadyRead(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: notification.FieldAlreadRead,
+			Column: notification.FieldAlreadyRead,
 		})
 	}
 	if value, ok := nu.mutation.Title(); ok {
@@ -306,9 +306,9 @@ func (nuo *NotificationUpdateOne) SetUserID(u uuid.UUID) *NotificationUpdateOne 
 	return nuo
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (nuo *NotificationUpdateOne) SetAlreadRead(b bool) *NotificationUpdateOne {
-	nuo.mutation.SetAlreadRead(b)
+// SetAlreadyRead sets the "already_read" field.
+func (nuo *NotificationUpdateOne) SetAlreadyRead(b bool) *NotificationUpdateOne {
+	nuo.mutation.SetAlreadyRead(b)
 	return nuo
 }
 
@@ -503,11 +503,11 @@ func (nuo *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificat
 			Column: notification.FieldUserID,
 		})
 	}
-	if value, ok := nuo.mutation.AlreadRead(); ok {
+	if value, ok := nuo.mutation.AlreadyRead(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: notification.FieldAlreadRead,
+			Column: notification.FieldAlreadyRead,
 		})
 	}
 	if value, ok := nuo.mutation.Title(); ok {

@@ -15,8 +15,8 @@ const (
 	FieldAppID = "app_id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
-	// FieldAlreadRead holds the string denoting the alread_read field in the database.
-	FieldAlreadRead = "alread_read"
+	// FieldAlreadyRead holds the string denoting the already_read field in the database.
+	FieldAlreadyRead = "already_read"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
 	// FieldContent holds the string denoting the content field in the database.
@@ -36,7 +36,7 @@ var Columns = []string{
 	FieldID,
 	FieldAppID,
 	FieldUserID,
-	FieldAlreadRead,
+	FieldAlreadyRead,
 	FieldTitle,
 	FieldContent,
 	FieldCreateAt,
