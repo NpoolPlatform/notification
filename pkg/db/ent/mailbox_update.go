@@ -45,9 +45,9 @@ func (mbu *MailBoxUpdate) SetToUserID(u uuid.UUID) *MailBoxUpdate {
 	return mbu
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (mbu *MailBoxUpdate) SetAlreadRead(b bool) *MailBoxUpdate {
-	mbu.mutation.SetAlreadRead(b)
+// SetAlreadyRead sets the "already_read" field.
+func (mbu *MailBoxUpdate) SetAlreadyRead(b bool) *MailBoxUpdate {
+	mbu.mutation.SetAlreadyRead(b)
 	return mbu
 }
 
@@ -225,11 +225,11 @@ func (mbu *MailBoxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: mailbox.FieldToUserID,
 		})
 	}
-	if value, ok := mbu.mutation.AlreadRead(); ok {
+	if value, ok := mbu.mutation.AlreadyRead(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: mailbox.FieldAlreadRead,
+			Column: mailbox.FieldAlreadyRead,
 		})
 	}
 	if value, ok := mbu.mutation.Title(); ok {
@@ -325,9 +325,9 @@ func (mbuo *MailBoxUpdateOne) SetToUserID(u uuid.UUID) *MailBoxUpdateOne {
 	return mbuo
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (mbuo *MailBoxUpdateOne) SetAlreadRead(b bool) *MailBoxUpdateOne {
-	mbuo.mutation.SetAlreadRead(b)
+// SetAlreadyRead sets the "already_read" field.
+func (mbuo *MailBoxUpdateOne) SetAlreadyRead(b bool) *MailBoxUpdateOne {
+	mbuo.mutation.SetAlreadyRead(b)
 	return mbuo
 }
 
@@ -529,11 +529,11 @@ func (mbuo *MailBoxUpdateOne) sqlSave(ctx context.Context) (_node *MailBox, err 
 			Column: mailbox.FieldToUserID,
 		})
 	}
-	if value, ok := mbuo.mutation.AlreadRead(); ok {
+	if value, ok := mbuo.mutation.AlreadyRead(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: mailbox.FieldAlreadRead,
+			Column: mailbox.FieldAlreadyRead,
 		})
 	}
 	if value, ok := mbuo.mutation.Title(); ok {

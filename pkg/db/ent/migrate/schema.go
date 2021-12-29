@@ -30,7 +30,7 @@ var (
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "from_user_id", Type: field.TypeUUID},
 		{Name: "to_user_id", Type: field.TypeUUID},
-		{Name: "alread_read", Type: field.TypeBool},
+		{Name: "already_read", Type: field.TypeBool},
 		{Name: "title", Type: field.TypeString},
 		{Name: "content", Type: field.TypeString},
 		{Name: "create_at", Type: field.TypeUint32},

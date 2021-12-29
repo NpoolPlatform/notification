@@ -112,10 +112,10 @@ func ToUserID(v uuid.UUID) predicate.MailBox {
 	})
 }
 
-// AlreadRead applies equality check predicate on the "alread_read" field. It's identical to AlreadReadEQ.
-func AlreadRead(v bool) predicate.MailBox {
+// AlreadyRead applies equality check predicate on the "already_read" field. It's identical to AlreadyReadEQ.
+func AlreadyRead(v bool) predicate.MailBox {
 	return predicate.MailBox(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlreadRead), v))
+		s.Where(sql.EQ(s.C(FieldAlreadyRead), v))
 	})
 }
 
@@ -382,17 +382,17 @@ func ToUserIDLTE(v uuid.UUID) predicate.MailBox {
 	})
 }
 
-// AlreadReadEQ applies the EQ predicate on the "alread_read" field.
-func AlreadReadEQ(v bool) predicate.MailBox {
+// AlreadyReadEQ applies the EQ predicate on the "already_read" field.
+func AlreadyReadEQ(v bool) predicate.MailBox {
 	return predicate.MailBox(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlreadRead), v))
+		s.Where(sql.EQ(s.C(FieldAlreadyRead), v))
 	})
 }
 
-// AlreadReadNEQ applies the NEQ predicate on the "alread_read" field.
-func AlreadReadNEQ(v bool) predicate.MailBox {
+// AlreadyReadNEQ applies the NEQ predicate on the "already_read" field.
+func AlreadyReadNEQ(v bool) predicate.MailBox {
 	return predicate.MailBox(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAlreadRead), v))
+		s.Where(sql.NEQ(s.C(FieldAlreadyRead), v))
 	})
 }
 

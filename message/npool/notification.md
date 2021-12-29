@@ -282,12 +282,13 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | ID | [string](#string) |  |  |
+| AppID | [string](#string) |  |  |
 | FromUserID | [string](#string) |  |  |
 | ToUserID | [string](#string) |  |  |
 | Title | [string](#string) |  |  |
 | Content | [string](#string) |  |  |
 | AlreadyRead | [bool](#bool) |  |  |
-| CreateAt | [string](#string) |  |  |
+| CreateAt | [uint32](#uint32) |  |  |
 
 
 

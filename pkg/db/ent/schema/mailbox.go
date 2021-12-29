@@ -23,7 +23,7 @@ func (MailBox) Fields() []ent.Field {
 		field.UUID("app_id", uuid.UUID{}),
 		field.UUID("from_user_id", uuid.UUID{}),
 		field.UUID("to_user_id", uuid.UUID{}),
-		field.Bool("alread_read"),
+		field.Bool("already_read"),
 		field.String("title"),
 		field.String("content"),
 		field.Uint32("create_at").

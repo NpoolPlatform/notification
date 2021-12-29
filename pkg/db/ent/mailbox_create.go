@@ -41,9 +41,9 @@ func (mbc *MailBoxCreate) SetToUserID(u uuid.UUID) *MailBoxCreate {
 	return mbc
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (mbc *MailBoxCreate) SetAlreadRead(b bool) *MailBoxCreate {
-	mbc.mutation.SetAlreadRead(b)
+// SetAlreadyRead sets the "already_read" field.
+func (mbc *MailBoxCreate) SetAlreadyRead(b bool) *MailBoxCreate {
+	mbc.mutation.SetAlreadyRead(b)
 	return mbc
 }
 
@@ -207,8 +207,8 @@ func (mbc *MailBoxCreate) check() error {
 	if _, ok := mbc.mutation.ToUserID(); !ok {
 		return &ValidationError{Name: "to_user_id", err: errors.New(`ent: missing required field "to_user_id"`)}
 	}
-	if _, ok := mbc.mutation.AlreadRead(); !ok {
-		return &ValidationError{Name: "alread_read", err: errors.New(`ent: missing required field "alread_read"`)}
+	if _, ok := mbc.mutation.AlreadyRead(); !ok {
+		return &ValidationError{Name: "already_read", err: errors.New(`ent: missing required field "already_read"`)}
 	}
 	if _, ok := mbc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
@@ -282,13 +282,13 @@ func (mbc *MailBoxCreate) createSpec() (*MailBox, *sqlgraph.CreateSpec) {
 		})
 		_node.ToUserID = value
 	}
-	if value, ok := mbc.mutation.AlreadRead(); ok {
+	if value, ok := mbc.mutation.AlreadyRead(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: mailbox.FieldAlreadRead,
+			Column: mailbox.FieldAlreadyRead,
 		})
-		_node.AlreadRead = value
+		_node.AlreadyRead = value
 	}
 	if value, ok := mbc.mutation.Title(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -420,15 +420,15 @@ func (u *MailBoxUpsert) UpdateToUserID() *MailBoxUpsert {
 	return u
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (u *MailBoxUpsert) SetAlreadRead(v bool) *MailBoxUpsert {
-	u.Set(mailbox.FieldAlreadRead, v)
+// SetAlreadyRead sets the "already_read" field.
+func (u *MailBoxUpsert) SetAlreadyRead(v bool) *MailBoxUpsert {
+	u.Set(mailbox.FieldAlreadyRead, v)
 	return u
 }
 
-// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
-func (u *MailBoxUpsert) UpdateAlreadRead() *MailBoxUpsert {
-	u.SetExcluded(mailbox.FieldAlreadRead)
+// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
+func (u *MailBoxUpsert) UpdateAlreadyRead() *MailBoxUpsert {
+	u.SetExcluded(mailbox.FieldAlreadyRead)
 	return u
 }
 
@@ -584,17 +584,17 @@ func (u *MailBoxUpsertOne) UpdateToUserID() *MailBoxUpsertOne {
 	})
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (u *MailBoxUpsertOne) SetAlreadRead(v bool) *MailBoxUpsertOne {
+// SetAlreadyRead sets the "already_read" field.
+func (u *MailBoxUpsertOne) SetAlreadyRead(v bool) *MailBoxUpsertOne {
 	return u.Update(func(s *MailBoxUpsert) {
-		s.SetAlreadRead(v)
+		s.SetAlreadyRead(v)
 	})
 }
 
-// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
-func (u *MailBoxUpsertOne) UpdateAlreadRead() *MailBoxUpsertOne {
+// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
+func (u *MailBoxUpsertOne) UpdateAlreadyRead() *MailBoxUpsertOne {
 	return u.Update(func(s *MailBoxUpsert) {
-		s.UpdateAlreadRead()
+		s.UpdateAlreadyRead()
 	})
 }
 
@@ -926,17 +926,17 @@ func (u *MailBoxUpsertBulk) UpdateToUserID() *MailBoxUpsertBulk {
 	})
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (u *MailBoxUpsertBulk) SetAlreadRead(v bool) *MailBoxUpsertBulk {
+// SetAlreadyRead sets the "already_read" field.
+func (u *MailBoxUpsertBulk) SetAlreadyRead(v bool) *MailBoxUpsertBulk {
 	return u.Update(func(s *MailBoxUpsert) {
-		s.SetAlreadRead(v)
+		s.SetAlreadyRead(v)
 	})
 }
 
-// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
-func (u *MailBoxUpsertBulk) UpdateAlreadRead() *MailBoxUpsertBulk {
+// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
+func (u *MailBoxUpsertBulk) UpdateAlreadyRead() *MailBoxUpsertBulk {
 	return u.Update(func(s *MailBoxUpsert) {
-		s.UpdateAlreadRead()
+		s.UpdateAlreadyRead()
 	})
 }
 

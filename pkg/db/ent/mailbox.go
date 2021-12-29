@@ -22,8 +22,8 @@ type MailBox struct {
 	FromUserID uuid.UUID `json:"from_user_id,omitempty"`
 	// ToUserID holds the value of the "to_user_id" field.
 	ToUserID uuid.UUID `json:"to_user_id,omitempty"`
-	// AlreadRead holds the value of the "alread_read" field.
-	AlreadRead bool `json:"alread_read,omitempty"`
+	// AlreadyRead holds the value of the "already_read" field.
+	AlreadyRead bool `json:"already_read,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Content holds the value of the "content" field.
@@ -41,7 +41,7 @@ func (*MailBox) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case mailbox.FieldAlreadRead:
+		case mailbox.FieldAlreadyRead:
 			values[i] = new(sql.NullBool)
 		case mailbox.FieldCreateAt, mailbox.FieldUpdateAt, mailbox.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
@@ -88,11 +88,11 @@ func (mb *MailBox) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				mb.ToUserID = *value
 			}
-		case mailbox.FieldAlreadRead:
+		case mailbox.FieldAlreadyRead:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field alread_read", values[i])
+				return fmt.Errorf("unexpected type %T for field already_read", values[i])
 			} else if value.Valid {
-				mb.AlreadRead = value.Bool
+				mb.AlreadyRead = value.Bool
 			}
 		case mailbox.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -158,8 +158,8 @@ func (mb *MailBox) String() string {
 	builder.WriteString(fmt.Sprintf("%v", mb.FromUserID))
 	builder.WriteString(", to_user_id=")
 	builder.WriteString(fmt.Sprintf("%v", mb.ToUserID))
-	builder.WriteString(", alread_read=")
-	builder.WriteString(fmt.Sprintf("%v", mb.AlreadRead))
+	builder.WriteString(", already_read=")
+	builder.WriteString(fmt.Sprintf("%v", mb.AlreadyRead))
 	builder.WriteString(", title=")
 	builder.WriteString(mb.Title)
 	builder.WriteString(", content=")

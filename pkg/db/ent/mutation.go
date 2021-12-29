@@ -711,7 +711,7 @@ type MailBoxMutation struct {
 	app_id        *uuid.UUID
 	from_user_id  *uuid.UUID
 	to_user_id    *uuid.UUID
-	alread_read   *bool
+	already_read  *bool
 	title         *string
 	content       *string
 	create_at     *uint32
@@ -919,40 +919,40 @@ func (m *MailBoxMutation) ResetToUserID() {
 	m.to_user_id = nil
 }
 
-// SetAlreadRead sets the "alread_read" field.
-func (m *MailBoxMutation) SetAlreadRead(b bool) {
-	m.alread_read = &b
+// SetAlreadyRead sets the "already_read" field.
+func (m *MailBoxMutation) SetAlreadyRead(b bool) {
+	m.already_read = &b
 }
 
-// AlreadRead returns the value of the "alread_read" field in the mutation.
-func (m *MailBoxMutation) AlreadRead() (r bool, exists bool) {
-	v := m.alread_read
+// AlreadyRead returns the value of the "already_read" field in the mutation.
+func (m *MailBoxMutation) AlreadyRead() (r bool, exists bool) {
+	v := m.already_read
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAlreadRead returns the old "alread_read" field's value of the MailBox entity.
+// OldAlreadyRead returns the old "already_read" field's value of the MailBox entity.
 // If the MailBox object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MailBoxMutation) OldAlreadRead(ctx context.Context) (v bool, err error) {
+func (m *MailBoxMutation) OldAlreadyRead(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldAlreadRead is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldAlreadyRead is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldAlreadRead requires an ID field in the mutation")
+		return v, fmt.Errorf("OldAlreadyRead requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAlreadRead: %w", err)
+		return v, fmt.Errorf("querying old value for OldAlreadyRead: %w", err)
 	}
-	return oldValue.AlreadRead, nil
+	return oldValue.AlreadyRead, nil
 }
 
-// ResetAlreadRead resets all changes to the "alread_read" field.
-func (m *MailBoxMutation) ResetAlreadRead() {
-	m.alread_read = nil
+// ResetAlreadyRead resets all changes to the "already_read" field.
+func (m *MailBoxMutation) ResetAlreadyRead() {
+	m.already_read = nil
 }
 
 // SetTitle sets the "title" field.
@@ -1224,8 +1224,8 @@ func (m *MailBoxMutation) Fields() []string {
 	if m.to_user_id != nil {
 		fields = append(fields, mailbox.FieldToUserID)
 	}
-	if m.alread_read != nil {
-		fields = append(fields, mailbox.FieldAlreadRead)
+	if m.already_read != nil {
+		fields = append(fields, mailbox.FieldAlreadyRead)
 	}
 	if m.title != nil {
 		fields = append(fields, mailbox.FieldTitle)
@@ -1256,8 +1256,8 @@ func (m *MailBoxMutation) Field(name string) (ent.Value, bool) {
 		return m.FromUserID()
 	case mailbox.FieldToUserID:
 		return m.ToUserID()
-	case mailbox.FieldAlreadRead:
-		return m.AlreadRead()
+	case mailbox.FieldAlreadyRead:
+		return m.AlreadyRead()
 	case mailbox.FieldTitle:
 		return m.Title()
 	case mailbox.FieldContent:
@@ -1283,8 +1283,8 @@ func (m *MailBoxMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldFromUserID(ctx)
 	case mailbox.FieldToUserID:
 		return m.OldToUserID(ctx)
-	case mailbox.FieldAlreadRead:
-		return m.OldAlreadRead(ctx)
+	case mailbox.FieldAlreadyRead:
+		return m.OldAlreadyRead(ctx)
 	case mailbox.FieldTitle:
 		return m.OldTitle(ctx)
 	case mailbox.FieldContent:
@@ -1325,12 +1325,12 @@ func (m *MailBoxMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetToUserID(v)
 		return nil
-	case mailbox.FieldAlreadRead:
+	case mailbox.FieldAlreadyRead:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAlreadRead(v)
+		m.SetAlreadyRead(v)
 		return nil
 	case mailbox.FieldTitle:
 		v, ok := value.(string)
@@ -1464,8 +1464,8 @@ func (m *MailBoxMutation) ResetField(name string) error {
 	case mailbox.FieldToUserID:
 		m.ResetToUserID()
 		return nil
-	case mailbox.FieldAlreadRead:
-		m.ResetAlreadRead()
+	case mailbox.FieldAlreadyRead:
+		m.ResetAlreadyRead()
 		return nil
 	case mailbox.FieldTitle:
 		m.ResetTitle()

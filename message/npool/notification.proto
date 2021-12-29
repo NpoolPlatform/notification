@@ -180,12 +180,13 @@ message CheckReadUserResponse {
 
 message Mail {
     string ID = 10;
-    string FromUserID = 20;
-    string ToUserID = 30;
-    string Title = 40;
-    string Content = 50;
-    bool AlreadyRead = 60;
-    string CreateAt = 70;
+    string AppID = 20;
+    string FromUserID = 30;
+    string ToUserID = 40;
+    string Title = 50;
+    string Content = 60;
+    bool AlreadyRead = 70;
+    uint32 CreateAt = 80;
 }
 
 message CreateMailRequest {
