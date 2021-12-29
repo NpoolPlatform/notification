@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/predicate"
+	"github.com/google/uuid"
 )
 
 // AnnouncementQuery is the builder for querying Announcement entities.
@@ -84,8 +85,8 @@ func (aq *AnnouncementQuery) FirstX(ctx context.Context) *Announcement {
 
 // FirstID returns the first Announcement ID from the query.
 // Returns a *NotFoundError when no Announcement ID was found.
-func (aq *AnnouncementQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (aq *AnnouncementQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = aq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -97,7 +98,7 @@ func (aq *AnnouncementQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (aq *AnnouncementQuery) FirstIDX(ctx context.Context) int {
+func (aq *AnnouncementQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := aq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -135,8 +136,8 @@ func (aq *AnnouncementQuery) OnlyX(ctx context.Context) *Announcement {
 // OnlyID is like Only, but returns the only Announcement ID in the query.
 // Returns a *NotSingularError when exactly one Announcement ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (aq *AnnouncementQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (aq *AnnouncementQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = aq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -152,7 +153,7 @@ func (aq *AnnouncementQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (aq *AnnouncementQuery) OnlyIDX(ctx context.Context) int {
+func (aq *AnnouncementQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := aq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -178,8 +179,8 @@ func (aq *AnnouncementQuery) AllX(ctx context.Context) []*Announcement {
 }
 
 // IDs executes the query and returns a list of Announcement IDs.
-func (aq *AnnouncementQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
+func (aq *AnnouncementQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	if err := aq.Select(announcement.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -187,7 +188,7 @@ func (aq *AnnouncementQuery) IDs(ctx context.Context) ([]int, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (aq *AnnouncementQuery) IDsX(ctx context.Context) []int {
+func (aq *AnnouncementQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := aq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -249,6 +250,19 @@ func (aq *AnnouncementQuery) Clone() *AnnouncementQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		AppID uuid.UUID `json:"app_id,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Announcement.Query().
+//		GroupBy(announcement.FieldAppID).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
+//
 func (aq *AnnouncementQuery) GroupBy(field string, fields ...string) *AnnouncementGroupBy {
 	group := &AnnouncementGroupBy{config: aq.config}
 	group.fields = append([]string{field}, fields...)
@@ -263,6 +277,17 @@ func (aq *AnnouncementQuery) GroupBy(field string, fields ...string) *Announceme
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		AppID uuid.UUID `json:"app_id,omitempty"`
+//	}
+//
+//	client.Announcement.Query().
+//		Select(announcement.FieldAppID).
+//		Scan(ctx, &v)
+//
 func (aq *AnnouncementQuery) Select(fields ...string) *AnnouncementSelect {
 	aq.fields = append(aq.fields, fields...)
 	return &AnnouncementSelect{AnnouncementQuery: aq}
@@ -329,7 +354,7 @@ func (aq *AnnouncementQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   announcement.Table,
 			Columns: announcement.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: announcement.FieldID,
 			},
 		},

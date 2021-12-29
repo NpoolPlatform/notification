@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/predicate"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/readstate"
+	"github.com/google/uuid"
 )
 
 // ReadStateUpdate is the builder for updating ReadState entities.
@@ -26,6 +27,79 @@ func (rsu *ReadStateUpdate) Where(ps ...predicate.ReadState) *ReadStateUpdate {
 	return rsu
 }
 
+// SetAppID sets the "app_id" field.
+func (rsu *ReadStateUpdate) SetAppID(u uuid.UUID) *ReadStateUpdate {
+	rsu.mutation.SetAppID(u)
+	return rsu
+}
+
+// SetUserID sets the "user_id" field.
+func (rsu *ReadStateUpdate) SetUserID(u uuid.UUID) *ReadStateUpdate {
+	rsu.mutation.SetUserID(u)
+	return rsu
+}
+
+// SetAlreadyRead sets the "already_read" field.
+func (rsu *ReadStateUpdate) SetAlreadyRead(b bool) *ReadStateUpdate {
+	rsu.mutation.SetAlreadyRead(b)
+	return rsu
+}
+
+// SetCreateAt sets the "create_at" field.
+func (rsu *ReadStateUpdate) SetCreateAt(u uint32) *ReadStateUpdate {
+	rsu.mutation.ResetCreateAt()
+	rsu.mutation.SetCreateAt(u)
+	return rsu
+}
+
+// SetNillableCreateAt sets the "create_at" field if the given value is not nil.
+func (rsu *ReadStateUpdate) SetNillableCreateAt(u *uint32) *ReadStateUpdate {
+	if u != nil {
+		rsu.SetCreateAt(*u)
+	}
+	return rsu
+}
+
+// AddCreateAt adds u to the "create_at" field.
+func (rsu *ReadStateUpdate) AddCreateAt(u uint32) *ReadStateUpdate {
+	rsu.mutation.AddCreateAt(u)
+	return rsu
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (rsu *ReadStateUpdate) SetUpdateAt(u uint32) *ReadStateUpdate {
+	rsu.mutation.ResetUpdateAt()
+	rsu.mutation.SetUpdateAt(u)
+	return rsu
+}
+
+// AddUpdateAt adds u to the "update_at" field.
+func (rsu *ReadStateUpdate) AddUpdateAt(u uint32) *ReadStateUpdate {
+	rsu.mutation.AddUpdateAt(u)
+	return rsu
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (rsu *ReadStateUpdate) SetDeleteAt(u uint32) *ReadStateUpdate {
+	rsu.mutation.ResetDeleteAt()
+	rsu.mutation.SetDeleteAt(u)
+	return rsu
+}
+
+// SetNillableDeleteAt sets the "delete_at" field if the given value is not nil.
+func (rsu *ReadStateUpdate) SetNillableDeleteAt(u *uint32) *ReadStateUpdate {
+	if u != nil {
+		rsu.SetDeleteAt(*u)
+	}
+	return rsu
+}
+
+// AddDeleteAt adds u to the "delete_at" field.
+func (rsu *ReadStateUpdate) AddDeleteAt(u uint32) *ReadStateUpdate {
+	rsu.mutation.AddDeleteAt(u)
+	return rsu
+}
+
 // Mutation returns the ReadStateMutation object of the builder.
 func (rsu *ReadStateUpdate) Mutation() *ReadStateMutation {
 	return rsu.mutation
@@ -37,6 +111,7 @@ func (rsu *ReadStateUpdate) Save(ctx context.Context) (int, error) {
 		err      error
 		affected int
 	)
+	rsu.defaults()
 	if len(rsu.hooks) == 0 {
 		affected, err = rsu.sqlSave(ctx)
 	} else {
@@ -85,13 +160,21 @@ func (rsu *ReadStateUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (rsu *ReadStateUpdate) defaults() {
+	if _, ok := rsu.mutation.UpdateAt(); !ok {
+		v := readstate.UpdateDefaultUpdateAt()
+		rsu.mutation.SetUpdateAt(v)
+	}
+}
+
 func (rsu *ReadStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   readstate.Table,
 			Columns: readstate.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: readstate.FieldID,
 			},
 		},
@@ -102,6 +185,69 @@ func (rsu *ReadStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := rsu.mutation.AppID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: readstate.FieldAppID,
+		})
+	}
+	if value, ok := rsu.mutation.UserID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: readstate.FieldUserID,
+		})
+	}
+	if value, ok := rsu.mutation.AlreadyRead(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: readstate.FieldAlreadyRead,
+		})
+	}
+	if value, ok := rsu.mutation.CreateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldCreateAt,
+		})
+	}
+	if value, ok := rsu.mutation.AddedCreateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldCreateAt,
+		})
+	}
+	if value, ok := rsu.mutation.UpdateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldUpdateAt,
+		})
+	}
+	if value, ok := rsu.mutation.AddedUpdateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldUpdateAt,
+		})
+	}
+	if value, ok := rsu.mutation.DeleteAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldDeleteAt,
+		})
+	}
+	if value, ok := rsu.mutation.AddedDeleteAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldDeleteAt,
+		})
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, rsu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -122,6 +268,79 @@ type ReadStateUpdateOne struct {
 	mutation *ReadStateMutation
 }
 
+// SetAppID sets the "app_id" field.
+func (rsuo *ReadStateUpdateOne) SetAppID(u uuid.UUID) *ReadStateUpdateOne {
+	rsuo.mutation.SetAppID(u)
+	return rsuo
+}
+
+// SetUserID sets the "user_id" field.
+func (rsuo *ReadStateUpdateOne) SetUserID(u uuid.UUID) *ReadStateUpdateOne {
+	rsuo.mutation.SetUserID(u)
+	return rsuo
+}
+
+// SetAlreadyRead sets the "already_read" field.
+func (rsuo *ReadStateUpdateOne) SetAlreadyRead(b bool) *ReadStateUpdateOne {
+	rsuo.mutation.SetAlreadyRead(b)
+	return rsuo
+}
+
+// SetCreateAt sets the "create_at" field.
+func (rsuo *ReadStateUpdateOne) SetCreateAt(u uint32) *ReadStateUpdateOne {
+	rsuo.mutation.ResetCreateAt()
+	rsuo.mutation.SetCreateAt(u)
+	return rsuo
+}
+
+// SetNillableCreateAt sets the "create_at" field if the given value is not nil.
+func (rsuo *ReadStateUpdateOne) SetNillableCreateAt(u *uint32) *ReadStateUpdateOne {
+	if u != nil {
+		rsuo.SetCreateAt(*u)
+	}
+	return rsuo
+}
+
+// AddCreateAt adds u to the "create_at" field.
+func (rsuo *ReadStateUpdateOne) AddCreateAt(u uint32) *ReadStateUpdateOne {
+	rsuo.mutation.AddCreateAt(u)
+	return rsuo
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (rsuo *ReadStateUpdateOne) SetUpdateAt(u uint32) *ReadStateUpdateOne {
+	rsuo.mutation.ResetUpdateAt()
+	rsuo.mutation.SetUpdateAt(u)
+	return rsuo
+}
+
+// AddUpdateAt adds u to the "update_at" field.
+func (rsuo *ReadStateUpdateOne) AddUpdateAt(u uint32) *ReadStateUpdateOne {
+	rsuo.mutation.AddUpdateAt(u)
+	return rsuo
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (rsuo *ReadStateUpdateOne) SetDeleteAt(u uint32) *ReadStateUpdateOne {
+	rsuo.mutation.ResetDeleteAt()
+	rsuo.mutation.SetDeleteAt(u)
+	return rsuo
+}
+
+// SetNillableDeleteAt sets the "delete_at" field if the given value is not nil.
+func (rsuo *ReadStateUpdateOne) SetNillableDeleteAt(u *uint32) *ReadStateUpdateOne {
+	if u != nil {
+		rsuo.SetDeleteAt(*u)
+	}
+	return rsuo
+}
+
+// AddDeleteAt adds u to the "delete_at" field.
+func (rsuo *ReadStateUpdateOne) AddDeleteAt(u uint32) *ReadStateUpdateOne {
+	rsuo.mutation.AddDeleteAt(u)
+	return rsuo
+}
+
 // Mutation returns the ReadStateMutation object of the builder.
 func (rsuo *ReadStateUpdateOne) Mutation() *ReadStateMutation {
 	return rsuo.mutation
@@ -140,6 +359,7 @@ func (rsuo *ReadStateUpdateOne) Save(ctx context.Context) (*ReadState, error) {
 		err  error
 		node *ReadState
 	)
+	rsuo.defaults()
 	if len(rsuo.hooks) == 0 {
 		node, err = rsuo.sqlSave(ctx)
 	} else {
@@ -188,13 +408,21 @@ func (rsuo *ReadStateUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (rsuo *ReadStateUpdateOne) defaults() {
+	if _, ok := rsuo.mutation.UpdateAt(); !ok {
+		v := readstate.UpdateDefaultUpdateAt()
+		rsuo.mutation.SetUpdateAt(v)
+	}
+}
+
 func (rsuo *ReadStateUpdateOne) sqlSave(ctx context.Context) (_node *ReadState, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   readstate.Table,
 			Columns: readstate.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: readstate.FieldID,
 			},
 		},
@@ -222,6 +450,69 @@ func (rsuo *ReadStateUpdateOne) sqlSave(ctx context.Context) (_node *ReadState, 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := rsuo.mutation.AppID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: readstate.FieldAppID,
+		})
+	}
+	if value, ok := rsuo.mutation.UserID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: readstate.FieldUserID,
+		})
+	}
+	if value, ok := rsuo.mutation.AlreadyRead(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: readstate.FieldAlreadyRead,
+		})
+	}
+	if value, ok := rsuo.mutation.CreateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldCreateAt,
+		})
+	}
+	if value, ok := rsuo.mutation.AddedCreateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldCreateAt,
+		})
+	}
+	if value, ok := rsuo.mutation.UpdateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldUpdateAt,
+		})
+	}
+	if value, ok := rsuo.mutation.AddedUpdateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldUpdateAt,
+		})
+	}
+	if value, ok := rsuo.mutation.DeleteAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldDeleteAt,
+		})
+	}
+	if value, ok := rsuo.mutation.AddedDeleteAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldDeleteAt,
+		})
 	}
 	_node = &ReadState{config: rsuo.config}
 	_spec.Assign = _node.assignValues

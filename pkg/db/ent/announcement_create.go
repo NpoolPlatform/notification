@@ -7,10 +7,12 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/announcement"
+	"github.com/google/uuid"
 )
 
 // AnnouncementCreate is the builder for creating a Announcement entity.
@@ -19,6 +21,72 @@ type AnnouncementCreate struct {
 	mutation *AnnouncementMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetAppID sets the "app_id" field.
+func (ac *AnnouncementCreate) SetAppID(u uuid.UUID) *AnnouncementCreate {
+	ac.mutation.SetAppID(u)
+	return ac
+}
+
+// SetTitle sets the "title" field.
+func (ac *AnnouncementCreate) SetTitle(s string) *AnnouncementCreate {
+	ac.mutation.SetTitle(s)
+	return ac
+}
+
+// SetContent sets the "content" field.
+func (ac *AnnouncementCreate) SetContent(s string) *AnnouncementCreate {
+	ac.mutation.SetContent(s)
+	return ac
+}
+
+// SetCreateAt sets the "create_at" field.
+func (ac *AnnouncementCreate) SetCreateAt(u uint32) *AnnouncementCreate {
+	ac.mutation.SetCreateAt(u)
+	return ac
+}
+
+// SetNillableCreateAt sets the "create_at" field if the given value is not nil.
+func (ac *AnnouncementCreate) SetNillableCreateAt(u *uint32) *AnnouncementCreate {
+	if u != nil {
+		ac.SetCreateAt(*u)
+	}
+	return ac
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (ac *AnnouncementCreate) SetUpdateAt(u uint32) *AnnouncementCreate {
+	ac.mutation.SetUpdateAt(u)
+	return ac
+}
+
+// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
+func (ac *AnnouncementCreate) SetNillableUpdateAt(u *uint32) *AnnouncementCreate {
+	if u != nil {
+		ac.SetUpdateAt(*u)
+	}
+	return ac
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (ac *AnnouncementCreate) SetDeleteAt(u uint32) *AnnouncementCreate {
+	ac.mutation.SetDeleteAt(u)
+	return ac
+}
+
+// SetNillableDeleteAt sets the "delete_at" field if the given value is not nil.
+func (ac *AnnouncementCreate) SetNillableDeleteAt(u *uint32) *AnnouncementCreate {
+	if u != nil {
+		ac.SetDeleteAt(*u)
+	}
+	return ac
+}
+
+// SetID sets the "id" field.
+func (ac *AnnouncementCreate) SetID(u uuid.UUID) *AnnouncementCreate {
+	ac.mutation.SetID(u)
+	return ac
 }
 
 // Mutation returns the AnnouncementMutation object of the builder.
@@ -32,6 +100,7 @@ func (ac *AnnouncementCreate) Save(ctx context.Context) (*Announcement, error) {
 		err  error
 		node *Announcement
 	)
+	ac.defaults()
 	if len(ac.hooks) == 0 {
 		if err = ac.check(); err != nil {
 			return nil, err
@@ -89,8 +158,46 @@ func (ac *AnnouncementCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ac *AnnouncementCreate) defaults() {
+	if _, ok := ac.mutation.CreateAt(); !ok {
+		v := announcement.DefaultCreateAt()
+		ac.mutation.SetCreateAt(v)
+	}
+	if _, ok := ac.mutation.UpdateAt(); !ok {
+		v := announcement.DefaultUpdateAt()
+		ac.mutation.SetUpdateAt(v)
+	}
+	if _, ok := ac.mutation.DeleteAt(); !ok {
+		v := announcement.DefaultDeleteAt()
+		ac.mutation.SetDeleteAt(v)
+	}
+	if _, ok := ac.mutation.ID(); !ok {
+		v := announcement.DefaultID()
+		ac.mutation.SetID(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (ac *AnnouncementCreate) check() error {
+	if _, ok := ac.mutation.AppID(); !ok {
+		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "app_id"`)}
+	}
+	if _, ok := ac.mutation.Title(); !ok {
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
+	}
+	if _, ok := ac.mutation.Content(); !ok {
+		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "content"`)}
+	}
+	if _, ok := ac.mutation.CreateAt(); !ok {
+		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "create_at"`)}
+	}
+	if _, ok := ac.mutation.UpdateAt(); !ok {
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "update_at"`)}
+	}
+	if _, ok := ac.mutation.DeleteAt(); !ok {
+		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "delete_at"`)}
+	}
 	return nil
 }
 
@@ -102,8 +209,9 @@ func (ac *AnnouncementCreate) sqlSave(ctx context.Context) (*Announcement, error
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		_node.ID = _spec.ID.Value.(uuid.UUID)
+	}
 	return _node, nil
 }
 
@@ -113,12 +221,64 @@ func (ac *AnnouncementCreate) createSpec() (*Announcement, *sqlgraph.CreateSpec)
 		_spec = &sqlgraph.CreateSpec{
 			Table: announcement.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: announcement.FieldID,
 			},
 		}
 	)
 	_spec.OnConflict = ac.conflict
+	if id, ok := ac.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := ac.mutation.AppID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: announcement.FieldAppID,
+		})
+		_node.AppID = value
+	}
+	if value, ok := ac.mutation.Title(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: announcement.FieldTitle,
+		})
+		_node.Title = value
+	}
+	if value, ok := ac.mutation.Content(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: announcement.FieldContent,
+		})
+		_node.Content = value
+	}
+	if value, ok := ac.mutation.CreateAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldCreateAt,
+		})
+		_node.CreateAt = value
+	}
+	if value, ok := ac.mutation.UpdateAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldUpdateAt,
+		})
+		_node.UpdateAt = value
+	}
+	if value, ok := ac.mutation.DeleteAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldDeleteAt,
+		})
+		_node.DeleteAt = value
+	}
 	return _node, _spec
 }
 
@@ -126,11 +286,17 @@ func (ac *AnnouncementCreate) createSpec() (*Announcement, *sqlgraph.CreateSpec)
 // of the `INSERT` statement. For example:
 //
 //	client.Announcement.Create().
+//		SetAppID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.AnnouncementUpsert) {
+//			SetAppID(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (ac *AnnouncementCreate) OnConflict(opts ...sql.ConflictOption) *AnnouncementUpsertOne {
@@ -167,17 +333,97 @@ type (
 	}
 )
 
-// UpdateNewValues updates the fields using the new values that were set on create.
+// SetAppID sets the "app_id" field.
+func (u *AnnouncementUpsert) SetAppID(v uuid.UUID) *AnnouncementUpsert {
+	u.Set(announcement.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *AnnouncementUpsert) UpdateAppID() *AnnouncementUpsert {
+	u.SetExcluded(announcement.FieldAppID)
+	return u
+}
+
+// SetTitle sets the "title" field.
+func (u *AnnouncementUpsert) SetTitle(v string) *AnnouncementUpsert {
+	u.Set(announcement.FieldTitle, v)
+	return u
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *AnnouncementUpsert) UpdateTitle() *AnnouncementUpsert {
+	u.SetExcluded(announcement.FieldTitle)
+	return u
+}
+
+// SetContent sets the "content" field.
+func (u *AnnouncementUpsert) SetContent(v string) *AnnouncementUpsert {
+	u.Set(announcement.FieldContent, v)
+	return u
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *AnnouncementUpsert) UpdateContent() *AnnouncementUpsert {
+	u.SetExcluded(announcement.FieldContent)
+	return u
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *AnnouncementUpsert) SetCreateAt(v uint32) *AnnouncementUpsert {
+	u.Set(announcement.FieldCreateAt, v)
+	return u
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *AnnouncementUpsert) UpdateCreateAt() *AnnouncementUpsert {
+	u.SetExcluded(announcement.FieldCreateAt)
+	return u
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *AnnouncementUpsert) SetUpdateAt(v uint32) *AnnouncementUpsert {
+	u.Set(announcement.FieldUpdateAt, v)
+	return u
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *AnnouncementUpsert) UpdateUpdateAt() *AnnouncementUpsert {
+	u.SetExcluded(announcement.FieldUpdateAt)
+	return u
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *AnnouncementUpsert) SetDeleteAt(v uint32) *AnnouncementUpsert {
+	u.Set(announcement.FieldDeleteAt, v)
+	return u
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *AnnouncementUpsert) UpdateDeleteAt() *AnnouncementUpsert {
+	u.SetExcluded(announcement.FieldDeleteAt)
+	return u
+}
+
+// UpdateNewValues updates the fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.Announcement.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(announcement.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 //
 func (u *AnnouncementUpsertOne) UpdateNewValues() *AnnouncementUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(announcement.FieldID)
+		}
+	}))
 	return u
 }
 
@@ -209,6 +455,90 @@ func (u *AnnouncementUpsertOne) Update(set func(*AnnouncementUpsert)) *Announcem
 	return u
 }
 
+// SetAppID sets the "app_id" field.
+func (u *AnnouncementUpsertOne) SetAppID(v uuid.UUID) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *AnnouncementUpsertOne) UpdateAppID() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// SetTitle sets the "title" field.
+func (u *AnnouncementUpsertOne) SetTitle(v string) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetTitle(v)
+	})
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *AnnouncementUpsertOne) UpdateTitle() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateTitle()
+	})
+}
+
+// SetContent sets the "content" field.
+func (u *AnnouncementUpsertOne) SetContent(v string) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetContent(v)
+	})
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *AnnouncementUpsertOne) UpdateContent() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateContent()
+	})
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *AnnouncementUpsertOne) SetCreateAt(v uint32) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetCreateAt(v)
+	})
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *AnnouncementUpsertOne) UpdateCreateAt() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateCreateAt()
+	})
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *AnnouncementUpsertOne) SetUpdateAt(v uint32) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetUpdateAt(v)
+	})
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *AnnouncementUpsertOne) UpdateUpdateAt() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateUpdateAt()
+	})
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *AnnouncementUpsertOne) SetDeleteAt(v uint32) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetDeleteAt(v)
+	})
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *AnnouncementUpsertOne) UpdateDeleteAt() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateDeleteAt()
+	})
+}
+
 // Exec executes the query.
 func (u *AnnouncementUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -225,7 +555,12 @@ func (u *AnnouncementUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *AnnouncementUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *AnnouncementUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
+	if u.create.driver.Dialect() == dialect.MySQL {
+		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
+		// fields from the database since MySQL does not support the RETURNING clause.
+		return id, errors.New("ent: AnnouncementUpsertOne.ID is not supported by MySQL driver. Use AnnouncementUpsertOne.Exec instead")
+	}
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -234,7 +569,7 @@ func (u *AnnouncementUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *AnnouncementUpsertOne) IDX(ctx context.Context) int {
+func (u *AnnouncementUpsertOne) IDX(ctx context.Context) uuid.UUID {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -257,6 +592,7 @@ func (acb *AnnouncementCreateBulk) Save(ctx context.Context) ([]*Announcement, e
 	for i := range acb.builders {
 		func(i int, root context.Context) {
 			builder := acb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*AnnouncementMutation)
 				if !ok {
@@ -285,10 +621,6 @@ func (acb *AnnouncementCreateBulk) Save(ctx context.Context) ([]*Announcement, e
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				return nodes[i], nil
 			})
 			for i := len(builder.hooks) - 1; i >= 0; i-- {
@@ -336,6 +668,11 @@ func (acb *AnnouncementCreateBulk) ExecX(ctx context.Context) {
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.AnnouncementUpsert) {
+//			SetAppID(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (acb *AnnouncementCreateBulk) OnConflict(opts ...sql.ConflictOption) *AnnouncementUpsertBulk {
@@ -371,11 +708,22 @@ type AnnouncementUpsertBulk struct {
 //	client.Announcement.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(announcement.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 //
 func (u *AnnouncementUpsertBulk) UpdateNewValues() *AnnouncementUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(announcement.FieldID)
+				return
+			}
+		}
+	}))
 	return u
 }
 
@@ -405,6 +753,90 @@ func (u *AnnouncementUpsertBulk) Update(set func(*AnnouncementUpsert)) *Announce
 		set(&AnnouncementUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *AnnouncementUpsertBulk) SetAppID(v uuid.UUID) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *AnnouncementUpsertBulk) UpdateAppID() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// SetTitle sets the "title" field.
+func (u *AnnouncementUpsertBulk) SetTitle(v string) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetTitle(v)
+	})
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *AnnouncementUpsertBulk) UpdateTitle() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateTitle()
+	})
+}
+
+// SetContent sets the "content" field.
+func (u *AnnouncementUpsertBulk) SetContent(v string) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetContent(v)
+	})
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *AnnouncementUpsertBulk) UpdateContent() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateContent()
+	})
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *AnnouncementUpsertBulk) SetCreateAt(v uint32) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetCreateAt(v)
+	})
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *AnnouncementUpsertBulk) UpdateCreateAt() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateCreateAt()
+	})
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *AnnouncementUpsertBulk) SetUpdateAt(v uint32) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetUpdateAt(v)
+	})
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *AnnouncementUpsertBulk) UpdateUpdateAt() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateUpdateAt()
+	})
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *AnnouncementUpsertBulk) SetDeleteAt(v uint32) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetDeleteAt(v)
+	})
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *AnnouncementUpsertBulk) UpdateDeleteAt() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateDeleteAt()
+	})
 }
 
 // Exec executes the query.

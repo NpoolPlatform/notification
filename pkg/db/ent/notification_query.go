@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/predicate"
+	"github.com/google/uuid"
 )
 
 // NotificationQuery is the builder for querying Notification entities.
@@ -84,8 +85,8 @@ func (nq *NotificationQuery) FirstX(ctx context.Context) *Notification {
 
 // FirstID returns the first Notification ID from the query.
 // Returns a *NotFoundError when no Notification ID was found.
-func (nq *NotificationQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (nq *NotificationQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = nq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -97,7 +98,7 @@ func (nq *NotificationQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (nq *NotificationQuery) FirstIDX(ctx context.Context) int {
+func (nq *NotificationQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := nq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -135,8 +136,8 @@ func (nq *NotificationQuery) OnlyX(ctx context.Context) *Notification {
 // OnlyID is like Only, but returns the only Notification ID in the query.
 // Returns a *NotSingularError when exactly one Notification ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (nq *NotificationQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (nq *NotificationQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = nq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -152,7 +153,7 @@ func (nq *NotificationQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (nq *NotificationQuery) OnlyIDX(ctx context.Context) int {
+func (nq *NotificationQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := nq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -178,8 +179,8 @@ func (nq *NotificationQuery) AllX(ctx context.Context) []*Notification {
 }
 
 // IDs executes the query and returns a list of Notification IDs.
-func (nq *NotificationQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
+func (nq *NotificationQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	if err := nq.Select(notification.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -187,7 +188,7 @@ func (nq *NotificationQuery) IDs(ctx context.Context) ([]int, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (nq *NotificationQuery) IDsX(ctx context.Context) []int {
+func (nq *NotificationQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := nq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -249,6 +250,19 @@ func (nq *NotificationQuery) Clone() *NotificationQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		AppID uuid.UUID `json:"app_id,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Notification.Query().
+//		GroupBy(notification.FieldAppID).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
+//
 func (nq *NotificationQuery) GroupBy(field string, fields ...string) *NotificationGroupBy {
 	group := &NotificationGroupBy{config: nq.config}
 	group.fields = append([]string{field}, fields...)
@@ -263,6 +277,17 @@ func (nq *NotificationQuery) GroupBy(field string, fields ...string) *Notificati
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		AppID uuid.UUID `json:"app_id,omitempty"`
+//	}
+//
+//	client.Notification.Query().
+//		Select(notification.FieldAppID).
+//		Scan(ctx, &v)
+//
 func (nq *NotificationQuery) Select(fields ...string) *NotificationSelect {
 	nq.fields = append(nq.fields, fields...)
 	return &NotificationSelect{NotificationQuery: nq}
@@ -329,7 +354,7 @@ func (nq *NotificationQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   notification.Table,
 			Columns: notification.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: notification.FieldID,
 			},
 		},

@@ -8,6 +8,7 @@ import (
 	"log"
 
 	"github.com/NpoolPlatform/notification/pkg/db/ent/migrate"
+	"github.com/google/uuid"
 
 	"github.com/NpoolPlatform/notification/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/mailbox"
@@ -182,7 +183,7 @@ func (c *AnnouncementClient) UpdateOne(a *Announcement) *AnnouncementUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AnnouncementClient) UpdateOneID(id int) *AnnouncementUpdateOne {
+func (c *AnnouncementClient) UpdateOneID(id uuid.UUID) *AnnouncementUpdateOne {
 	mutation := newAnnouncementMutation(c.config, OpUpdateOne, withAnnouncementID(id))
 	return &AnnouncementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -199,7 +200,7 @@ func (c *AnnouncementClient) DeleteOne(a *Announcement) *AnnouncementDeleteOne {
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *AnnouncementClient) DeleteOneID(id int) *AnnouncementDeleteOne {
+func (c *AnnouncementClient) DeleteOneID(id uuid.UUID) *AnnouncementDeleteOne {
 	builder := c.Delete().Where(announcement.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -214,12 +215,12 @@ func (c *AnnouncementClient) Query() *AnnouncementQuery {
 }
 
 // Get returns a Announcement entity by its id.
-func (c *AnnouncementClient) Get(ctx context.Context, id int) (*Announcement, error) {
+func (c *AnnouncementClient) Get(ctx context.Context, id uuid.UUID) (*Announcement, error) {
 	return c.Query().Where(announcement.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AnnouncementClient) GetX(ctx context.Context, id int) *Announcement {
+func (c *AnnouncementClient) GetX(ctx context.Context, id uuid.UUID) *Announcement {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -272,7 +273,7 @@ func (c *MailBoxClient) UpdateOne(mb *MailBox) *MailBoxUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *MailBoxClient) UpdateOneID(id int) *MailBoxUpdateOne {
+func (c *MailBoxClient) UpdateOneID(id uuid.UUID) *MailBoxUpdateOne {
 	mutation := newMailBoxMutation(c.config, OpUpdateOne, withMailBoxID(id))
 	return &MailBoxUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -289,7 +290,7 @@ func (c *MailBoxClient) DeleteOne(mb *MailBox) *MailBoxDeleteOne {
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *MailBoxClient) DeleteOneID(id int) *MailBoxDeleteOne {
+func (c *MailBoxClient) DeleteOneID(id uuid.UUID) *MailBoxDeleteOne {
 	builder := c.Delete().Where(mailbox.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -304,12 +305,12 @@ func (c *MailBoxClient) Query() *MailBoxQuery {
 }
 
 // Get returns a MailBox entity by its id.
-func (c *MailBoxClient) Get(ctx context.Context, id int) (*MailBox, error) {
+func (c *MailBoxClient) Get(ctx context.Context, id uuid.UUID) (*MailBox, error) {
 	return c.Query().Where(mailbox.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *MailBoxClient) GetX(ctx context.Context, id int) *MailBox {
+func (c *MailBoxClient) GetX(ctx context.Context, id uuid.UUID) *MailBox {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -362,7 +363,7 @@ func (c *NotificationClient) UpdateOne(n *Notification) *NotificationUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *NotificationClient) UpdateOneID(id int) *NotificationUpdateOne {
+func (c *NotificationClient) UpdateOneID(id uuid.UUID) *NotificationUpdateOne {
 	mutation := newNotificationMutation(c.config, OpUpdateOne, withNotificationID(id))
 	return &NotificationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -379,7 +380,7 @@ func (c *NotificationClient) DeleteOne(n *Notification) *NotificationDeleteOne {
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *NotificationClient) DeleteOneID(id int) *NotificationDeleteOne {
+func (c *NotificationClient) DeleteOneID(id uuid.UUID) *NotificationDeleteOne {
 	builder := c.Delete().Where(notification.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -394,12 +395,12 @@ func (c *NotificationClient) Query() *NotificationQuery {
 }
 
 // Get returns a Notification entity by its id.
-func (c *NotificationClient) Get(ctx context.Context, id int) (*Notification, error) {
+func (c *NotificationClient) Get(ctx context.Context, id uuid.UUID) (*Notification, error) {
 	return c.Query().Where(notification.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *NotificationClient) GetX(ctx context.Context, id int) *Notification {
+func (c *NotificationClient) GetX(ctx context.Context, id uuid.UUID) *Notification {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -452,7 +453,7 @@ func (c *ReadStateClient) UpdateOne(rs *ReadState) *ReadStateUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ReadStateClient) UpdateOneID(id int) *ReadStateUpdateOne {
+func (c *ReadStateClient) UpdateOneID(id uuid.UUID) *ReadStateUpdateOne {
 	mutation := newReadStateMutation(c.config, OpUpdateOne, withReadStateID(id))
 	return &ReadStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -469,7 +470,7 @@ func (c *ReadStateClient) DeleteOne(rs *ReadState) *ReadStateDeleteOne {
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *ReadStateClient) DeleteOneID(id int) *ReadStateDeleteOne {
+func (c *ReadStateClient) DeleteOneID(id uuid.UUID) *ReadStateDeleteOne {
 	builder := c.Delete().Where(readstate.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -484,12 +485,12 @@ func (c *ReadStateClient) Query() *ReadStateQuery {
 }
 
 // Get returns a ReadState entity by its id.
-func (c *ReadStateClient) Get(ctx context.Context, id int) (*ReadState, error) {
+func (c *ReadStateClient) Get(ctx context.Context, id uuid.UUID) (*ReadState, error) {
 	return c.Query().Where(readstate.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ReadStateClient) GetX(ctx context.Context, id int) *ReadState {
+func (c *ReadStateClient) GetX(ctx context.Context, id uuid.UUID) *ReadState {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

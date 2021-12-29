@@ -7,10 +7,12 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/readstate"
+	"github.com/google/uuid"
 )
 
 // ReadStateCreate is the builder for creating a ReadState entity.
@@ -19,6 +21,72 @@ type ReadStateCreate struct {
 	mutation *ReadStateMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetAppID sets the "app_id" field.
+func (rsc *ReadStateCreate) SetAppID(u uuid.UUID) *ReadStateCreate {
+	rsc.mutation.SetAppID(u)
+	return rsc
+}
+
+// SetUserID sets the "user_id" field.
+func (rsc *ReadStateCreate) SetUserID(u uuid.UUID) *ReadStateCreate {
+	rsc.mutation.SetUserID(u)
+	return rsc
+}
+
+// SetAlreadyRead sets the "already_read" field.
+func (rsc *ReadStateCreate) SetAlreadyRead(b bool) *ReadStateCreate {
+	rsc.mutation.SetAlreadyRead(b)
+	return rsc
+}
+
+// SetCreateAt sets the "create_at" field.
+func (rsc *ReadStateCreate) SetCreateAt(u uint32) *ReadStateCreate {
+	rsc.mutation.SetCreateAt(u)
+	return rsc
+}
+
+// SetNillableCreateAt sets the "create_at" field if the given value is not nil.
+func (rsc *ReadStateCreate) SetNillableCreateAt(u *uint32) *ReadStateCreate {
+	if u != nil {
+		rsc.SetCreateAt(*u)
+	}
+	return rsc
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (rsc *ReadStateCreate) SetUpdateAt(u uint32) *ReadStateCreate {
+	rsc.mutation.SetUpdateAt(u)
+	return rsc
+}
+
+// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
+func (rsc *ReadStateCreate) SetNillableUpdateAt(u *uint32) *ReadStateCreate {
+	if u != nil {
+		rsc.SetUpdateAt(*u)
+	}
+	return rsc
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (rsc *ReadStateCreate) SetDeleteAt(u uint32) *ReadStateCreate {
+	rsc.mutation.SetDeleteAt(u)
+	return rsc
+}
+
+// SetNillableDeleteAt sets the "delete_at" field if the given value is not nil.
+func (rsc *ReadStateCreate) SetNillableDeleteAt(u *uint32) *ReadStateCreate {
+	if u != nil {
+		rsc.SetDeleteAt(*u)
+	}
+	return rsc
+}
+
+// SetID sets the "id" field.
+func (rsc *ReadStateCreate) SetID(u uuid.UUID) *ReadStateCreate {
+	rsc.mutation.SetID(u)
+	return rsc
 }
 
 // Mutation returns the ReadStateMutation object of the builder.
@@ -32,6 +100,7 @@ func (rsc *ReadStateCreate) Save(ctx context.Context) (*ReadState, error) {
 		err  error
 		node *ReadState
 	)
+	rsc.defaults()
 	if len(rsc.hooks) == 0 {
 		if err = rsc.check(); err != nil {
 			return nil, err
@@ -89,8 +158,46 @@ func (rsc *ReadStateCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (rsc *ReadStateCreate) defaults() {
+	if _, ok := rsc.mutation.CreateAt(); !ok {
+		v := readstate.DefaultCreateAt()
+		rsc.mutation.SetCreateAt(v)
+	}
+	if _, ok := rsc.mutation.UpdateAt(); !ok {
+		v := readstate.DefaultUpdateAt()
+		rsc.mutation.SetUpdateAt(v)
+	}
+	if _, ok := rsc.mutation.DeleteAt(); !ok {
+		v := readstate.DefaultDeleteAt()
+		rsc.mutation.SetDeleteAt(v)
+	}
+	if _, ok := rsc.mutation.ID(); !ok {
+		v := readstate.DefaultID()
+		rsc.mutation.SetID(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (rsc *ReadStateCreate) check() error {
+	if _, ok := rsc.mutation.AppID(); !ok {
+		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "app_id"`)}
+	}
+	if _, ok := rsc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "user_id"`)}
+	}
+	if _, ok := rsc.mutation.AlreadyRead(); !ok {
+		return &ValidationError{Name: "already_read", err: errors.New(`ent: missing required field "already_read"`)}
+	}
+	if _, ok := rsc.mutation.CreateAt(); !ok {
+		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "create_at"`)}
+	}
+	if _, ok := rsc.mutation.UpdateAt(); !ok {
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "update_at"`)}
+	}
+	if _, ok := rsc.mutation.DeleteAt(); !ok {
+		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "delete_at"`)}
+	}
 	return nil
 }
 
@@ -102,8 +209,9 @@ func (rsc *ReadStateCreate) sqlSave(ctx context.Context) (*ReadState, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		_node.ID = _spec.ID.Value.(uuid.UUID)
+	}
 	return _node, nil
 }
 
@@ -113,12 +221,64 @@ func (rsc *ReadStateCreate) createSpec() (*ReadState, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: readstate.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: readstate.FieldID,
 			},
 		}
 	)
 	_spec.OnConflict = rsc.conflict
+	if id, ok := rsc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := rsc.mutation.AppID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: readstate.FieldAppID,
+		})
+		_node.AppID = value
+	}
+	if value, ok := rsc.mutation.UserID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: readstate.FieldUserID,
+		})
+		_node.UserID = value
+	}
+	if value, ok := rsc.mutation.AlreadyRead(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: readstate.FieldAlreadyRead,
+		})
+		_node.AlreadyRead = value
+	}
+	if value, ok := rsc.mutation.CreateAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldCreateAt,
+		})
+		_node.CreateAt = value
+	}
+	if value, ok := rsc.mutation.UpdateAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldUpdateAt,
+		})
+		_node.UpdateAt = value
+	}
+	if value, ok := rsc.mutation.DeleteAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: readstate.FieldDeleteAt,
+		})
+		_node.DeleteAt = value
+	}
 	return _node, _spec
 }
 
@@ -126,11 +286,17 @@ func (rsc *ReadStateCreate) createSpec() (*ReadState, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.ReadState.Create().
+//		SetAppID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.ReadStateUpsert) {
+//			SetAppID(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (rsc *ReadStateCreate) OnConflict(opts ...sql.ConflictOption) *ReadStateUpsertOne {
@@ -167,17 +333,97 @@ type (
 	}
 )
 
-// UpdateNewValues updates the fields using the new values that were set on create.
+// SetAppID sets the "app_id" field.
+func (u *ReadStateUpsert) SetAppID(v uuid.UUID) *ReadStateUpsert {
+	u.Set(readstate.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *ReadStateUpsert) UpdateAppID() *ReadStateUpsert {
+	u.SetExcluded(readstate.FieldAppID)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *ReadStateUpsert) SetUserID(v uuid.UUID) *ReadStateUpsert {
+	u.Set(readstate.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *ReadStateUpsert) UpdateUserID() *ReadStateUpsert {
+	u.SetExcluded(readstate.FieldUserID)
+	return u
+}
+
+// SetAlreadyRead sets the "already_read" field.
+func (u *ReadStateUpsert) SetAlreadyRead(v bool) *ReadStateUpsert {
+	u.Set(readstate.FieldAlreadyRead, v)
+	return u
+}
+
+// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
+func (u *ReadStateUpsert) UpdateAlreadyRead() *ReadStateUpsert {
+	u.SetExcluded(readstate.FieldAlreadyRead)
+	return u
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *ReadStateUpsert) SetCreateAt(v uint32) *ReadStateUpsert {
+	u.Set(readstate.FieldCreateAt, v)
+	return u
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *ReadStateUpsert) UpdateCreateAt() *ReadStateUpsert {
+	u.SetExcluded(readstate.FieldCreateAt)
+	return u
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *ReadStateUpsert) SetUpdateAt(v uint32) *ReadStateUpsert {
+	u.Set(readstate.FieldUpdateAt, v)
+	return u
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *ReadStateUpsert) UpdateUpdateAt() *ReadStateUpsert {
+	u.SetExcluded(readstate.FieldUpdateAt)
+	return u
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *ReadStateUpsert) SetDeleteAt(v uint32) *ReadStateUpsert {
+	u.Set(readstate.FieldDeleteAt, v)
+	return u
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *ReadStateUpsert) UpdateDeleteAt() *ReadStateUpsert {
+	u.SetExcluded(readstate.FieldDeleteAt)
+	return u
+}
+
+// UpdateNewValues updates the fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.ReadState.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(readstate.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 //
 func (u *ReadStateUpsertOne) UpdateNewValues() *ReadStateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(readstate.FieldID)
+		}
+	}))
 	return u
 }
 
@@ -209,6 +455,90 @@ func (u *ReadStateUpsertOne) Update(set func(*ReadStateUpsert)) *ReadStateUpsert
 	return u
 }
 
+// SetAppID sets the "app_id" field.
+func (u *ReadStateUpsertOne) SetAppID(v uuid.UUID) *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *ReadStateUpsertOne) UpdateAppID() *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *ReadStateUpsertOne) SetUserID(v uuid.UUID) *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *ReadStateUpsertOne) UpdateUserID() *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetAlreadyRead sets the "already_read" field.
+func (u *ReadStateUpsertOne) SetAlreadyRead(v bool) *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetAlreadyRead(v)
+	})
+}
+
+// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
+func (u *ReadStateUpsertOne) UpdateAlreadyRead() *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateAlreadyRead()
+	})
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *ReadStateUpsertOne) SetCreateAt(v uint32) *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetCreateAt(v)
+	})
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *ReadStateUpsertOne) UpdateCreateAt() *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateCreateAt()
+	})
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *ReadStateUpsertOne) SetUpdateAt(v uint32) *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetUpdateAt(v)
+	})
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *ReadStateUpsertOne) UpdateUpdateAt() *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateUpdateAt()
+	})
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *ReadStateUpsertOne) SetDeleteAt(v uint32) *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetDeleteAt(v)
+	})
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *ReadStateUpsertOne) UpdateDeleteAt() *ReadStateUpsertOne {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateDeleteAt()
+	})
+}
+
 // Exec executes the query.
 func (u *ReadStateUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -225,7 +555,12 @@ func (u *ReadStateUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ReadStateUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *ReadStateUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
+	if u.create.driver.Dialect() == dialect.MySQL {
+		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
+		// fields from the database since MySQL does not support the RETURNING clause.
+		return id, errors.New("ent: ReadStateUpsertOne.ID is not supported by MySQL driver. Use ReadStateUpsertOne.Exec instead")
+	}
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -234,7 +569,7 @@ func (u *ReadStateUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ReadStateUpsertOne) IDX(ctx context.Context) int {
+func (u *ReadStateUpsertOne) IDX(ctx context.Context) uuid.UUID {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -257,6 +592,7 @@ func (rscb *ReadStateCreateBulk) Save(ctx context.Context) ([]*ReadState, error)
 	for i := range rscb.builders {
 		func(i int, root context.Context) {
 			builder := rscb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ReadStateMutation)
 				if !ok {
@@ -285,10 +621,6 @@ func (rscb *ReadStateCreateBulk) Save(ctx context.Context) ([]*ReadState, error)
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				return nodes[i], nil
 			})
 			for i := len(builder.hooks) - 1; i >= 0; i-- {
@@ -336,6 +668,11 @@ func (rscb *ReadStateCreateBulk) ExecX(ctx context.Context) {
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.ReadStateUpsert) {
+//			SetAppID(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (rscb *ReadStateCreateBulk) OnConflict(opts ...sql.ConflictOption) *ReadStateUpsertBulk {
@@ -371,11 +708,22 @@ type ReadStateUpsertBulk struct {
 //	client.ReadState.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(readstate.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 //
 func (u *ReadStateUpsertBulk) UpdateNewValues() *ReadStateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(readstate.FieldID)
+				return
+			}
+		}
+	}))
 	return u
 }
 
@@ -405,6 +753,90 @@ func (u *ReadStateUpsertBulk) Update(set func(*ReadStateUpsert)) *ReadStateUpser
 		set(&ReadStateUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *ReadStateUpsertBulk) SetAppID(v uuid.UUID) *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *ReadStateUpsertBulk) UpdateAppID() *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *ReadStateUpsertBulk) SetUserID(v uuid.UUID) *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *ReadStateUpsertBulk) UpdateUserID() *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetAlreadyRead sets the "already_read" field.
+func (u *ReadStateUpsertBulk) SetAlreadyRead(v bool) *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetAlreadyRead(v)
+	})
+}
+
+// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
+func (u *ReadStateUpsertBulk) UpdateAlreadyRead() *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateAlreadyRead()
+	})
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *ReadStateUpsertBulk) SetCreateAt(v uint32) *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetCreateAt(v)
+	})
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *ReadStateUpsertBulk) UpdateCreateAt() *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateCreateAt()
+	})
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *ReadStateUpsertBulk) SetUpdateAt(v uint32) *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetUpdateAt(v)
+	})
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *ReadStateUpsertBulk) UpdateUpdateAt() *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateUpdateAt()
+	})
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *ReadStateUpsertBulk) SetDeleteAt(v uint32) *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.SetDeleteAt(v)
+	})
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *ReadStateUpsertBulk) UpdateDeleteAt() *ReadStateUpsertBulk {
+	return u.Update(func(s *ReadStateUpsert) {
+		s.UpdateDeleteAt()
+	})
 }
 
 // Exec executes the query.

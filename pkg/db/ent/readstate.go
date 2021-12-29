@@ -8,13 +8,26 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/readstate"
+	"github.com/google/uuid"
 )
 
 // ReadState is the model entity for the ReadState schema.
 type ReadState struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID uuid.UUID `json:"app_id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID uuid.UUID `json:"user_id,omitempty"`
+	// AlreadyRead holds the value of the "already_read" field.
+	AlreadyRead bool `json:"already_read,omitempty"`
+	// CreateAt holds the value of the "create_at" field.
+	CreateAt uint32 `json:"create_at,omitempty"`
+	// UpdateAt holds the value of the "update_at" field.
+	UpdateAt uint32 `json:"update_at,omitempty"`
+	// DeleteAt holds the value of the "delete_at" field.
+	DeleteAt uint32 `json:"delete_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -22,8 +35,12 @@ func (*ReadState) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case readstate.FieldID:
+		case readstate.FieldAlreadyRead:
+			values[i] = new(sql.NullBool)
+		case readstate.FieldCreateAt, readstate.FieldUpdateAt, readstate.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
+		case readstate.FieldID, readstate.FieldAppID, readstate.FieldUserID:
+			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type ReadState", columns[i])
 		}
@@ -40,11 +57,47 @@ func (rs *ReadState) assignValues(columns []string, values []interface{}) error 
 	for i := range columns {
 		switch columns[i] {
 		case readstate.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value != nil {
+				rs.ID = *value
 			}
-			rs.ID = int(value.Int64)
+		case readstate.FieldAppID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value != nil {
+				rs.AppID = *value
+			}
+		case readstate.FieldUserID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value != nil {
+				rs.UserID = *value
+			}
+		case readstate.FieldAlreadyRead:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field already_read", values[i])
+			} else if value.Valid {
+				rs.AlreadyRead = value.Bool
+			}
+		case readstate.FieldCreateAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field create_at", values[i])
+			} else if value.Valid {
+				rs.CreateAt = uint32(value.Int64)
+			}
+		case readstate.FieldUpdateAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field update_at", values[i])
+			} else if value.Valid {
+				rs.UpdateAt = uint32(value.Int64)
+			}
+		case readstate.FieldDeleteAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete_at", values[i])
+			} else if value.Valid {
+				rs.DeleteAt = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -73,6 +126,18 @@ func (rs *ReadState) String() string {
 	var builder strings.Builder
 	builder.WriteString("ReadState(")
 	builder.WriteString(fmt.Sprintf("id=%v", rs.ID))
+	builder.WriteString(", app_id=")
+	builder.WriteString(fmt.Sprintf("%v", rs.AppID))
+	builder.WriteString(", user_id=")
+	builder.WriteString(fmt.Sprintf("%v", rs.UserID))
+	builder.WriteString(", already_read=")
+	builder.WriteString(fmt.Sprintf("%v", rs.AlreadyRead))
+	builder.WriteString(", create_at=")
+	builder.WriteString(fmt.Sprintf("%v", rs.CreateAt))
+	builder.WriteString(", update_at=")
+	builder.WriteString(fmt.Sprintf("%v", rs.UpdateAt))
+	builder.WriteString(", delete_at=")
+	builder.WriteString(fmt.Sprintf("%v", rs.DeleteAt))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/predicate"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/readstate"
+	"github.com/google/uuid"
 )
 
 // ReadStateQuery is the builder for querying ReadState entities.
@@ -84,8 +85,8 @@ func (rsq *ReadStateQuery) FirstX(ctx context.Context) *ReadState {
 
 // FirstID returns the first ReadState ID from the query.
 // Returns a *NotFoundError when no ReadState ID was found.
-func (rsq *ReadStateQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (rsq *ReadStateQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = rsq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -97,7 +98,7 @@ func (rsq *ReadStateQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (rsq *ReadStateQuery) FirstIDX(ctx context.Context) int {
+func (rsq *ReadStateQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := rsq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -135,8 +136,8 @@ func (rsq *ReadStateQuery) OnlyX(ctx context.Context) *ReadState {
 // OnlyID is like Only, but returns the only ReadState ID in the query.
 // Returns a *NotSingularError when exactly one ReadState ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (rsq *ReadStateQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (rsq *ReadStateQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = rsq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -152,7 +153,7 @@ func (rsq *ReadStateQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (rsq *ReadStateQuery) OnlyIDX(ctx context.Context) int {
+func (rsq *ReadStateQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := rsq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -178,8 +179,8 @@ func (rsq *ReadStateQuery) AllX(ctx context.Context) []*ReadState {
 }
 
 // IDs executes the query and returns a list of ReadState IDs.
-func (rsq *ReadStateQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
+func (rsq *ReadStateQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	if err := rsq.Select(readstate.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -187,7 +188,7 @@ func (rsq *ReadStateQuery) IDs(ctx context.Context) ([]int, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (rsq *ReadStateQuery) IDsX(ctx context.Context) []int {
+func (rsq *ReadStateQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := rsq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -249,6 +250,19 @@ func (rsq *ReadStateQuery) Clone() *ReadStateQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		AppID uuid.UUID `json:"app_id,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.ReadState.Query().
+//		GroupBy(readstate.FieldAppID).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
+//
 func (rsq *ReadStateQuery) GroupBy(field string, fields ...string) *ReadStateGroupBy {
 	group := &ReadStateGroupBy{config: rsq.config}
 	group.fields = append([]string{field}, fields...)
@@ -263,6 +277,17 @@ func (rsq *ReadStateQuery) GroupBy(field string, fields ...string) *ReadStateGro
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		AppID uuid.UUID `json:"app_id,omitempty"`
+//	}
+//
+//	client.ReadState.Query().
+//		Select(readstate.FieldAppID).
+//		Scan(ctx, &v)
+//
 func (rsq *ReadStateQuery) Select(fields ...string) *ReadStateSelect {
 	rsq.fields = append(rsq.fields, fields...)
 	return &ReadStateSelect{ReadStateQuery: rsq}
@@ -329,7 +354,7 @@ func (rsq *ReadStateQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   readstate.Table,
 			Columns: readstate.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: readstate.FieldID,
 			},
 		},

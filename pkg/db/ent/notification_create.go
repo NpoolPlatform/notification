@@ -7,10 +7,12 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"
+	"github.com/google/uuid"
 )
 
 // NotificationCreate is the builder for creating a Notification entity.
@@ -19,6 +21,84 @@ type NotificationCreate struct {
 	mutation *NotificationMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetAppID sets the "app_id" field.
+func (nc *NotificationCreate) SetAppID(u uuid.UUID) *NotificationCreate {
+	nc.mutation.SetAppID(u)
+	return nc
+}
+
+// SetUserID sets the "user_id" field.
+func (nc *NotificationCreate) SetUserID(u uuid.UUID) *NotificationCreate {
+	nc.mutation.SetUserID(u)
+	return nc
+}
+
+// SetAlreadRead sets the "alread_read" field.
+func (nc *NotificationCreate) SetAlreadRead(b bool) *NotificationCreate {
+	nc.mutation.SetAlreadRead(b)
+	return nc
+}
+
+// SetTitle sets the "title" field.
+func (nc *NotificationCreate) SetTitle(s string) *NotificationCreate {
+	nc.mutation.SetTitle(s)
+	return nc
+}
+
+// SetContent sets the "content" field.
+func (nc *NotificationCreate) SetContent(s string) *NotificationCreate {
+	nc.mutation.SetContent(s)
+	return nc
+}
+
+// SetCreateAt sets the "create_at" field.
+func (nc *NotificationCreate) SetCreateAt(u uint32) *NotificationCreate {
+	nc.mutation.SetCreateAt(u)
+	return nc
+}
+
+// SetNillableCreateAt sets the "create_at" field if the given value is not nil.
+func (nc *NotificationCreate) SetNillableCreateAt(u *uint32) *NotificationCreate {
+	if u != nil {
+		nc.SetCreateAt(*u)
+	}
+	return nc
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (nc *NotificationCreate) SetUpdateAt(u uint32) *NotificationCreate {
+	nc.mutation.SetUpdateAt(u)
+	return nc
+}
+
+// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
+func (nc *NotificationCreate) SetNillableUpdateAt(u *uint32) *NotificationCreate {
+	if u != nil {
+		nc.SetUpdateAt(*u)
+	}
+	return nc
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (nc *NotificationCreate) SetDeleteAt(u uint32) *NotificationCreate {
+	nc.mutation.SetDeleteAt(u)
+	return nc
+}
+
+// SetNillableDeleteAt sets the "delete_at" field if the given value is not nil.
+func (nc *NotificationCreate) SetNillableDeleteAt(u *uint32) *NotificationCreate {
+	if u != nil {
+		nc.SetDeleteAt(*u)
+	}
+	return nc
+}
+
+// SetID sets the "id" field.
+func (nc *NotificationCreate) SetID(u uuid.UUID) *NotificationCreate {
+	nc.mutation.SetID(u)
+	return nc
 }
 
 // Mutation returns the NotificationMutation object of the builder.
@@ -32,6 +112,7 @@ func (nc *NotificationCreate) Save(ctx context.Context) (*Notification, error) {
 		err  error
 		node *Notification
 	)
+	nc.defaults()
 	if len(nc.hooks) == 0 {
 		if err = nc.check(); err != nil {
 			return nil, err
@@ -89,8 +170,52 @@ func (nc *NotificationCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (nc *NotificationCreate) defaults() {
+	if _, ok := nc.mutation.CreateAt(); !ok {
+		v := notification.DefaultCreateAt()
+		nc.mutation.SetCreateAt(v)
+	}
+	if _, ok := nc.mutation.UpdateAt(); !ok {
+		v := notification.DefaultUpdateAt()
+		nc.mutation.SetUpdateAt(v)
+	}
+	if _, ok := nc.mutation.DeleteAt(); !ok {
+		v := notification.DefaultDeleteAt()
+		nc.mutation.SetDeleteAt(v)
+	}
+	if _, ok := nc.mutation.ID(); !ok {
+		v := notification.DefaultID()
+		nc.mutation.SetID(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (nc *NotificationCreate) check() error {
+	if _, ok := nc.mutation.AppID(); !ok {
+		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "app_id"`)}
+	}
+	if _, ok := nc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "user_id"`)}
+	}
+	if _, ok := nc.mutation.AlreadRead(); !ok {
+		return &ValidationError{Name: "alread_read", err: errors.New(`ent: missing required field "alread_read"`)}
+	}
+	if _, ok := nc.mutation.Title(); !ok {
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
+	}
+	if _, ok := nc.mutation.Content(); !ok {
+		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "content"`)}
+	}
+	if _, ok := nc.mutation.CreateAt(); !ok {
+		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "create_at"`)}
+	}
+	if _, ok := nc.mutation.UpdateAt(); !ok {
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "update_at"`)}
+	}
+	if _, ok := nc.mutation.DeleteAt(); !ok {
+		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "delete_at"`)}
+	}
 	return nil
 }
 
@@ -102,8 +227,9 @@ func (nc *NotificationCreate) sqlSave(ctx context.Context) (*Notification, error
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		_node.ID = _spec.ID.Value.(uuid.UUID)
+	}
 	return _node, nil
 }
 
@@ -113,12 +239,80 @@ func (nc *NotificationCreate) createSpec() (*Notification, *sqlgraph.CreateSpec)
 		_spec = &sqlgraph.CreateSpec{
 			Table: notification.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: notification.FieldID,
 			},
 		}
 	)
 	_spec.OnConflict = nc.conflict
+	if id, ok := nc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := nc.mutation.AppID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: notification.FieldAppID,
+		})
+		_node.AppID = value
+	}
+	if value, ok := nc.mutation.UserID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: notification.FieldUserID,
+		})
+		_node.UserID = value
+	}
+	if value, ok := nc.mutation.AlreadRead(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notification.FieldAlreadRead,
+		})
+		_node.AlreadRead = value
+	}
+	if value, ok := nc.mutation.Title(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notification.FieldTitle,
+		})
+		_node.Title = value
+	}
+	if value, ok := nc.mutation.Content(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notification.FieldContent,
+		})
+		_node.Content = value
+	}
+	if value, ok := nc.mutation.CreateAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldCreateAt,
+		})
+		_node.CreateAt = value
+	}
+	if value, ok := nc.mutation.UpdateAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldUpdateAt,
+		})
+		_node.UpdateAt = value
+	}
+	if value, ok := nc.mutation.DeleteAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldDeleteAt,
+		})
+		_node.DeleteAt = value
+	}
 	return _node, _spec
 }
 
@@ -126,11 +320,17 @@ func (nc *NotificationCreate) createSpec() (*Notification, *sqlgraph.CreateSpec)
 // of the `INSERT` statement. For example:
 //
 //	client.Notification.Create().
+//		SetAppID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.NotificationUpsert) {
+//			SetAppID(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (nc *NotificationCreate) OnConflict(opts ...sql.ConflictOption) *NotificationUpsertOne {
@@ -167,17 +367,121 @@ type (
 	}
 )
 
-// UpdateNewValues updates the fields using the new values that were set on create.
+// SetAppID sets the "app_id" field.
+func (u *NotificationUpsert) SetAppID(v uuid.UUID) *NotificationUpsert {
+	u.Set(notification.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *NotificationUpsert) UpdateAppID() *NotificationUpsert {
+	u.SetExcluded(notification.FieldAppID)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *NotificationUpsert) SetUserID(v uuid.UUID) *NotificationUpsert {
+	u.Set(notification.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *NotificationUpsert) UpdateUserID() *NotificationUpsert {
+	u.SetExcluded(notification.FieldUserID)
+	return u
+}
+
+// SetAlreadRead sets the "alread_read" field.
+func (u *NotificationUpsert) SetAlreadRead(v bool) *NotificationUpsert {
+	u.Set(notification.FieldAlreadRead, v)
+	return u
+}
+
+// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
+func (u *NotificationUpsert) UpdateAlreadRead() *NotificationUpsert {
+	u.SetExcluded(notification.FieldAlreadRead)
+	return u
+}
+
+// SetTitle sets the "title" field.
+func (u *NotificationUpsert) SetTitle(v string) *NotificationUpsert {
+	u.Set(notification.FieldTitle, v)
+	return u
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *NotificationUpsert) UpdateTitle() *NotificationUpsert {
+	u.SetExcluded(notification.FieldTitle)
+	return u
+}
+
+// SetContent sets the "content" field.
+func (u *NotificationUpsert) SetContent(v string) *NotificationUpsert {
+	u.Set(notification.FieldContent, v)
+	return u
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *NotificationUpsert) UpdateContent() *NotificationUpsert {
+	u.SetExcluded(notification.FieldContent)
+	return u
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *NotificationUpsert) SetCreateAt(v uint32) *NotificationUpsert {
+	u.Set(notification.FieldCreateAt, v)
+	return u
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *NotificationUpsert) UpdateCreateAt() *NotificationUpsert {
+	u.SetExcluded(notification.FieldCreateAt)
+	return u
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *NotificationUpsert) SetUpdateAt(v uint32) *NotificationUpsert {
+	u.Set(notification.FieldUpdateAt, v)
+	return u
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *NotificationUpsert) UpdateUpdateAt() *NotificationUpsert {
+	u.SetExcluded(notification.FieldUpdateAt)
+	return u
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *NotificationUpsert) SetDeleteAt(v uint32) *NotificationUpsert {
+	u.Set(notification.FieldDeleteAt, v)
+	return u
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *NotificationUpsert) UpdateDeleteAt() *NotificationUpsert {
+	u.SetExcluded(notification.FieldDeleteAt)
+	return u
+}
+
+// UpdateNewValues updates the fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.Notification.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(notification.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 //
 func (u *NotificationUpsertOne) UpdateNewValues() *NotificationUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(notification.FieldID)
+		}
+	}))
 	return u
 }
 
@@ -209,6 +513,118 @@ func (u *NotificationUpsertOne) Update(set func(*NotificationUpsert)) *Notificat
 	return u
 }
 
+// SetAppID sets the "app_id" field.
+func (u *NotificationUpsertOne) SetAppID(v uuid.UUID) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *NotificationUpsertOne) UpdateAppID() *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *NotificationUpsertOne) SetUserID(v uuid.UUID) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *NotificationUpsertOne) UpdateUserID() *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetAlreadRead sets the "alread_read" field.
+func (u *NotificationUpsertOne) SetAlreadRead(v bool) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetAlreadRead(v)
+	})
+}
+
+// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
+func (u *NotificationUpsertOne) UpdateAlreadRead() *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateAlreadRead()
+	})
+}
+
+// SetTitle sets the "title" field.
+func (u *NotificationUpsertOne) SetTitle(v string) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetTitle(v)
+	})
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *NotificationUpsertOne) UpdateTitle() *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateTitle()
+	})
+}
+
+// SetContent sets the "content" field.
+func (u *NotificationUpsertOne) SetContent(v string) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetContent(v)
+	})
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *NotificationUpsertOne) UpdateContent() *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateContent()
+	})
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *NotificationUpsertOne) SetCreateAt(v uint32) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetCreateAt(v)
+	})
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *NotificationUpsertOne) UpdateCreateAt() *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateCreateAt()
+	})
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *NotificationUpsertOne) SetUpdateAt(v uint32) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetUpdateAt(v)
+	})
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *NotificationUpsertOne) UpdateUpdateAt() *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateUpdateAt()
+	})
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *NotificationUpsertOne) SetDeleteAt(v uint32) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetDeleteAt(v)
+	})
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *NotificationUpsertOne) UpdateDeleteAt() *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateDeleteAt()
+	})
+}
+
 // Exec executes the query.
 func (u *NotificationUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -225,7 +641,12 @@ func (u *NotificationUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *NotificationUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *NotificationUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
+	if u.create.driver.Dialect() == dialect.MySQL {
+		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
+		// fields from the database since MySQL does not support the RETURNING clause.
+		return id, errors.New("ent: NotificationUpsertOne.ID is not supported by MySQL driver. Use NotificationUpsertOne.Exec instead")
+	}
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -234,7 +655,7 @@ func (u *NotificationUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *NotificationUpsertOne) IDX(ctx context.Context) int {
+func (u *NotificationUpsertOne) IDX(ctx context.Context) uuid.UUID {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -257,6 +678,7 @@ func (ncb *NotificationCreateBulk) Save(ctx context.Context) ([]*Notification, e
 	for i := range ncb.builders {
 		func(i int, root context.Context) {
 			builder := ncb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*NotificationMutation)
 				if !ok {
@@ -285,10 +707,6 @@ func (ncb *NotificationCreateBulk) Save(ctx context.Context) ([]*Notification, e
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				return nodes[i], nil
 			})
 			for i := len(builder.hooks) - 1; i >= 0; i-- {
@@ -336,6 +754,11 @@ func (ncb *NotificationCreateBulk) ExecX(ctx context.Context) {
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.NotificationUpsert) {
+//			SetAppID(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (ncb *NotificationCreateBulk) OnConflict(opts ...sql.ConflictOption) *NotificationUpsertBulk {
@@ -371,11 +794,22 @@ type NotificationUpsertBulk struct {
 //	client.Notification.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(notification.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 //
 func (u *NotificationUpsertBulk) UpdateNewValues() *NotificationUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(notification.FieldID)
+				return
+			}
+		}
+	}))
 	return u
 }
 
@@ -405,6 +839,118 @@ func (u *NotificationUpsertBulk) Update(set func(*NotificationUpsert)) *Notifica
 		set(&NotificationUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *NotificationUpsertBulk) SetAppID(v uuid.UUID) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *NotificationUpsertBulk) UpdateAppID() *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *NotificationUpsertBulk) SetUserID(v uuid.UUID) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *NotificationUpsertBulk) UpdateUserID() *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetAlreadRead sets the "alread_read" field.
+func (u *NotificationUpsertBulk) SetAlreadRead(v bool) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetAlreadRead(v)
+	})
+}
+
+// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
+func (u *NotificationUpsertBulk) UpdateAlreadRead() *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateAlreadRead()
+	})
+}
+
+// SetTitle sets the "title" field.
+func (u *NotificationUpsertBulk) SetTitle(v string) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetTitle(v)
+	})
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *NotificationUpsertBulk) UpdateTitle() *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateTitle()
+	})
+}
+
+// SetContent sets the "content" field.
+func (u *NotificationUpsertBulk) SetContent(v string) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetContent(v)
+	})
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *NotificationUpsertBulk) UpdateContent() *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateContent()
+	})
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *NotificationUpsertBulk) SetCreateAt(v uint32) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetCreateAt(v)
+	})
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *NotificationUpsertBulk) UpdateCreateAt() *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateCreateAt()
+	})
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *NotificationUpsertBulk) SetUpdateAt(v uint32) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetUpdateAt(v)
+	})
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *NotificationUpsertBulk) UpdateUpdateAt() *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateUpdateAt()
+	})
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *NotificationUpsertBulk) SetDeleteAt(v uint32) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.SetDeleteAt(v)
+	})
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *NotificationUpsertBulk) UpdateDeleteAt() *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.UpdateDeleteAt()
+	})
 }
 
 // Exec executes the query.

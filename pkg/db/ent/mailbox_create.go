@@ -7,10 +7,12 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/mailbox"
+	"github.com/google/uuid"
 )
 
 // MailBoxCreate is the builder for creating a MailBox entity.
@@ -19,6 +21,90 @@ type MailBoxCreate struct {
 	mutation *MailBoxMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetAppID sets the "app_id" field.
+func (mbc *MailBoxCreate) SetAppID(u uuid.UUID) *MailBoxCreate {
+	mbc.mutation.SetAppID(u)
+	return mbc
+}
+
+// SetFromUserID sets the "from_user_id" field.
+func (mbc *MailBoxCreate) SetFromUserID(u uuid.UUID) *MailBoxCreate {
+	mbc.mutation.SetFromUserID(u)
+	return mbc
+}
+
+// SetToUserID sets the "to_user_id" field.
+func (mbc *MailBoxCreate) SetToUserID(u uuid.UUID) *MailBoxCreate {
+	mbc.mutation.SetToUserID(u)
+	return mbc
+}
+
+// SetAlreadRead sets the "alread_read" field.
+func (mbc *MailBoxCreate) SetAlreadRead(b bool) *MailBoxCreate {
+	mbc.mutation.SetAlreadRead(b)
+	return mbc
+}
+
+// SetTitle sets the "title" field.
+func (mbc *MailBoxCreate) SetTitle(s string) *MailBoxCreate {
+	mbc.mutation.SetTitle(s)
+	return mbc
+}
+
+// SetContent sets the "content" field.
+func (mbc *MailBoxCreate) SetContent(s string) *MailBoxCreate {
+	mbc.mutation.SetContent(s)
+	return mbc
+}
+
+// SetCreateAt sets the "create_at" field.
+func (mbc *MailBoxCreate) SetCreateAt(u uint32) *MailBoxCreate {
+	mbc.mutation.SetCreateAt(u)
+	return mbc
+}
+
+// SetNillableCreateAt sets the "create_at" field if the given value is not nil.
+func (mbc *MailBoxCreate) SetNillableCreateAt(u *uint32) *MailBoxCreate {
+	if u != nil {
+		mbc.SetCreateAt(*u)
+	}
+	return mbc
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (mbc *MailBoxCreate) SetUpdateAt(u uint32) *MailBoxCreate {
+	mbc.mutation.SetUpdateAt(u)
+	return mbc
+}
+
+// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
+func (mbc *MailBoxCreate) SetNillableUpdateAt(u *uint32) *MailBoxCreate {
+	if u != nil {
+		mbc.SetUpdateAt(*u)
+	}
+	return mbc
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (mbc *MailBoxCreate) SetDeleteAt(u uint32) *MailBoxCreate {
+	mbc.mutation.SetDeleteAt(u)
+	return mbc
+}
+
+// SetNillableDeleteAt sets the "delete_at" field if the given value is not nil.
+func (mbc *MailBoxCreate) SetNillableDeleteAt(u *uint32) *MailBoxCreate {
+	if u != nil {
+		mbc.SetDeleteAt(*u)
+	}
+	return mbc
+}
+
+// SetID sets the "id" field.
+func (mbc *MailBoxCreate) SetID(u uuid.UUID) *MailBoxCreate {
+	mbc.mutation.SetID(u)
+	return mbc
 }
 
 // Mutation returns the MailBoxMutation object of the builder.
@@ -32,6 +118,7 @@ func (mbc *MailBoxCreate) Save(ctx context.Context) (*MailBox, error) {
 		err  error
 		node *MailBox
 	)
+	mbc.defaults()
 	if len(mbc.hooks) == 0 {
 		if err = mbc.check(); err != nil {
 			return nil, err
@@ -89,8 +176,55 @@ func (mbc *MailBoxCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (mbc *MailBoxCreate) defaults() {
+	if _, ok := mbc.mutation.CreateAt(); !ok {
+		v := mailbox.DefaultCreateAt()
+		mbc.mutation.SetCreateAt(v)
+	}
+	if _, ok := mbc.mutation.UpdateAt(); !ok {
+		v := mailbox.DefaultUpdateAt()
+		mbc.mutation.SetUpdateAt(v)
+	}
+	if _, ok := mbc.mutation.DeleteAt(); !ok {
+		v := mailbox.DefaultDeleteAt()
+		mbc.mutation.SetDeleteAt(v)
+	}
+	if _, ok := mbc.mutation.ID(); !ok {
+		v := mailbox.DefaultID()
+		mbc.mutation.SetID(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (mbc *MailBoxCreate) check() error {
+	if _, ok := mbc.mutation.AppID(); !ok {
+		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "app_id"`)}
+	}
+	if _, ok := mbc.mutation.FromUserID(); !ok {
+		return &ValidationError{Name: "from_user_id", err: errors.New(`ent: missing required field "from_user_id"`)}
+	}
+	if _, ok := mbc.mutation.ToUserID(); !ok {
+		return &ValidationError{Name: "to_user_id", err: errors.New(`ent: missing required field "to_user_id"`)}
+	}
+	if _, ok := mbc.mutation.AlreadRead(); !ok {
+		return &ValidationError{Name: "alread_read", err: errors.New(`ent: missing required field "alread_read"`)}
+	}
+	if _, ok := mbc.mutation.Title(); !ok {
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
+	}
+	if _, ok := mbc.mutation.Content(); !ok {
+		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "content"`)}
+	}
+	if _, ok := mbc.mutation.CreateAt(); !ok {
+		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "create_at"`)}
+	}
+	if _, ok := mbc.mutation.UpdateAt(); !ok {
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "update_at"`)}
+	}
+	if _, ok := mbc.mutation.DeleteAt(); !ok {
+		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "delete_at"`)}
+	}
 	return nil
 }
 
@@ -102,8 +236,9 @@ func (mbc *MailBoxCreate) sqlSave(ctx context.Context) (*MailBox, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		_node.ID = _spec.ID.Value.(uuid.UUID)
+	}
 	return _node, nil
 }
 
@@ -113,12 +248,88 @@ func (mbc *MailBoxCreate) createSpec() (*MailBox, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: mailbox.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: mailbox.FieldID,
 			},
 		}
 	)
 	_spec.OnConflict = mbc.conflict
+	if id, ok := mbc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := mbc.mutation.AppID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: mailbox.FieldAppID,
+		})
+		_node.AppID = value
+	}
+	if value, ok := mbc.mutation.FromUserID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: mailbox.FieldFromUserID,
+		})
+		_node.FromUserID = value
+	}
+	if value, ok := mbc.mutation.ToUserID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: mailbox.FieldToUserID,
+		})
+		_node.ToUserID = value
+	}
+	if value, ok := mbc.mutation.AlreadRead(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: mailbox.FieldAlreadRead,
+		})
+		_node.AlreadRead = value
+	}
+	if value, ok := mbc.mutation.Title(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: mailbox.FieldTitle,
+		})
+		_node.Title = value
+	}
+	if value, ok := mbc.mutation.Content(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: mailbox.FieldContent,
+		})
+		_node.Content = value
+	}
+	if value, ok := mbc.mutation.CreateAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: mailbox.FieldCreateAt,
+		})
+		_node.CreateAt = value
+	}
+	if value, ok := mbc.mutation.UpdateAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: mailbox.FieldUpdateAt,
+		})
+		_node.UpdateAt = value
+	}
+	if value, ok := mbc.mutation.DeleteAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: mailbox.FieldDeleteAt,
+		})
+		_node.DeleteAt = value
+	}
 	return _node, _spec
 }
 
@@ -126,11 +337,17 @@ func (mbc *MailBoxCreate) createSpec() (*MailBox, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.MailBox.Create().
+//		SetAppID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.MailBoxUpsert) {
+//			SetAppID(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (mbc *MailBoxCreate) OnConflict(opts ...sql.ConflictOption) *MailBoxUpsertOne {
@@ -167,17 +384,133 @@ type (
 	}
 )
 
-// UpdateNewValues updates the fields using the new values that were set on create.
+// SetAppID sets the "app_id" field.
+func (u *MailBoxUpsert) SetAppID(v uuid.UUID) *MailBoxUpsert {
+	u.Set(mailbox.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *MailBoxUpsert) UpdateAppID() *MailBoxUpsert {
+	u.SetExcluded(mailbox.FieldAppID)
+	return u
+}
+
+// SetFromUserID sets the "from_user_id" field.
+func (u *MailBoxUpsert) SetFromUserID(v uuid.UUID) *MailBoxUpsert {
+	u.Set(mailbox.FieldFromUserID, v)
+	return u
+}
+
+// UpdateFromUserID sets the "from_user_id" field to the value that was provided on create.
+func (u *MailBoxUpsert) UpdateFromUserID() *MailBoxUpsert {
+	u.SetExcluded(mailbox.FieldFromUserID)
+	return u
+}
+
+// SetToUserID sets the "to_user_id" field.
+func (u *MailBoxUpsert) SetToUserID(v uuid.UUID) *MailBoxUpsert {
+	u.Set(mailbox.FieldToUserID, v)
+	return u
+}
+
+// UpdateToUserID sets the "to_user_id" field to the value that was provided on create.
+func (u *MailBoxUpsert) UpdateToUserID() *MailBoxUpsert {
+	u.SetExcluded(mailbox.FieldToUserID)
+	return u
+}
+
+// SetAlreadRead sets the "alread_read" field.
+func (u *MailBoxUpsert) SetAlreadRead(v bool) *MailBoxUpsert {
+	u.Set(mailbox.FieldAlreadRead, v)
+	return u
+}
+
+// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
+func (u *MailBoxUpsert) UpdateAlreadRead() *MailBoxUpsert {
+	u.SetExcluded(mailbox.FieldAlreadRead)
+	return u
+}
+
+// SetTitle sets the "title" field.
+func (u *MailBoxUpsert) SetTitle(v string) *MailBoxUpsert {
+	u.Set(mailbox.FieldTitle, v)
+	return u
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *MailBoxUpsert) UpdateTitle() *MailBoxUpsert {
+	u.SetExcluded(mailbox.FieldTitle)
+	return u
+}
+
+// SetContent sets the "content" field.
+func (u *MailBoxUpsert) SetContent(v string) *MailBoxUpsert {
+	u.Set(mailbox.FieldContent, v)
+	return u
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *MailBoxUpsert) UpdateContent() *MailBoxUpsert {
+	u.SetExcluded(mailbox.FieldContent)
+	return u
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *MailBoxUpsert) SetCreateAt(v uint32) *MailBoxUpsert {
+	u.Set(mailbox.FieldCreateAt, v)
+	return u
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *MailBoxUpsert) UpdateCreateAt() *MailBoxUpsert {
+	u.SetExcluded(mailbox.FieldCreateAt)
+	return u
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *MailBoxUpsert) SetUpdateAt(v uint32) *MailBoxUpsert {
+	u.Set(mailbox.FieldUpdateAt, v)
+	return u
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *MailBoxUpsert) UpdateUpdateAt() *MailBoxUpsert {
+	u.SetExcluded(mailbox.FieldUpdateAt)
+	return u
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *MailBoxUpsert) SetDeleteAt(v uint32) *MailBoxUpsert {
+	u.Set(mailbox.FieldDeleteAt, v)
+	return u
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *MailBoxUpsert) UpdateDeleteAt() *MailBoxUpsert {
+	u.SetExcluded(mailbox.FieldDeleteAt)
+	return u
+}
+
+// UpdateNewValues updates the fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.MailBox.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(mailbox.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 //
 func (u *MailBoxUpsertOne) UpdateNewValues() *MailBoxUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(mailbox.FieldID)
+		}
+	}))
 	return u
 }
 
@@ -209,6 +542,132 @@ func (u *MailBoxUpsertOne) Update(set func(*MailBoxUpsert)) *MailBoxUpsertOne {
 	return u
 }
 
+// SetAppID sets the "app_id" field.
+func (u *MailBoxUpsertOne) SetAppID(v uuid.UUID) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *MailBoxUpsertOne) UpdateAppID() *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// SetFromUserID sets the "from_user_id" field.
+func (u *MailBoxUpsertOne) SetFromUserID(v uuid.UUID) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetFromUserID(v)
+	})
+}
+
+// UpdateFromUserID sets the "from_user_id" field to the value that was provided on create.
+func (u *MailBoxUpsertOne) UpdateFromUserID() *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateFromUserID()
+	})
+}
+
+// SetToUserID sets the "to_user_id" field.
+func (u *MailBoxUpsertOne) SetToUserID(v uuid.UUID) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetToUserID(v)
+	})
+}
+
+// UpdateToUserID sets the "to_user_id" field to the value that was provided on create.
+func (u *MailBoxUpsertOne) UpdateToUserID() *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateToUserID()
+	})
+}
+
+// SetAlreadRead sets the "alread_read" field.
+func (u *MailBoxUpsertOne) SetAlreadRead(v bool) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetAlreadRead(v)
+	})
+}
+
+// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
+func (u *MailBoxUpsertOne) UpdateAlreadRead() *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateAlreadRead()
+	})
+}
+
+// SetTitle sets the "title" field.
+func (u *MailBoxUpsertOne) SetTitle(v string) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetTitle(v)
+	})
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *MailBoxUpsertOne) UpdateTitle() *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateTitle()
+	})
+}
+
+// SetContent sets the "content" field.
+func (u *MailBoxUpsertOne) SetContent(v string) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetContent(v)
+	})
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *MailBoxUpsertOne) UpdateContent() *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateContent()
+	})
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *MailBoxUpsertOne) SetCreateAt(v uint32) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetCreateAt(v)
+	})
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *MailBoxUpsertOne) UpdateCreateAt() *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateCreateAt()
+	})
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *MailBoxUpsertOne) SetUpdateAt(v uint32) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetUpdateAt(v)
+	})
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *MailBoxUpsertOne) UpdateUpdateAt() *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateUpdateAt()
+	})
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *MailBoxUpsertOne) SetDeleteAt(v uint32) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetDeleteAt(v)
+	})
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *MailBoxUpsertOne) UpdateDeleteAt() *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateDeleteAt()
+	})
+}
+
 // Exec executes the query.
 func (u *MailBoxUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -225,7 +684,12 @@ func (u *MailBoxUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *MailBoxUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *MailBoxUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
+	if u.create.driver.Dialect() == dialect.MySQL {
+		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
+		// fields from the database since MySQL does not support the RETURNING clause.
+		return id, errors.New("ent: MailBoxUpsertOne.ID is not supported by MySQL driver. Use MailBoxUpsertOne.Exec instead")
+	}
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -234,7 +698,7 @@ func (u *MailBoxUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *MailBoxUpsertOne) IDX(ctx context.Context) int {
+func (u *MailBoxUpsertOne) IDX(ctx context.Context) uuid.UUID {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -257,6 +721,7 @@ func (mbcb *MailBoxCreateBulk) Save(ctx context.Context) ([]*MailBox, error) {
 	for i := range mbcb.builders {
 		func(i int, root context.Context) {
 			builder := mbcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*MailBoxMutation)
 				if !ok {
@@ -285,10 +750,6 @@ func (mbcb *MailBoxCreateBulk) Save(ctx context.Context) ([]*MailBox, error) {
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				return nodes[i], nil
 			})
 			for i := len(builder.hooks) - 1; i >= 0; i-- {
@@ -336,6 +797,11 @@ func (mbcb *MailBoxCreateBulk) ExecX(ctx context.Context) {
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.MailBoxUpsert) {
+//			SetAppID(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (mbcb *MailBoxCreateBulk) OnConflict(opts ...sql.ConflictOption) *MailBoxUpsertBulk {
@@ -371,11 +837,22 @@ type MailBoxUpsertBulk struct {
 //	client.MailBox.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(mailbox.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 //
 func (u *MailBoxUpsertBulk) UpdateNewValues() *MailBoxUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(mailbox.FieldID)
+				return
+			}
+		}
+	}))
 	return u
 }
 
@@ -405,6 +882,132 @@ func (u *MailBoxUpsertBulk) Update(set func(*MailBoxUpsert)) *MailBoxUpsertBulk 
 		set(&MailBoxUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *MailBoxUpsertBulk) SetAppID(v uuid.UUID) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *MailBoxUpsertBulk) UpdateAppID() *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// SetFromUserID sets the "from_user_id" field.
+func (u *MailBoxUpsertBulk) SetFromUserID(v uuid.UUID) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetFromUserID(v)
+	})
+}
+
+// UpdateFromUserID sets the "from_user_id" field to the value that was provided on create.
+func (u *MailBoxUpsertBulk) UpdateFromUserID() *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateFromUserID()
+	})
+}
+
+// SetToUserID sets the "to_user_id" field.
+func (u *MailBoxUpsertBulk) SetToUserID(v uuid.UUID) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetToUserID(v)
+	})
+}
+
+// UpdateToUserID sets the "to_user_id" field to the value that was provided on create.
+func (u *MailBoxUpsertBulk) UpdateToUserID() *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateToUserID()
+	})
+}
+
+// SetAlreadRead sets the "alread_read" field.
+func (u *MailBoxUpsertBulk) SetAlreadRead(v bool) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetAlreadRead(v)
+	})
+}
+
+// UpdateAlreadRead sets the "alread_read" field to the value that was provided on create.
+func (u *MailBoxUpsertBulk) UpdateAlreadRead() *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateAlreadRead()
+	})
+}
+
+// SetTitle sets the "title" field.
+func (u *MailBoxUpsertBulk) SetTitle(v string) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetTitle(v)
+	})
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *MailBoxUpsertBulk) UpdateTitle() *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateTitle()
+	})
+}
+
+// SetContent sets the "content" field.
+func (u *MailBoxUpsertBulk) SetContent(v string) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetContent(v)
+	})
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *MailBoxUpsertBulk) UpdateContent() *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateContent()
+	})
+}
+
+// SetCreateAt sets the "create_at" field.
+func (u *MailBoxUpsertBulk) SetCreateAt(v uint32) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetCreateAt(v)
+	})
+}
+
+// UpdateCreateAt sets the "create_at" field to the value that was provided on create.
+func (u *MailBoxUpsertBulk) UpdateCreateAt() *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateCreateAt()
+	})
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (u *MailBoxUpsertBulk) SetUpdateAt(v uint32) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetUpdateAt(v)
+	})
+}
+
+// UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
+func (u *MailBoxUpsertBulk) UpdateUpdateAt() *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateUpdateAt()
+	})
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (u *MailBoxUpsertBulk) SetDeleteAt(v uint32) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.SetDeleteAt(v)
+	})
+}
+
+// UpdateDeleteAt sets the "delete_at" field to the value that was provided on create.
+func (u *MailBoxUpsertBulk) UpdateDeleteAt() *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.UpdateDeleteAt()
+	})
 }
 
 // Exec executes the query.

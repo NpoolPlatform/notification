@@ -8,13 +8,26 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/announcement"
+	"github.com/google/uuid"
 )
 
 // Announcement is the model entity for the Announcement schema.
 type Announcement struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID uuid.UUID `json:"app_id,omitempty"`
+	// Title holds the value of the "title" field.
+	Title string `json:"title,omitempty"`
+	// Content holds the value of the "content" field.
+	Content string `json:"content,omitempty"`
+	// CreateAt holds the value of the "create_at" field.
+	CreateAt uint32 `json:"create_at,omitempty"`
+	// UpdateAt holds the value of the "update_at" field.
+	UpdateAt uint32 `json:"update_at,omitempty"`
+	// DeleteAt holds the value of the "delete_at" field.
+	DeleteAt uint32 `json:"delete_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -22,8 +35,12 @@ func (*Announcement) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case announcement.FieldID:
+		case announcement.FieldCreateAt, announcement.FieldUpdateAt, announcement.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
+		case announcement.FieldTitle, announcement.FieldContent:
+			values[i] = new(sql.NullString)
+		case announcement.FieldID, announcement.FieldAppID:
+			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Announcement", columns[i])
 		}
@@ -40,11 +57,47 @@ func (a *Announcement) assignValues(columns []string, values []interface{}) erro
 	for i := range columns {
 		switch columns[i] {
 		case announcement.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value != nil {
+				a.ID = *value
 			}
-			a.ID = int(value.Int64)
+		case announcement.FieldAppID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value != nil {
+				a.AppID = *value
+			}
+		case announcement.FieldTitle:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field title", values[i])
+			} else if value.Valid {
+				a.Title = value.String
+			}
+		case announcement.FieldContent:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field content", values[i])
+			} else if value.Valid {
+				a.Content = value.String
+			}
+		case announcement.FieldCreateAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field create_at", values[i])
+			} else if value.Valid {
+				a.CreateAt = uint32(value.Int64)
+			}
+		case announcement.FieldUpdateAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field update_at", values[i])
+			} else if value.Valid {
+				a.UpdateAt = uint32(value.Int64)
+			}
+		case announcement.FieldDeleteAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete_at", values[i])
+			} else if value.Valid {
+				a.DeleteAt = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -73,6 +126,18 @@ func (a *Announcement) String() string {
 	var builder strings.Builder
 	builder.WriteString("Announcement(")
 	builder.WriteString(fmt.Sprintf("id=%v", a.ID))
+	builder.WriteString(", app_id=")
+	builder.WriteString(fmt.Sprintf("%v", a.AppID))
+	builder.WriteString(", title=")
+	builder.WriteString(a.Title)
+	builder.WriteString(", content=")
+	builder.WriteString(a.Content)
+	builder.WriteString(", create_at=")
+	builder.WriteString(fmt.Sprintf("%v", a.CreateAt))
+	builder.WriteString(", update_at=")
+	builder.WriteString(fmt.Sprintf("%v", a.UpdateAt))
+	builder.WriteString(", delete_at=")
+	builder.WriteString(fmt.Sprintf("%v", a.DeleteAt))
 	builder.WriteByte(')')
 	return builder.String()
 }

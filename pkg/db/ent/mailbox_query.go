@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/mailbox"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/predicate"
+	"github.com/google/uuid"
 )
 
 // MailBoxQuery is the builder for querying MailBox entities.
@@ -84,8 +85,8 @@ func (mbq *MailBoxQuery) FirstX(ctx context.Context) *MailBox {
 
 // FirstID returns the first MailBox ID from the query.
 // Returns a *NotFoundError when no MailBox ID was found.
-func (mbq *MailBoxQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (mbq *MailBoxQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = mbq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -97,7 +98,7 @@ func (mbq *MailBoxQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (mbq *MailBoxQuery) FirstIDX(ctx context.Context) int {
+func (mbq *MailBoxQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := mbq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -135,8 +136,8 @@ func (mbq *MailBoxQuery) OnlyX(ctx context.Context) *MailBox {
 // OnlyID is like Only, but returns the only MailBox ID in the query.
 // Returns a *NotSingularError when exactly one MailBox ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (mbq *MailBoxQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (mbq *MailBoxQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = mbq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -152,7 +153,7 @@ func (mbq *MailBoxQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (mbq *MailBoxQuery) OnlyIDX(ctx context.Context) int {
+func (mbq *MailBoxQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := mbq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -178,8 +179,8 @@ func (mbq *MailBoxQuery) AllX(ctx context.Context) []*MailBox {
 }
 
 // IDs executes the query and returns a list of MailBox IDs.
-func (mbq *MailBoxQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
+func (mbq *MailBoxQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	if err := mbq.Select(mailbox.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -187,7 +188,7 @@ func (mbq *MailBoxQuery) IDs(ctx context.Context) ([]int, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (mbq *MailBoxQuery) IDsX(ctx context.Context) []int {
+func (mbq *MailBoxQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := mbq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -249,6 +250,19 @@ func (mbq *MailBoxQuery) Clone() *MailBoxQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		AppID uuid.UUID `json:"app_id,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.MailBox.Query().
+//		GroupBy(mailbox.FieldAppID).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
+//
 func (mbq *MailBoxQuery) GroupBy(field string, fields ...string) *MailBoxGroupBy {
 	group := &MailBoxGroupBy{config: mbq.config}
 	group.fields = append([]string{field}, fields...)
@@ -263,6 +277,17 @@ func (mbq *MailBoxQuery) GroupBy(field string, fields ...string) *MailBoxGroupBy
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		AppID uuid.UUID `json:"app_id,omitempty"`
+//	}
+//
+//	client.MailBox.Query().
+//		Select(mailbox.FieldAppID).
+//		Scan(ctx, &v)
+//
 func (mbq *MailBoxQuery) Select(fields ...string) *MailBoxSelect {
 	mbq.fields = append(mbq.fields, fields...)
 	return &MailBoxSelect{MailBoxQuery: mbq}
@@ -329,7 +354,7 @@ func (mbq *MailBoxQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   mailbox.Table,
 			Columns: mailbox.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: mailbox.FieldID,
 			},
 		},

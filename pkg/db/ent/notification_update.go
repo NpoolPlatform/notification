@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/predicate"
+	"github.com/google/uuid"
 )
 
 // NotificationUpdate is the builder for updating Notification entities.
@@ -26,6 +27,91 @@ func (nu *NotificationUpdate) Where(ps ...predicate.Notification) *NotificationU
 	return nu
 }
 
+// SetAppID sets the "app_id" field.
+func (nu *NotificationUpdate) SetAppID(u uuid.UUID) *NotificationUpdate {
+	nu.mutation.SetAppID(u)
+	return nu
+}
+
+// SetUserID sets the "user_id" field.
+func (nu *NotificationUpdate) SetUserID(u uuid.UUID) *NotificationUpdate {
+	nu.mutation.SetUserID(u)
+	return nu
+}
+
+// SetAlreadRead sets the "alread_read" field.
+func (nu *NotificationUpdate) SetAlreadRead(b bool) *NotificationUpdate {
+	nu.mutation.SetAlreadRead(b)
+	return nu
+}
+
+// SetTitle sets the "title" field.
+func (nu *NotificationUpdate) SetTitle(s string) *NotificationUpdate {
+	nu.mutation.SetTitle(s)
+	return nu
+}
+
+// SetContent sets the "content" field.
+func (nu *NotificationUpdate) SetContent(s string) *NotificationUpdate {
+	nu.mutation.SetContent(s)
+	return nu
+}
+
+// SetCreateAt sets the "create_at" field.
+func (nu *NotificationUpdate) SetCreateAt(u uint32) *NotificationUpdate {
+	nu.mutation.ResetCreateAt()
+	nu.mutation.SetCreateAt(u)
+	return nu
+}
+
+// SetNillableCreateAt sets the "create_at" field if the given value is not nil.
+func (nu *NotificationUpdate) SetNillableCreateAt(u *uint32) *NotificationUpdate {
+	if u != nil {
+		nu.SetCreateAt(*u)
+	}
+	return nu
+}
+
+// AddCreateAt adds u to the "create_at" field.
+func (nu *NotificationUpdate) AddCreateAt(u uint32) *NotificationUpdate {
+	nu.mutation.AddCreateAt(u)
+	return nu
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (nu *NotificationUpdate) SetUpdateAt(u uint32) *NotificationUpdate {
+	nu.mutation.ResetUpdateAt()
+	nu.mutation.SetUpdateAt(u)
+	return nu
+}
+
+// AddUpdateAt adds u to the "update_at" field.
+func (nu *NotificationUpdate) AddUpdateAt(u uint32) *NotificationUpdate {
+	nu.mutation.AddUpdateAt(u)
+	return nu
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (nu *NotificationUpdate) SetDeleteAt(u uint32) *NotificationUpdate {
+	nu.mutation.ResetDeleteAt()
+	nu.mutation.SetDeleteAt(u)
+	return nu
+}
+
+// SetNillableDeleteAt sets the "delete_at" field if the given value is not nil.
+func (nu *NotificationUpdate) SetNillableDeleteAt(u *uint32) *NotificationUpdate {
+	if u != nil {
+		nu.SetDeleteAt(*u)
+	}
+	return nu
+}
+
+// AddDeleteAt adds u to the "delete_at" field.
+func (nu *NotificationUpdate) AddDeleteAt(u uint32) *NotificationUpdate {
+	nu.mutation.AddDeleteAt(u)
+	return nu
+}
+
 // Mutation returns the NotificationMutation object of the builder.
 func (nu *NotificationUpdate) Mutation() *NotificationMutation {
 	return nu.mutation
@@ -37,6 +123,7 @@ func (nu *NotificationUpdate) Save(ctx context.Context) (int, error) {
 		err      error
 		affected int
 	)
+	nu.defaults()
 	if len(nu.hooks) == 0 {
 		affected, err = nu.sqlSave(ctx)
 	} else {
@@ -85,13 +172,21 @@ func (nu *NotificationUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (nu *NotificationUpdate) defaults() {
+	if _, ok := nu.mutation.UpdateAt(); !ok {
+		v := notification.UpdateDefaultUpdateAt()
+		nu.mutation.SetUpdateAt(v)
+	}
+}
+
 func (nu *NotificationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   notification.Table,
 			Columns: notification.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: notification.FieldID,
 			},
 		},
@@ -102,6 +197,83 @@ func (nu *NotificationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := nu.mutation.AppID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: notification.FieldAppID,
+		})
+	}
+	if value, ok := nu.mutation.UserID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: notification.FieldUserID,
+		})
+	}
+	if value, ok := nu.mutation.AlreadRead(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notification.FieldAlreadRead,
+		})
+	}
+	if value, ok := nu.mutation.Title(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notification.FieldTitle,
+		})
+	}
+	if value, ok := nu.mutation.Content(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notification.FieldContent,
+		})
+	}
+	if value, ok := nu.mutation.CreateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldCreateAt,
+		})
+	}
+	if value, ok := nu.mutation.AddedCreateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldCreateAt,
+		})
+	}
+	if value, ok := nu.mutation.UpdateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldUpdateAt,
+		})
+	}
+	if value, ok := nu.mutation.AddedUpdateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldUpdateAt,
+		})
+	}
+	if value, ok := nu.mutation.DeleteAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldDeleteAt,
+		})
+	}
+	if value, ok := nu.mutation.AddedDeleteAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldDeleteAt,
+		})
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, nu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -122,6 +294,91 @@ type NotificationUpdateOne struct {
 	mutation *NotificationMutation
 }
 
+// SetAppID sets the "app_id" field.
+func (nuo *NotificationUpdateOne) SetAppID(u uuid.UUID) *NotificationUpdateOne {
+	nuo.mutation.SetAppID(u)
+	return nuo
+}
+
+// SetUserID sets the "user_id" field.
+func (nuo *NotificationUpdateOne) SetUserID(u uuid.UUID) *NotificationUpdateOne {
+	nuo.mutation.SetUserID(u)
+	return nuo
+}
+
+// SetAlreadRead sets the "alread_read" field.
+func (nuo *NotificationUpdateOne) SetAlreadRead(b bool) *NotificationUpdateOne {
+	nuo.mutation.SetAlreadRead(b)
+	return nuo
+}
+
+// SetTitle sets the "title" field.
+func (nuo *NotificationUpdateOne) SetTitle(s string) *NotificationUpdateOne {
+	nuo.mutation.SetTitle(s)
+	return nuo
+}
+
+// SetContent sets the "content" field.
+func (nuo *NotificationUpdateOne) SetContent(s string) *NotificationUpdateOne {
+	nuo.mutation.SetContent(s)
+	return nuo
+}
+
+// SetCreateAt sets the "create_at" field.
+func (nuo *NotificationUpdateOne) SetCreateAt(u uint32) *NotificationUpdateOne {
+	nuo.mutation.ResetCreateAt()
+	nuo.mutation.SetCreateAt(u)
+	return nuo
+}
+
+// SetNillableCreateAt sets the "create_at" field if the given value is not nil.
+func (nuo *NotificationUpdateOne) SetNillableCreateAt(u *uint32) *NotificationUpdateOne {
+	if u != nil {
+		nuo.SetCreateAt(*u)
+	}
+	return nuo
+}
+
+// AddCreateAt adds u to the "create_at" field.
+func (nuo *NotificationUpdateOne) AddCreateAt(u uint32) *NotificationUpdateOne {
+	nuo.mutation.AddCreateAt(u)
+	return nuo
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (nuo *NotificationUpdateOne) SetUpdateAt(u uint32) *NotificationUpdateOne {
+	nuo.mutation.ResetUpdateAt()
+	nuo.mutation.SetUpdateAt(u)
+	return nuo
+}
+
+// AddUpdateAt adds u to the "update_at" field.
+func (nuo *NotificationUpdateOne) AddUpdateAt(u uint32) *NotificationUpdateOne {
+	nuo.mutation.AddUpdateAt(u)
+	return nuo
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (nuo *NotificationUpdateOne) SetDeleteAt(u uint32) *NotificationUpdateOne {
+	nuo.mutation.ResetDeleteAt()
+	nuo.mutation.SetDeleteAt(u)
+	return nuo
+}
+
+// SetNillableDeleteAt sets the "delete_at" field if the given value is not nil.
+func (nuo *NotificationUpdateOne) SetNillableDeleteAt(u *uint32) *NotificationUpdateOne {
+	if u != nil {
+		nuo.SetDeleteAt(*u)
+	}
+	return nuo
+}
+
+// AddDeleteAt adds u to the "delete_at" field.
+func (nuo *NotificationUpdateOne) AddDeleteAt(u uint32) *NotificationUpdateOne {
+	nuo.mutation.AddDeleteAt(u)
+	return nuo
+}
+
 // Mutation returns the NotificationMutation object of the builder.
 func (nuo *NotificationUpdateOne) Mutation() *NotificationMutation {
 	return nuo.mutation
@@ -140,6 +397,7 @@ func (nuo *NotificationUpdateOne) Save(ctx context.Context) (*Notification, erro
 		err  error
 		node *Notification
 	)
+	nuo.defaults()
 	if len(nuo.hooks) == 0 {
 		node, err = nuo.sqlSave(ctx)
 	} else {
@@ -188,13 +446,21 @@ func (nuo *NotificationUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (nuo *NotificationUpdateOne) defaults() {
+	if _, ok := nuo.mutation.UpdateAt(); !ok {
+		v := notification.UpdateDefaultUpdateAt()
+		nuo.mutation.SetUpdateAt(v)
+	}
+}
+
 func (nuo *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notification, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   notification.Table,
 			Columns: notification.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: notification.FieldID,
 			},
 		},
@@ -222,6 +488,83 @@ func (nuo *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificat
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := nuo.mutation.AppID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: notification.FieldAppID,
+		})
+	}
+	if value, ok := nuo.mutation.UserID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: notification.FieldUserID,
+		})
+	}
+	if value, ok := nuo.mutation.AlreadRead(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notification.FieldAlreadRead,
+		})
+	}
+	if value, ok := nuo.mutation.Title(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notification.FieldTitle,
+		})
+	}
+	if value, ok := nuo.mutation.Content(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notification.FieldContent,
+		})
+	}
+	if value, ok := nuo.mutation.CreateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldCreateAt,
+		})
+	}
+	if value, ok := nuo.mutation.AddedCreateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldCreateAt,
+		})
+	}
+	if value, ok := nuo.mutation.UpdateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldUpdateAt,
+		})
+	}
+	if value, ok := nuo.mutation.AddedUpdateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldUpdateAt,
+		})
+	}
+	if value, ok := nuo.mutation.DeleteAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldDeleteAt,
+		})
+	}
+	if value, ok := nuo.mutation.AddedDeleteAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: notification.FieldDeleteAt,
+		})
 	}
 	_node = &Notification{config: nuo.config}
 	_spec.Assign = _node.assignValues

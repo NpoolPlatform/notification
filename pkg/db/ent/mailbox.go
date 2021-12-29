@@ -8,13 +8,32 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/mailbox"
+	"github.com/google/uuid"
 )
 
 // MailBox is the model entity for the MailBox schema.
 type MailBox struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID uuid.UUID `json:"app_id,omitempty"`
+	// FromUserID holds the value of the "from_user_id" field.
+	FromUserID uuid.UUID `json:"from_user_id,omitempty"`
+	// ToUserID holds the value of the "to_user_id" field.
+	ToUserID uuid.UUID `json:"to_user_id,omitempty"`
+	// AlreadRead holds the value of the "alread_read" field.
+	AlreadRead bool `json:"alread_read,omitempty"`
+	// Title holds the value of the "title" field.
+	Title string `json:"title,omitempty"`
+	// Content holds the value of the "content" field.
+	Content string `json:"content,omitempty"`
+	// CreateAt holds the value of the "create_at" field.
+	CreateAt uint32 `json:"create_at,omitempty"`
+	// UpdateAt holds the value of the "update_at" field.
+	UpdateAt uint32 `json:"update_at,omitempty"`
+	// DeleteAt holds the value of the "delete_at" field.
+	DeleteAt uint32 `json:"delete_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -22,8 +41,14 @@ func (*MailBox) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case mailbox.FieldID:
+		case mailbox.FieldAlreadRead:
+			values[i] = new(sql.NullBool)
+		case mailbox.FieldCreateAt, mailbox.FieldUpdateAt, mailbox.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
+		case mailbox.FieldTitle, mailbox.FieldContent:
+			values[i] = new(sql.NullString)
+		case mailbox.FieldID, mailbox.FieldAppID, mailbox.FieldFromUserID, mailbox.FieldToUserID:
+			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type MailBox", columns[i])
 		}
@@ -40,11 +65,65 @@ func (mb *MailBox) assignValues(columns []string, values []interface{}) error {
 	for i := range columns {
 		switch columns[i] {
 		case mailbox.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value != nil {
+				mb.ID = *value
 			}
-			mb.ID = int(value.Int64)
+		case mailbox.FieldAppID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value != nil {
+				mb.AppID = *value
+			}
+		case mailbox.FieldFromUserID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field from_user_id", values[i])
+			} else if value != nil {
+				mb.FromUserID = *value
+			}
+		case mailbox.FieldToUserID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field to_user_id", values[i])
+			} else if value != nil {
+				mb.ToUserID = *value
+			}
+		case mailbox.FieldAlreadRead:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field alread_read", values[i])
+			} else if value.Valid {
+				mb.AlreadRead = value.Bool
+			}
+		case mailbox.FieldTitle:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field title", values[i])
+			} else if value.Valid {
+				mb.Title = value.String
+			}
+		case mailbox.FieldContent:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field content", values[i])
+			} else if value.Valid {
+				mb.Content = value.String
+			}
+		case mailbox.FieldCreateAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field create_at", values[i])
+			} else if value.Valid {
+				mb.CreateAt = uint32(value.Int64)
+			}
+		case mailbox.FieldUpdateAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field update_at", values[i])
+			} else if value.Valid {
+				mb.UpdateAt = uint32(value.Int64)
+			}
+		case mailbox.FieldDeleteAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete_at", values[i])
+			} else if value.Valid {
+				mb.DeleteAt = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -73,6 +152,24 @@ func (mb *MailBox) String() string {
 	var builder strings.Builder
 	builder.WriteString("MailBox(")
 	builder.WriteString(fmt.Sprintf("id=%v", mb.ID))
+	builder.WriteString(", app_id=")
+	builder.WriteString(fmt.Sprintf("%v", mb.AppID))
+	builder.WriteString(", from_user_id=")
+	builder.WriteString(fmt.Sprintf("%v", mb.FromUserID))
+	builder.WriteString(", to_user_id=")
+	builder.WriteString(fmt.Sprintf("%v", mb.ToUserID))
+	builder.WriteString(", alread_read=")
+	builder.WriteString(fmt.Sprintf("%v", mb.AlreadRead))
+	builder.WriteString(", title=")
+	builder.WriteString(mb.Title)
+	builder.WriteString(", content=")
+	builder.WriteString(mb.Content)
+	builder.WriteString(", create_at=")
+	builder.WriteString(fmt.Sprintf("%v", mb.CreateAt))
+	builder.WriteString(", update_at=")
+	builder.WriteString(fmt.Sprintf("%v", mb.UpdateAt))
+	builder.WriteString(", delete_at=")
+	builder.WriteString(fmt.Sprintf("%v", mb.DeleteAt))
 	builder.WriteByte(')')
 	return builder.String()
 }

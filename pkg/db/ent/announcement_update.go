@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/predicate"
+	"github.com/google/uuid"
 )
 
 // AnnouncementUpdate is the builder for updating Announcement entities.
@@ -26,6 +27,79 @@ func (au *AnnouncementUpdate) Where(ps ...predicate.Announcement) *AnnouncementU
 	return au
 }
 
+// SetAppID sets the "app_id" field.
+func (au *AnnouncementUpdate) SetAppID(u uuid.UUID) *AnnouncementUpdate {
+	au.mutation.SetAppID(u)
+	return au
+}
+
+// SetTitle sets the "title" field.
+func (au *AnnouncementUpdate) SetTitle(s string) *AnnouncementUpdate {
+	au.mutation.SetTitle(s)
+	return au
+}
+
+// SetContent sets the "content" field.
+func (au *AnnouncementUpdate) SetContent(s string) *AnnouncementUpdate {
+	au.mutation.SetContent(s)
+	return au
+}
+
+// SetCreateAt sets the "create_at" field.
+func (au *AnnouncementUpdate) SetCreateAt(u uint32) *AnnouncementUpdate {
+	au.mutation.ResetCreateAt()
+	au.mutation.SetCreateAt(u)
+	return au
+}
+
+// SetNillableCreateAt sets the "create_at" field if the given value is not nil.
+func (au *AnnouncementUpdate) SetNillableCreateAt(u *uint32) *AnnouncementUpdate {
+	if u != nil {
+		au.SetCreateAt(*u)
+	}
+	return au
+}
+
+// AddCreateAt adds u to the "create_at" field.
+func (au *AnnouncementUpdate) AddCreateAt(u uint32) *AnnouncementUpdate {
+	au.mutation.AddCreateAt(u)
+	return au
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (au *AnnouncementUpdate) SetUpdateAt(u uint32) *AnnouncementUpdate {
+	au.mutation.ResetUpdateAt()
+	au.mutation.SetUpdateAt(u)
+	return au
+}
+
+// AddUpdateAt adds u to the "update_at" field.
+func (au *AnnouncementUpdate) AddUpdateAt(u uint32) *AnnouncementUpdate {
+	au.mutation.AddUpdateAt(u)
+	return au
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (au *AnnouncementUpdate) SetDeleteAt(u uint32) *AnnouncementUpdate {
+	au.mutation.ResetDeleteAt()
+	au.mutation.SetDeleteAt(u)
+	return au
+}
+
+// SetNillableDeleteAt sets the "delete_at" field if the given value is not nil.
+func (au *AnnouncementUpdate) SetNillableDeleteAt(u *uint32) *AnnouncementUpdate {
+	if u != nil {
+		au.SetDeleteAt(*u)
+	}
+	return au
+}
+
+// AddDeleteAt adds u to the "delete_at" field.
+func (au *AnnouncementUpdate) AddDeleteAt(u uint32) *AnnouncementUpdate {
+	au.mutation.AddDeleteAt(u)
+	return au
+}
+
 // Mutation returns the AnnouncementMutation object of the builder.
 func (au *AnnouncementUpdate) Mutation() *AnnouncementMutation {
 	return au.mutation
@@ -37,6 +111,7 @@ func (au *AnnouncementUpdate) Save(ctx context.Context) (int, error) {
 		err      error
 		affected int
 	)
+	au.defaults()
 	if len(au.hooks) == 0 {
 		affected, err = au.sqlSave(ctx)
 	} else {
@@ -85,13 +160,21 @@ func (au *AnnouncementUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (au *AnnouncementUpdate) defaults() {
+	if _, ok := au.mutation.UpdateAt(); !ok {
+		v := announcement.UpdateDefaultUpdateAt()
+		au.mutation.SetUpdateAt(v)
+	}
+}
+
 func (au *AnnouncementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   announcement.Table,
 			Columns: announcement.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: announcement.FieldID,
 			},
 		},
@@ -102,6 +185,69 @@ func (au *AnnouncementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := au.mutation.AppID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: announcement.FieldAppID,
+		})
+	}
+	if value, ok := au.mutation.Title(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: announcement.FieldTitle,
+		})
+	}
+	if value, ok := au.mutation.Content(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: announcement.FieldContent,
+		})
+	}
+	if value, ok := au.mutation.CreateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldCreateAt,
+		})
+	}
+	if value, ok := au.mutation.AddedCreateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldCreateAt,
+		})
+	}
+	if value, ok := au.mutation.UpdateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldUpdateAt,
+		})
+	}
+	if value, ok := au.mutation.AddedUpdateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldUpdateAt,
+		})
+	}
+	if value, ok := au.mutation.DeleteAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldDeleteAt,
+		})
+	}
+	if value, ok := au.mutation.AddedDeleteAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldDeleteAt,
+		})
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -122,6 +268,79 @@ type AnnouncementUpdateOne struct {
 	mutation *AnnouncementMutation
 }
 
+// SetAppID sets the "app_id" field.
+func (auo *AnnouncementUpdateOne) SetAppID(u uuid.UUID) *AnnouncementUpdateOne {
+	auo.mutation.SetAppID(u)
+	return auo
+}
+
+// SetTitle sets the "title" field.
+func (auo *AnnouncementUpdateOne) SetTitle(s string) *AnnouncementUpdateOne {
+	auo.mutation.SetTitle(s)
+	return auo
+}
+
+// SetContent sets the "content" field.
+func (auo *AnnouncementUpdateOne) SetContent(s string) *AnnouncementUpdateOne {
+	auo.mutation.SetContent(s)
+	return auo
+}
+
+// SetCreateAt sets the "create_at" field.
+func (auo *AnnouncementUpdateOne) SetCreateAt(u uint32) *AnnouncementUpdateOne {
+	auo.mutation.ResetCreateAt()
+	auo.mutation.SetCreateAt(u)
+	return auo
+}
+
+// SetNillableCreateAt sets the "create_at" field if the given value is not nil.
+func (auo *AnnouncementUpdateOne) SetNillableCreateAt(u *uint32) *AnnouncementUpdateOne {
+	if u != nil {
+		auo.SetCreateAt(*u)
+	}
+	return auo
+}
+
+// AddCreateAt adds u to the "create_at" field.
+func (auo *AnnouncementUpdateOne) AddCreateAt(u uint32) *AnnouncementUpdateOne {
+	auo.mutation.AddCreateAt(u)
+	return auo
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (auo *AnnouncementUpdateOne) SetUpdateAt(u uint32) *AnnouncementUpdateOne {
+	auo.mutation.ResetUpdateAt()
+	auo.mutation.SetUpdateAt(u)
+	return auo
+}
+
+// AddUpdateAt adds u to the "update_at" field.
+func (auo *AnnouncementUpdateOne) AddUpdateAt(u uint32) *AnnouncementUpdateOne {
+	auo.mutation.AddUpdateAt(u)
+	return auo
+}
+
+// SetDeleteAt sets the "delete_at" field.
+func (auo *AnnouncementUpdateOne) SetDeleteAt(u uint32) *AnnouncementUpdateOne {
+	auo.mutation.ResetDeleteAt()
+	auo.mutation.SetDeleteAt(u)
+	return auo
+}
+
+// SetNillableDeleteAt sets the "delete_at" field if the given value is not nil.
+func (auo *AnnouncementUpdateOne) SetNillableDeleteAt(u *uint32) *AnnouncementUpdateOne {
+	if u != nil {
+		auo.SetDeleteAt(*u)
+	}
+	return auo
+}
+
+// AddDeleteAt adds u to the "delete_at" field.
+func (auo *AnnouncementUpdateOne) AddDeleteAt(u uint32) *AnnouncementUpdateOne {
+	auo.mutation.AddDeleteAt(u)
+	return auo
+}
+
 // Mutation returns the AnnouncementMutation object of the builder.
 func (auo *AnnouncementUpdateOne) Mutation() *AnnouncementMutation {
 	return auo.mutation
@@ -140,6 +359,7 @@ func (auo *AnnouncementUpdateOne) Save(ctx context.Context) (*Announcement, erro
 		err  error
 		node *Announcement
 	)
+	auo.defaults()
 	if len(auo.hooks) == 0 {
 		node, err = auo.sqlSave(ctx)
 	} else {
@@ -188,13 +408,21 @@ func (auo *AnnouncementUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (auo *AnnouncementUpdateOne) defaults() {
+	if _, ok := auo.mutation.UpdateAt(); !ok {
+		v := announcement.UpdateDefaultUpdateAt()
+		auo.mutation.SetUpdateAt(v)
+	}
+}
+
 func (auo *AnnouncementUpdateOne) sqlSave(ctx context.Context) (_node *Announcement, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   announcement.Table,
 			Columns: announcement.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: announcement.FieldID,
 			},
 		},
@@ -222,6 +450,69 @@ func (auo *AnnouncementUpdateOne) sqlSave(ctx context.Context) (_node *Announcem
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := auo.mutation.AppID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: announcement.FieldAppID,
+		})
+	}
+	if value, ok := auo.mutation.Title(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: announcement.FieldTitle,
+		})
+	}
+	if value, ok := auo.mutation.Content(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: announcement.FieldContent,
+		})
+	}
+	if value, ok := auo.mutation.CreateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldCreateAt,
+		})
+	}
+	if value, ok := auo.mutation.AddedCreateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldCreateAt,
+		})
+	}
+	if value, ok := auo.mutation.UpdateAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldUpdateAt,
+		})
+	}
+	if value, ok := auo.mutation.AddedUpdateAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldUpdateAt,
+		})
+	}
+	if value, ok := auo.mutation.DeleteAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldDeleteAt,
+		})
+	}
+	if value, ok := auo.mutation.AddedDeleteAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldDeleteAt,
+		})
 	}
 	_node = &Announcement{config: auo.config}
 	_spec.Assign = _node.assignValues

@@ -8,13 +8,30 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"
+	"github.com/google/uuid"
 )
 
 // Notification is the model entity for the Notification schema.
 type Notification struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID uuid.UUID `json:"app_id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID uuid.UUID `json:"user_id,omitempty"`
+	// AlreadRead holds the value of the "alread_read" field.
+	AlreadRead bool `json:"alread_read,omitempty"`
+	// Title holds the value of the "title" field.
+	Title string `json:"title,omitempty"`
+	// Content holds the value of the "content" field.
+	Content string `json:"content,omitempty"`
+	// CreateAt holds the value of the "create_at" field.
+	CreateAt uint32 `json:"create_at,omitempty"`
+	// UpdateAt holds the value of the "update_at" field.
+	UpdateAt uint32 `json:"update_at,omitempty"`
+	// DeleteAt holds the value of the "delete_at" field.
+	DeleteAt uint32 `json:"delete_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -22,8 +39,14 @@ func (*Notification) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case notification.FieldID:
+		case notification.FieldAlreadRead:
+			values[i] = new(sql.NullBool)
+		case notification.FieldCreateAt, notification.FieldUpdateAt, notification.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
+		case notification.FieldTitle, notification.FieldContent:
+			values[i] = new(sql.NullString)
+		case notification.FieldID, notification.FieldAppID, notification.FieldUserID:
+			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Notification", columns[i])
 		}
@@ -40,11 +63,59 @@ func (n *Notification) assignValues(columns []string, values []interface{}) erro
 	for i := range columns {
 		switch columns[i] {
 		case notification.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value != nil {
+				n.ID = *value
 			}
-			n.ID = int(value.Int64)
+		case notification.FieldAppID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value != nil {
+				n.AppID = *value
+			}
+		case notification.FieldUserID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value != nil {
+				n.UserID = *value
+			}
+		case notification.FieldAlreadRead:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field alread_read", values[i])
+			} else if value.Valid {
+				n.AlreadRead = value.Bool
+			}
+		case notification.FieldTitle:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field title", values[i])
+			} else if value.Valid {
+				n.Title = value.String
+			}
+		case notification.FieldContent:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field content", values[i])
+			} else if value.Valid {
+				n.Content = value.String
+			}
+		case notification.FieldCreateAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field create_at", values[i])
+			} else if value.Valid {
+				n.CreateAt = uint32(value.Int64)
+			}
+		case notification.FieldUpdateAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field update_at", values[i])
+			} else if value.Valid {
+				n.UpdateAt = uint32(value.Int64)
+			}
+		case notification.FieldDeleteAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete_at", values[i])
+			} else if value.Valid {
+				n.DeleteAt = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -73,6 +144,22 @@ func (n *Notification) String() string {
 	var builder strings.Builder
 	builder.WriteString("Notification(")
 	builder.WriteString(fmt.Sprintf("id=%v", n.ID))
+	builder.WriteString(", app_id=")
+	builder.WriteString(fmt.Sprintf("%v", n.AppID))
+	builder.WriteString(", user_id=")
+	builder.WriteString(fmt.Sprintf("%v", n.UserID))
+	builder.WriteString(", alread_read=")
+	builder.WriteString(fmt.Sprintf("%v", n.AlreadRead))
+	builder.WriteString(", title=")
+	builder.WriteString(n.Title)
+	builder.WriteString(", content=")
+	builder.WriteString(n.Content)
+	builder.WriteString(", create_at=")
+	builder.WriteString(fmt.Sprintf("%v", n.CreateAt))
+	builder.WriteString(", update_at=")
+	builder.WriteString(fmt.Sprintf("%v", n.UpdateAt))
+	builder.WriteString(", delete_at=")
+	builder.WriteString(fmt.Sprintf("%v", n.DeleteAt))
 	builder.WriteByte(')')
 	return builder.String()
 }

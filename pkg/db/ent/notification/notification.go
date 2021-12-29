@@ -2,11 +2,31 @@
 
 package notification
 
+import (
+	"github.com/google/uuid"
+)
+
 const (
 	// Label holds the string label denoting the notification type in the database.
 	Label = "notification"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldAppID holds the string denoting the app_id field in the database.
+	FieldAppID = "app_id"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
+	// FieldAlreadRead holds the string denoting the alread_read field in the database.
+	FieldAlreadRead = "alread_read"
+	// FieldTitle holds the string denoting the title field in the database.
+	FieldTitle = "title"
+	// FieldContent holds the string denoting the content field in the database.
+	FieldContent = "content"
+	// FieldCreateAt holds the string denoting the create_at field in the database.
+	FieldCreateAt = "create_at"
+	// FieldUpdateAt holds the string denoting the update_at field in the database.
+	FieldUpdateAt = "update_at"
+	// FieldDeleteAt holds the string denoting the delete_at field in the database.
+	FieldDeleteAt = "delete_at"
 	// Table holds the table name of the notification in the database.
 	Table = "notifications"
 )
@@ -14,6 +34,14 @@ const (
 // Columns holds all SQL columns for notification fields.
 var Columns = []string{
 	FieldID,
+	FieldAppID,
+	FieldUserID,
+	FieldAlreadRead,
+	FieldTitle,
+	FieldContent,
+	FieldCreateAt,
+	FieldUpdateAt,
+	FieldDeleteAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -25,3 +53,16 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
+
+var (
+	// DefaultCreateAt holds the default value on creation for the "create_at" field.
+	DefaultCreateAt func() uint32
+	// DefaultUpdateAt holds the default value on creation for the "update_at" field.
+	DefaultUpdateAt func() uint32
+	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
+	UpdateDefaultUpdateAt func() uint32
+	// DefaultDeleteAt holds the default value on creation for the "delete_at" field.
+	DefaultDeleteAt func() uint32
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID func() uuid.UUID
+)

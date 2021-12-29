@@ -2,8 +2,97 @@
 
 package ent
 
+import (
+	"github.com/NpoolPlatform/notification/pkg/db/ent/announcement"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/mailbox"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/readstate"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/schema"
+	"github.com/google/uuid"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	announcementFields := schema.Announcement{}.Fields()
+	_ = announcementFields
+	// announcementDescCreateAt is the schema descriptor for create_at field.
+	announcementDescCreateAt := announcementFields[4].Descriptor()
+	// announcement.DefaultCreateAt holds the default value on creation for the create_at field.
+	announcement.DefaultCreateAt = announcementDescCreateAt.Default.(func() uint32)
+	// announcementDescUpdateAt is the schema descriptor for update_at field.
+	announcementDescUpdateAt := announcementFields[5].Descriptor()
+	// announcement.DefaultUpdateAt holds the default value on creation for the update_at field.
+	announcement.DefaultUpdateAt = announcementDescUpdateAt.Default.(func() uint32)
+	// announcement.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
+	announcement.UpdateDefaultUpdateAt = announcementDescUpdateAt.UpdateDefault.(func() uint32)
+	// announcementDescDeleteAt is the schema descriptor for delete_at field.
+	announcementDescDeleteAt := announcementFields[6].Descriptor()
+	// announcement.DefaultDeleteAt holds the default value on creation for the delete_at field.
+	announcement.DefaultDeleteAt = announcementDescDeleteAt.Default.(func() uint32)
+	// announcementDescID is the schema descriptor for id field.
+	announcementDescID := announcementFields[0].Descriptor()
+	// announcement.DefaultID holds the default value on creation for the id field.
+	announcement.DefaultID = announcementDescID.Default.(func() uuid.UUID)
+	mailboxFields := schema.MailBox{}.Fields()
+	_ = mailboxFields
+	// mailboxDescCreateAt is the schema descriptor for create_at field.
+	mailboxDescCreateAt := mailboxFields[7].Descriptor()
+	// mailbox.DefaultCreateAt holds the default value on creation for the create_at field.
+	mailbox.DefaultCreateAt = mailboxDescCreateAt.Default.(func() uint32)
+	// mailboxDescUpdateAt is the schema descriptor for update_at field.
+	mailboxDescUpdateAt := mailboxFields[8].Descriptor()
+	// mailbox.DefaultUpdateAt holds the default value on creation for the update_at field.
+	mailbox.DefaultUpdateAt = mailboxDescUpdateAt.Default.(func() uint32)
+	// mailbox.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
+	mailbox.UpdateDefaultUpdateAt = mailboxDescUpdateAt.UpdateDefault.(func() uint32)
+	// mailboxDescDeleteAt is the schema descriptor for delete_at field.
+	mailboxDescDeleteAt := mailboxFields[9].Descriptor()
+	// mailbox.DefaultDeleteAt holds the default value on creation for the delete_at field.
+	mailbox.DefaultDeleteAt = mailboxDescDeleteAt.Default.(func() uint32)
+	// mailboxDescID is the schema descriptor for id field.
+	mailboxDescID := mailboxFields[0].Descriptor()
+	// mailbox.DefaultID holds the default value on creation for the id field.
+	mailbox.DefaultID = mailboxDescID.Default.(func() uuid.UUID)
+	notificationFields := schema.Notification{}.Fields()
+	_ = notificationFields
+	// notificationDescCreateAt is the schema descriptor for create_at field.
+	notificationDescCreateAt := notificationFields[6].Descriptor()
+	// notification.DefaultCreateAt holds the default value on creation for the create_at field.
+	notification.DefaultCreateAt = notificationDescCreateAt.Default.(func() uint32)
+	// notificationDescUpdateAt is the schema descriptor for update_at field.
+	notificationDescUpdateAt := notificationFields[7].Descriptor()
+	// notification.DefaultUpdateAt holds the default value on creation for the update_at field.
+	notification.DefaultUpdateAt = notificationDescUpdateAt.Default.(func() uint32)
+	// notification.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
+	notification.UpdateDefaultUpdateAt = notificationDescUpdateAt.UpdateDefault.(func() uint32)
+	// notificationDescDeleteAt is the schema descriptor for delete_at field.
+	notificationDescDeleteAt := notificationFields[8].Descriptor()
+	// notification.DefaultDeleteAt holds the default value on creation for the delete_at field.
+	notification.DefaultDeleteAt = notificationDescDeleteAt.Default.(func() uint32)
+	// notificationDescID is the schema descriptor for id field.
+	notificationDescID := notificationFields[0].Descriptor()
+	// notification.DefaultID holds the default value on creation for the id field.
+	notification.DefaultID = notificationDescID.Default.(func() uuid.UUID)
+	readstateFields := schema.ReadState{}.Fields()
+	_ = readstateFields
+	// readstateDescCreateAt is the schema descriptor for create_at field.
+	readstateDescCreateAt := readstateFields[4].Descriptor()
+	// readstate.DefaultCreateAt holds the default value on creation for the create_at field.
+	readstate.DefaultCreateAt = readstateDescCreateAt.Default.(func() uint32)
+	// readstateDescUpdateAt is the schema descriptor for update_at field.
+	readstateDescUpdateAt := readstateFields[5].Descriptor()
+	// readstate.DefaultUpdateAt holds the default value on creation for the update_at field.
+	readstate.DefaultUpdateAt = readstateDescUpdateAt.Default.(func() uint32)
+	// readstate.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
+	readstate.UpdateDefaultUpdateAt = readstateDescUpdateAt.UpdateDefault.(func() uint32)
+	// readstateDescDeleteAt is the schema descriptor for delete_at field.
+	readstateDescDeleteAt := readstateFields[6].Descriptor()
+	// readstate.DefaultDeleteAt holds the default value on creation for the delete_at field.
+	readstate.DefaultDeleteAt = readstateDescDeleteAt.Default.(func() uint32)
+	// readstateDescID is the schema descriptor for id field.
+	readstateDescID := readstateFields[0].Descriptor()
+	// readstate.DefaultID holds the default value on creation for the id field.
+	readstate.DefaultID = readstateDescID.Default.(func() uuid.UUID)
 }
