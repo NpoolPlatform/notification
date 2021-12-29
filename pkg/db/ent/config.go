@@ -27,7 +27,7 @@ type hooks struct {
 	Announcement []ent.Hook
 	MailBox      []ent.Hook
 	Notification []ent.Hook
-	ReadState    []ent.Hook
+	ReadUser     []ent.Hook
 }
 
 // Options applies the options on the config object.

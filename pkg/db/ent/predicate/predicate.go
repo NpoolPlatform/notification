@@ -15,5 +15,5 @@ type MailBox func(*sql.Selector)
 // Notification is the predicate function for notification builders.
 type Notification func(*sql.Selector)
 
-// ReadState is the predicate function for readstate builders.
-type ReadState func(*sql.Selector)
+// ReadUser is the predicate function for readuser builders.
+type ReadUser func(*sql.Selector)

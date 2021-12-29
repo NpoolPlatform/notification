@@ -7,12 +7,12 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/NpoolPlatform/notification/pkg/db/ent/readstate"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/readuser"
 	"github.com/google/uuid"
 )
 
-// ReadState is the model entity for the ReadState schema.
-type ReadState struct {
+// ReadUser is the model entity for the ReadUser schema.
+type ReadUser struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
@@ -31,122 +31,122 @@ type ReadState struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*ReadState) scanValues(columns []string) ([]interface{}, error) {
+func (*ReadUser) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case readstate.FieldAlreadyRead:
+		case readuser.FieldAlreadyRead:
 			values[i] = new(sql.NullBool)
-		case readstate.FieldCreateAt, readstate.FieldUpdateAt, readstate.FieldDeleteAt:
+		case readuser.FieldCreateAt, readuser.FieldUpdateAt, readuser.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
-		case readstate.FieldID, readstate.FieldAppID, readstate.FieldUserID:
+		case readuser.FieldID, readuser.FieldAppID, readuser.FieldUserID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type ReadState", columns[i])
+			return nil, fmt.Errorf("unexpected column %q for type ReadUser", columns[i])
 		}
 	}
 	return values, nil
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the ReadState fields.
-func (rs *ReadState) assignValues(columns []string, values []interface{}) error {
+// to the ReadUser fields.
+func (ru *ReadUser) assignValues(columns []string, values []interface{}) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case readstate.FieldID:
+		case readuser.FieldID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				rs.ID = *value
+				ru.ID = *value
 			}
-		case readstate.FieldAppID:
+		case readuser.FieldAppID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field app_id", values[i])
 			} else if value != nil {
-				rs.AppID = *value
+				ru.AppID = *value
 			}
-		case readstate.FieldUserID:
+		case readuser.FieldUserID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value != nil {
-				rs.UserID = *value
+				ru.UserID = *value
 			}
-		case readstate.FieldAlreadyRead:
+		case readuser.FieldAlreadyRead:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field already_read", values[i])
 			} else if value.Valid {
-				rs.AlreadyRead = value.Bool
+				ru.AlreadyRead = value.Bool
 			}
-		case readstate.FieldCreateAt:
+		case readuser.FieldCreateAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field create_at", values[i])
 			} else if value.Valid {
-				rs.CreateAt = uint32(value.Int64)
+				ru.CreateAt = uint32(value.Int64)
 			}
-		case readstate.FieldUpdateAt:
+		case readuser.FieldUpdateAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field update_at", values[i])
 			} else if value.Valid {
-				rs.UpdateAt = uint32(value.Int64)
+				ru.UpdateAt = uint32(value.Int64)
 			}
-		case readstate.FieldDeleteAt:
+		case readuser.FieldDeleteAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field delete_at", values[i])
 			} else if value.Valid {
-				rs.DeleteAt = uint32(value.Int64)
+				ru.DeleteAt = uint32(value.Int64)
 			}
 		}
 	}
 	return nil
 }
 
-// Update returns a builder for updating this ReadState.
-// Note that you need to call ReadState.Unwrap() before calling this method if this ReadState
+// Update returns a builder for updating this ReadUser.
+// Note that you need to call ReadUser.Unwrap() before calling this method if this ReadUser
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (rs *ReadState) Update() *ReadStateUpdateOne {
-	return (&ReadStateClient{config: rs.config}).UpdateOne(rs)
+func (ru *ReadUser) Update() *ReadUserUpdateOne {
+	return (&ReadUserClient{config: ru.config}).UpdateOne(ru)
 }
 
-// Unwrap unwraps the ReadState entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the ReadUser entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (rs *ReadState) Unwrap() *ReadState {
-	tx, ok := rs.config.driver.(*txDriver)
+func (ru *ReadUser) Unwrap() *ReadUser {
+	tx, ok := ru.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: ReadState is not a transactional entity")
+		panic("ent: ReadUser is not a transactional entity")
 	}
-	rs.config.driver = tx.drv
-	return rs
+	ru.config.driver = tx.drv
+	return ru
 }
 
 // String implements the fmt.Stringer.
-func (rs *ReadState) String() string {
+func (ru *ReadUser) String() string {
 	var builder strings.Builder
-	builder.WriteString("ReadState(")
-	builder.WriteString(fmt.Sprintf("id=%v", rs.ID))
+	builder.WriteString("ReadUser(")
+	builder.WriteString(fmt.Sprintf("id=%v", ru.ID))
 	builder.WriteString(", app_id=")
-	builder.WriteString(fmt.Sprintf("%v", rs.AppID))
+	builder.WriteString(fmt.Sprintf("%v", ru.AppID))
 	builder.WriteString(", user_id=")
-	builder.WriteString(fmt.Sprintf("%v", rs.UserID))
+	builder.WriteString(fmt.Sprintf("%v", ru.UserID))
 	builder.WriteString(", already_read=")
-	builder.WriteString(fmt.Sprintf("%v", rs.AlreadyRead))
+	builder.WriteString(fmt.Sprintf("%v", ru.AlreadyRead))
 	builder.WriteString(", create_at=")
-	builder.WriteString(fmt.Sprintf("%v", rs.CreateAt))
+	builder.WriteString(fmt.Sprintf("%v", ru.CreateAt))
 	builder.WriteString(", update_at=")
-	builder.WriteString(fmt.Sprintf("%v", rs.UpdateAt))
+	builder.WriteString(fmt.Sprintf("%v", ru.UpdateAt))
 	builder.WriteString(", delete_at=")
-	builder.WriteString(fmt.Sprintf("%v", rs.DeleteAt))
+	builder.WriteString(fmt.Sprintf("%v", ru.DeleteAt))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// ReadStates is a parsable slice of ReadState.
-type ReadStates []*ReadState
+// ReadUsers is a parsable slice of ReadUser.
+type ReadUsers []*ReadUser
 
-func (rs ReadStates) config(cfg config) {
-	for _i := range rs {
-		rs[_i].config = cfg
+func (ru ReadUsers) config(cfg config) {
+	for _i := range ru {
+		ru[_i].config = cfg
 	}
 }

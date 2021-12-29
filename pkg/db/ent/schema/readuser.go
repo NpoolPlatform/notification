@@ -9,13 +9,13 @@ import (
 	"github.com/google/uuid"
 )
 
-// ReadState holds the schema definition for the ReadState entity.
-type ReadState struct {
+// ReadUser holds the schema definition for the ReadUser entity.
+type ReadUser struct {
 	ent.Schema
 }
 
-// Fields of the ReadState.
-func (ReadState) Fields() []ent.Field {
+// Fields of the ReadUser.
+func (ReadUser) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New).
@@ -41,7 +41,7 @@ func (ReadState) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ReadState.
-func (ReadState) Edges() []ent.Edge {
+// Edges of the ReadUser.
+func (ReadUser) Edges() []ent.Edge {
 	return nil
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/NpoolPlatform/notification/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/mailbox"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"
-	"github.com/NpoolPlatform/notification/pkg/db/ent/readstate"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/readuser"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -30,8 +30,8 @@ type Client struct {
 	MailBox *MailBoxClient
 	// Notification is the client for interacting with the Notification builders.
 	Notification *NotificationClient
-	// ReadState is the client for interacting with the ReadState builders.
-	ReadState *ReadStateClient
+	// ReadUser is the client for interacting with the ReadUser builders.
+	ReadUser *ReadUserClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -48,7 +48,7 @@ func (c *Client) init() {
 	c.Announcement = NewAnnouncementClient(c.config)
 	c.MailBox = NewMailBoxClient(c.config)
 	c.Notification = NewNotificationClient(c.config)
-	c.ReadState = NewReadStateClient(c.config)
+	c.ReadUser = NewReadUserClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -85,7 +85,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Announcement: NewAnnouncementClient(cfg),
 		MailBox:      NewMailBoxClient(cfg),
 		Notification: NewNotificationClient(cfg),
-		ReadState:    NewReadStateClient(cfg),
+		ReadUser:     NewReadUserClient(cfg),
 	}, nil
 }
 
@@ -107,7 +107,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Announcement: NewAnnouncementClient(cfg),
 		MailBox:      NewMailBoxClient(cfg),
 		Notification: NewNotificationClient(cfg),
-		ReadState:    NewReadStateClient(cfg),
+		ReadUser:     NewReadUserClient(cfg),
 	}, nil
 }
 
@@ -140,7 +140,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Announcement.Use(hooks...)
 	c.MailBox.Use(hooks...)
 	c.Notification.Use(hooks...)
-	c.ReadState.Use(hooks...)
+	c.ReadUser.Use(hooks...)
 }
 
 // AnnouncementClient is a client for the Announcement schema.
@@ -413,84 +413,84 @@ func (c *NotificationClient) Hooks() []Hook {
 	return c.hooks.Notification
 }
 
-// ReadStateClient is a client for the ReadState schema.
-type ReadStateClient struct {
+// ReadUserClient is a client for the ReadUser schema.
+type ReadUserClient struct {
 	config
 }
 
-// NewReadStateClient returns a client for the ReadState from the given config.
-func NewReadStateClient(c config) *ReadStateClient {
-	return &ReadStateClient{config: c}
+// NewReadUserClient returns a client for the ReadUser from the given config.
+func NewReadUserClient(c config) *ReadUserClient {
+	return &ReadUserClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `readstate.Hooks(f(g(h())))`.
-func (c *ReadStateClient) Use(hooks ...Hook) {
-	c.hooks.ReadState = append(c.hooks.ReadState, hooks...)
+// A call to `Use(f, g, h)` equals to `readuser.Hooks(f(g(h())))`.
+func (c *ReadUserClient) Use(hooks ...Hook) {
+	c.hooks.ReadUser = append(c.hooks.ReadUser, hooks...)
 }
 
-// Create returns a create builder for ReadState.
-func (c *ReadStateClient) Create() *ReadStateCreate {
-	mutation := newReadStateMutation(c.config, OpCreate)
-	return &ReadStateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a create builder for ReadUser.
+func (c *ReadUserClient) Create() *ReadUserCreate {
+	mutation := newReadUserMutation(c.config, OpCreate)
+	return &ReadUserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of ReadState entities.
-func (c *ReadStateClient) CreateBulk(builders ...*ReadStateCreate) *ReadStateCreateBulk {
-	return &ReadStateCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of ReadUser entities.
+func (c *ReadUserClient) CreateBulk(builders ...*ReadUserCreate) *ReadUserCreateBulk {
+	return &ReadUserCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for ReadState.
-func (c *ReadStateClient) Update() *ReadStateUpdate {
-	mutation := newReadStateMutation(c.config, OpUpdate)
-	return &ReadStateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for ReadUser.
+func (c *ReadUserClient) Update() *ReadUserUpdate {
+	mutation := newReadUserMutation(c.config, OpUpdate)
+	return &ReadUserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ReadStateClient) UpdateOne(rs *ReadState) *ReadStateUpdateOne {
-	mutation := newReadStateMutation(c.config, OpUpdateOne, withReadState(rs))
-	return &ReadStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ReadUserClient) UpdateOne(ru *ReadUser) *ReadUserUpdateOne {
+	mutation := newReadUserMutation(c.config, OpUpdateOne, withReadUser(ru))
+	return &ReadUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ReadStateClient) UpdateOneID(id uuid.UUID) *ReadStateUpdateOne {
-	mutation := newReadStateMutation(c.config, OpUpdateOne, withReadStateID(id))
-	return &ReadStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ReadUserClient) UpdateOneID(id uuid.UUID) *ReadUserUpdateOne {
+	mutation := newReadUserMutation(c.config, OpUpdateOne, withReadUserID(id))
+	return &ReadUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for ReadState.
-func (c *ReadStateClient) Delete() *ReadStateDelete {
-	mutation := newReadStateMutation(c.config, OpDelete)
-	return &ReadStateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for ReadUser.
+func (c *ReadUserClient) Delete() *ReadUserDelete {
+	mutation := newReadUserMutation(c.config, OpDelete)
+	return &ReadUserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a delete builder for the given entity.
-func (c *ReadStateClient) DeleteOne(rs *ReadState) *ReadStateDeleteOne {
-	return c.DeleteOneID(rs.ID)
+func (c *ReadUserClient) DeleteOne(ru *ReadUser) *ReadUserDeleteOne {
+	return c.DeleteOneID(ru.ID)
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *ReadStateClient) DeleteOneID(id uuid.UUID) *ReadStateDeleteOne {
-	builder := c.Delete().Where(readstate.ID(id))
+func (c *ReadUserClient) DeleteOneID(id uuid.UUID) *ReadUserDeleteOne {
+	builder := c.Delete().Where(readuser.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &ReadStateDeleteOne{builder}
+	return &ReadUserDeleteOne{builder}
 }
 
-// Query returns a query builder for ReadState.
-func (c *ReadStateClient) Query() *ReadStateQuery {
-	return &ReadStateQuery{
+// Query returns a query builder for ReadUser.
+func (c *ReadUserClient) Query() *ReadUserQuery {
+	return &ReadUserQuery{
 		config: c.config,
 	}
 }
 
-// Get returns a ReadState entity by its id.
-func (c *ReadStateClient) Get(ctx context.Context, id uuid.UUID) (*ReadState, error) {
-	return c.Query().Where(readstate.ID(id)).Only(ctx)
+// Get returns a ReadUser entity by its id.
+func (c *ReadUserClient) Get(ctx context.Context, id uuid.UUID) (*ReadUser, error) {
+	return c.Query().Where(readuser.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ReadStateClient) GetX(ctx context.Context, id uuid.UUID) *ReadState {
+func (c *ReadUserClient) GetX(ctx context.Context, id uuid.UUID) *ReadUser {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -499,6 +499,6 @@ func (c *ReadStateClient) GetX(ctx context.Context, id uuid.UUID) *ReadState {
 }
 
 // Hooks returns the client hooks.
-func (c *ReadStateClient) Hooks() []Hook {
-	return c.hooks.ReadState
+func (c *ReadUserClient) Hooks() []Hook {
+	return c.hooks.ReadUser
 }

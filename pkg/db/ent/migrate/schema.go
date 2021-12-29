@@ -61,8 +61,8 @@ var (
 		Columns:    NotificationsColumns,
 		PrimaryKey: []*schema.Column{NotificationsColumns[0]},
 	}
-	// ReadStatesColumns holds the columns for the "read_states" table.
-	ReadStatesColumns = []*schema.Column{
+	// ReadUsersColumns holds the columns for the "read_users" table.
+	ReadUsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "user_id", Type: field.TypeUUID},
@@ -71,18 +71,18 @@ var (
 		{Name: "update_at", Type: field.TypeUint32},
 		{Name: "delete_at", Type: field.TypeUint32},
 	}
-	// ReadStatesTable holds the schema information for the "read_states" table.
-	ReadStatesTable = &schema.Table{
-		Name:       "read_states",
-		Columns:    ReadStatesColumns,
-		PrimaryKey: []*schema.Column{ReadStatesColumns[0]},
+	// ReadUsersTable holds the schema information for the "read_users" table.
+	ReadUsersTable = &schema.Table{
+		Name:       "read_users",
+		Columns:    ReadUsersColumns,
+		PrimaryKey: []*schema.Column{ReadUsersColumns[0]},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AnnouncementsTable,
 		MailBoxesTable,
 		NotificationsTable,
-		ReadStatesTable,
+		ReadUsersTable,
 	}
 )
 

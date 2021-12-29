@@ -16,6 +16,44 @@ service Notification {
             body: "*"
         };
     }
+
+    rpc CreateAnnouncement(CreateAnnouncementRequest) returns (CreateAnnouncementResponse) {
+        option (google.api.http) = {
+            post: "/create/announcement"
+            body: "*"
+        };
+    }
+    rpc UpdateAnnouncement(UpdateAnnouncementRequest) returns (UpdateAnnouncementResponse) {
+        option (google.api.http) = {
+            post: "/update/announcement"
+            body: "*"
+        };
+    }
+    rpc GetAnnouncements(GetAnnouncementsRequest) returns (GetAnnouncementsResponse) {
+        option (google.api.http) = {
+            post: "/get/announcements"
+            body: "*"
+        };
+    }
+
+    rpc CreateNotification(CreateNotificationRequest) returns (CreateNotificationResponse) {
+        option (google.api.http) = {
+            post: "/create/notification"
+            body: "*"
+        };
+    }
+    rpc UpdateNotification(UpdateNotificationRequest) returns (UpdateNotificationResponse) {
+        option (google.api.http) = {
+            post: "/update/notification"
+            body: "*"
+        };
+    }
+    rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse) {
+        option (google.api.http) = {
+            post: "/get/notifications"
+            body: "*"
+        };
+    }
 }
 
 // request body and response

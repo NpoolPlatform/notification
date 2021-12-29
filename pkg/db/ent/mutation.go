@@ -11,7 +11,7 @@ import (
 	"github.com/NpoolPlatform/notification/pkg/db/ent/mailbox"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/predicate"
-	"github.com/NpoolPlatform/notification/pkg/db/ent/readstate"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/readuser"
 	"github.com/google/uuid"
 
 	"entgo.io/ent"
@@ -29,7 +29,7 @@ const (
 	TypeAnnouncement = "Announcement"
 	TypeMailBox      = "MailBox"
 	TypeNotification = "Notification"
-	TypeReadState    = "ReadState"
+	TypeReadUser     = "ReadUser"
 )
 
 // AnnouncementMutation represents an operation that mutates the Announcement nodes in the graph.
@@ -2312,8 +2312,8 @@ func (m *NotificationMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Notification edge %s", name)
 }
 
-// ReadStateMutation represents an operation that mutates the ReadState nodes in the graph.
-type ReadStateMutation struct {
+// ReadUserMutation represents an operation that mutates the ReadUser nodes in the graph.
+type ReadUserMutation struct {
 	config
 	op            Op
 	typ           string
@@ -2329,21 +2329,21 @@ type ReadStateMutation struct {
 	adddelete_at  *uint32
 	clearedFields map[string]struct{}
 	done          bool
-	oldValue      func(context.Context) (*ReadState, error)
-	predicates    []predicate.ReadState
+	oldValue      func(context.Context) (*ReadUser, error)
+	predicates    []predicate.ReadUser
 }
 
-var _ ent.Mutation = (*ReadStateMutation)(nil)
+var _ ent.Mutation = (*ReadUserMutation)(nil)
 
-// readstateOption allows management of the mutation configuration using functional options.
-type readstateOption func(*ReadStateMutation)
+// readuserOption allows management of the mutation configuration using functional options.
+type readuserOption func(*ReadUserMutation)
 
-// newReadStateMutation creates new mutation for the ReadState entity.
-func newReadStateMutation(c config, op Op, opts ...readstateOption) *ReadStateMutation {
-	m := &ReadStateMutation{
+// newReadUserMutation creates new mutation for the ReadUser entity.
+func newReadUserMutation(c config, op Op, opts ...readuserOption) *ReadUserMutation {
+	m := &ReadUserMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeReadState,
+		typ:           TypeReadUser,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -2352,20 +2352,20 @@ func newReadStateMutation(c config, op Op, opts ...readstateOption) *ReadStateMu
 	return m
 }
 
-// withReadStateID sets the ID field of the mutation.
-func withReadStateID(id uuid.UUID) readstateOption {
-	return func(m *ReadStateMutation) {
+// withReadUserID sets the ID field of the mutation.
+func withReadUserID(id uuid.UUID) readuserOption {
+	return func(m *ReadUserMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *ReadState
+			value *ReadUser
 		)
-		m.oldValue = func(ctx context.Context) (*ReadState, error) {
+		m.oldValue = func(ctx context.Context) (*ReadUser, error) {
 			once.Do(func() {
 				if m.done {
 					err = fmt.Errorf("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().ReadState.Get(ctx, id)
+					value, err = m.Client().ReadUser.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -2374,10 +2374,10 @@ func withReadStateID(id uuid.UUID) readstateOption {
 	}
 }
 
-// withReadState sets the old ReadState of the mutation.
-func withReadState(node *ReadState) readstateOption {
-	return func(m *ReadStateMutation) {
-		m.oldValue = func(context.Context) (*ReadState, error) {
+// withReadUser sets the old ReadUser of the mutation.
+func withReadUser(node *ReadUser) readuserOption {
+	return func(m *ReadUserMutation) {
+		m.oldValue = func(context.Context) (*ReadUser, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -2386,7 +2386,7 @@ func withReadState(node *ReadState) readstateOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m ReadStateMutation) Client() *Client {
+func (m ReadUserMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -2394,7 +2394,7 @@ func (m ReadStateMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m ReadStateMutation) Tx() (*Tx, error) {
+func (m ReadUserMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
 	}
@@ -2404,14 +2404,14 @@ func (m ReadStateMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of ReadState entities.
-func (m *ReadStateMutation) SetID(id uuid.UUID) {
+// operation is only accepted on creation of ReadUser entities.
+func (m *ReadUserMutation) SetID(id uuid.UUID) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *ReadStateMutation) ID() (id uuid.UUID, exists bool) {
+func (m *ReadUserMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2419,12 +2419,12 @@ func (m *ReadStateMutation) ID() (id uuid.UUID, exists bool) {
 }
 
 // SetAppID sets the "app_id" field.
-func (m *ReadStateMutation) SetAppID(u uuid.UUID) {
+func (m *ReadUserMutation) SetAppID(u uuid.UUID) {
 	m.app_id = &u
 }
 
 // AppID returns the value of the "app_id" field in the mutation.
-func (m *ReadStateMutation) AppID() (r uuid.UUID, exists bool) {
+func (m *ReadUserMutation) AppID() (r uuid.UUID, exists bool) {
 	v := m.app_id
 	if v == nil {
 		return
@@ -2432,10 +2432,10 @@ func (m *ReadStateMutation) AppID() (r uuid.UUID, exists bool) {
 	return *v, true
 }
 
-// OldAppID returns the old "app_id" field's value of the ReadState entity.
-// If the ReadState object wasn't provided to the builder, the object is fetched from the database.
+// OldAppID returns the old "app_id" field's value of the ReadUser entity.
+// If the ReadUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ReadStateMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *ReadUserMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAppID is only allowed on UpdateOne operations")
 	}
@@ -2450,17 +2450,17 @@ func (m *ReadStateMutation) OldAppID(ctx context.Context) (v uuid.UUID, err erro
 }
 
 // ResetAppID resets all changes to the "app_id" field.
-func (m *ReadStateMutation) ResetAppID() {
+func (m *ReadUserMutation) ResetAppID() {
 	m.app_id = nil
 }
 
 // SetUserID sets the "user_id" field.
-func (m *ReadStateMutation) SetUserID(u uuid.UUID) {
+func (m *ReadUserMutation) SetUserID(u uuid.UUID) {
 	m.user_id = &u
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
-func (m *ReadStateMutation) UserID() (r uuid.UUID, exists bool) {
+func (m *ReadUserMutation) UserID() (r uuid.UUID, exists bool) {
 	v := m.user_id
 	if v == nil {
 		return
@@ -2468,10 +2468,10 @@ func (m *ReadStateMutation) UserID() (r uuid.UUID, exists bool) {
 	return *v, true
 }
 
-// OldUserID returns the old "user_id" field's value of the ReadState entity.
-// If the ReadState object wasn't provided to the builder, the object is fetched from the database.
+// OldUserID returns the old "user_id" field's value of the ReadUser entity.
+// If the ReadUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ReadStateMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *ReadUserMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldUserID is only allowed on UpdateOne operations")
 	}
@@ -2486,17 +2486,17 @@ func (m *ReadStateMutation) OldUserID(ctx context.Context) (v uuid.UUID, err err
 }
 
 // ResetUserID resets all changes to the "user_id" field.
-func (m *ReadStateMutation) ResetUserID() {
+func (m *ReadUserMutation) ResetUserID() {
 	m.user_id = nil
 }
 
 // SetAlreadyRead sets the "already_read" field.
-func (m *ReadStateMutation) SetAlreadyRead(b bool) {
+func (m *ReadUserMutation) SetAlreadyRead(b bool) {
 	m.already_read = &b
 }
 
 // AlreadyRead returns the value of the "already_read" field in the mutation.
-func (m *ReadStateMutation) AlreadyRead() (r bool, exists bool) {
+func (m *ReadUserMutation) AlreadyRead() (r bool, exists bool) {
 	v := m.already_read
 	if v == nil {
 		return
@@ -2504,10 +2504,10 @@ func (m *ReadStateMutation) AlreadyRead() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldAlreadyRead returns the old "already_read" field's value of the ReadState entity.
-// If the ReadState object wasn't provided to the builder, the object is fetched from the database.
+// OldAlreadyRead returns the old "already_read" field's value of the ReadUser entity.
+// If the ReadUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ReadStateMutation) OldAlreadyRead(ctx context.Context) (v bool, err error) {
+func (m *ReadUserMutation) OldAlreadyRead(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAlreadyRead is only allowed on UpdateOne operations")
 	}
@@ -2522,18 +2522,18 @@ func (m *ReadStateMutation) OldAlreadyRead(ctx context.Context) (v bool, err err
 }
 
 // ResetAlreadyRead resets all changes to the "already_read" field.
-func (m *ReadStateMutation) ResetAlreadyRead() {
+func (m *ReadUserMutation) ResetAlreadyRead() {
 	m.already_read = nil
 }
 
 // SetCreateAt sets the "create_at" field.
-func (m *ReadStateMutation) SetCreateAt(u uint32) {
+func (m *ReadUserMutation) SetCreateAt(u uint32) {
 	m.create_at = &u
 	m.addcreate_at = nil
 }
 
 // CreateAt returns the value of the "create_at" field in the mutation.
-func (m *ReadStateMutation) CreateAt() (r uint32, exists bool) {
+func (m *ReadUserMutation) CreateAt() (r uint32, exists bool) {
 	v := m.create_at
 	if v == nil {
 		return
@@ -2541,10 +2541,10 @@ func (m *ReadStateMutation) CreateAt() (r uint32, exists bool) {
 	return *v, true
 }
 
-// OldCreateAt returns the old "create_at" field's value of the ReadState entity.
-// If the ReadState object wasn't provided to the builder, the object is fetched from the database.
+// OldCreateAt returns the old "create_at" field's value of the ReadUser entity.
+// If the ReadUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ReadStateMutation) OldCreateAt(ctx context.Context) (v uint32, err error) {
+func (m *ReadUserMutation) OldCreateAt(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCreateAt is only allowed on UpdateOne operations")
 	}
@@ -2559,7 +2559,7 @@ func (m *ReadStateMutation) OldCreateAt(ctx context.Context) (v uint32, err erro
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (m *ReadStateMutation) AddCreateAt(u uint32) {
+func (m *ReadUserMutation) AddCreateAt(u uint32) {
 	if m.addcreate_at != nil {
 		*m.addcreate_at += u
 	} else {
@@ -2568,7 +2568,7 @@ func (m *ReadStateMutation) AddCreateAt(u uint32) {
 }
 
 // AddedCreateAt returns the value that was added to the "create_at" field in this mutation.
-func (m *ReadStateMutation) AddedCreateAt() (r uint32, exists bool) {
+func (m *ReadUserMutation) AddedCreateAt() (r uint32, exists bool) {
 	v := m.addcreate_at
 	if v == nil {
 		return
@@ -2577,19 +2577,19 @@ func (m *ReadStateMutation) AddedCreateAt() (r uint32, exists bool) {
 }
 
 // ResetCreateAt resets all changes to the "create_at" field.
-func (m *ReadStateMutation) ResetCreateAt() {
+func (m *ReadUserMutation) ResetCreateAt() {
 	m.create_at = nil
 	m.addcreate_at = nil
 }
 
 // SetUpdateAt sets the "update_at" field.
-func (m *ReadStateMutation) SetUpdateAt(u uint32) {
+func (m *ReadUserMutation) SetUpdateAt(u uint32) {
 	m.update_at = &u
 	m.addupdate_at = nil
 }
 
 // UpdateAt returns the value of the "update_at" field in the mutation.
-func (m *ReadStateMutation) UpdateAt() (r uint32, exists bool) {
+func (m *ReadUserMutation) UpdateAt() (r uint32, exists bool) {
 	v := m.update_at
 	if v == nil {
 		return
@@ -2597,10 +2597,10 @@ func (m *ReadStateMutation) UpdateAt() (r uint32, exists bool) {
 	return *v, true
 }
 
-// OldUpdateAt returns the old "update_at" field's value of the ReadState entity.
-// If the ReadState object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdateAt returns the old "update_at" field's value of the ReadUser entity.
+// If the ReadUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ReadStateMutation) OldUpdateAt(ctx context.Context) (v uint32, err error) {
+func (m *ReadUserMutation) OldUpdateAt(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldUpdateAt is only allowed on UpdateOne operations")
 	}
@@ -2615,7 +2615,7 @@ func (m *ReadStateMutation) OldUpdateAt(ctx context.Context) (v uint32, err erro
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (m *ReadStateMutation) AddUpdateAt(u uint32) {
+func (m *ReadUserMutation) AddUpdateAt(u uint32) {
 	if m.addupdate_at != nil {
 		*m.addupdate_at += u
 	} else {
@@ -2624,7 +2624,7 @@ func (m *ReadStateMutation) AddUpdateAt(u uint32) {
 }
 
 // AddedUpdateAt returns the value that was added to the "update_at" field in this mutation.
-func (m *ReadStateMutation) AddedUpdateAt() (r uint32, exists bool) {
+func (m *ReadUserMutation) AddedUpdateAt() (r uint32, exists bool) {
 	v := m.addupdate_at
 	if v == nil {
 		return
@@ -2633,19 +2633,19 @@ func (m *ReadStateMutation) AddedUpdateAt() (r uint32, exists bool) {
 }
 
 // ResetUpdateAt resets all changes to the "update_at" field.
-func (m *ReadStateMutation) ResetUpdateAt() {
+func (m *ReadUserMutation) ResetUpdateAt() {
 	m.update_at = nil
 	m.addupdate_at = nil
 }
 
 // SetDeleteAt sets the "delete_at" field.
-func (m *ReadStateMutation) SetDeleteAt(u uint32) {
+func (m *ReadUserMutation) SetDeleteAt(u uint32) {
 	m.delete_at = &u
 	m.adddelete_at = nil
 }
 
 // DeleteAt returns the value of the "delete_at" field in the mutation.
-func (m *ReadStateMutation) DeleteAt() (r uint32, exists bool) {
+func (m *ReadUserMutation) DeleteAt() (r uint32, exists bool) {
 	v := m.delete_at
 	if v == nil {
 		return
@@ -2653,10 +2653,10 @@ func (m *ReadStateMutation) DeleteAt() (r uint32, exists bool) {
 	return *v, true
 }
 
-// OldDeleteAt returns the old "delete_at" field's value of the ReadState entity.
-// If the ReadState object wasn't provided to the builder, the object is fetched from the database.
+// OldDeleteAt returns the old "delete_at" field's value of the ReadUser entity.
+// If the ReadUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ReadStateMutation) OldDeleteAt(ctx context.Context) (v uint32, err error) {
+func (m *ReadUserMutation) OldDeleteAt(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldDeleteAt is only allowed on UpdateOne operations")
 	}
@@ -2671,7 +2671,7 @@ func (m *ReadStateMutation) OldDeleteAt(ctx context.Context) (v uint32, err erro
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (m *ReadStateMutation) AddDeleteAt(u uint32) {
+func (m *ReadUserMutation) AddDeleteAt(u uint32) {
 	if m.adddelete_at != nil {
 		*m.adddelete_at += u
 	} else {
@@ -2680,7 +2680,7 @@ func (m *ReadStateMutation) AddDeleteAt(u uint32) {
 }
 
 // AddedDeleteAt returns the value that was added to the "delete_at" field in this mutation.
-func (m *ReadStateMutation) AddedDeleteAt() (r uint32, exists bool) {
+func (m *ReadUserMutation) AddedDeleteAt() (r uint32, exists bool) {
 	v := m.adddelete_at
 	if v == nil {
 		return
@@ -2689,48 +2689,48 @@ func (m *ReadStateMutation) AddedDeleteAt() (r uint32, exists bool) {
 }
 
 // ResetDeleteAt resets all changes to the "delete_at" field.
-func (m *ReadStateMutation) ResetDeleteAt() {
+func (m *ReadUserMutation) ResetDeleteAt() {
 	m.delete_at = nil
 	m.adddelete_at = nil
 }
 
-// Where appends a list predicates to the ReadStateMutation builder.
-func (m *ReadStateMutation) Where(ps ...predicate.ReadState) {
+// Where appends a list predicates to the ReadUserMutation builder.
+func (m *ReadUserMutation) Where(ps ...predicate.ReadUser) {
 	m.predicates = append(m.predicates, ps...)
 }
 
 // Op returns the operation name.
-func (m *ReadStateMutation) Op() Op {
+func (m *ReadUserMutation) Op() Op {
 	return m.op
 }
 
-// Type returns the node type of this mutation (ReadState).
-func (m *ReadStateMutation) Type() string {
+// Type returns the node type of this mutation (ReadUser).
+func (m *ReadUserMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *ReadStateMutation) Fields() []string {
+func (m *ReadUserMutation) Fields() []string {
 	fields := make([]string, 0, 6)
 	if m.app_id != nil {
-		fields = append(fields, readstate.FieldAppID)
+		fields = append(fields, readuser.FieldAppID)
 	}
 	if m.user_id != nil {
-		fields = append(fields, readstate.FieldUserID)
+		fields = append(fields, readuser.FieldUserID)
 	}
 	if m.already_read != nil {
-		fields = append(fields, readstate.FieldAlreadyRead)
+		fields = append(fields, readuser.FieldAlreadyRead)
 	}
 	if m.create_at != nil {
-		fields = append(fields, readstate.FieldCreateAt)
+		fields = append(fields, readuser.FieldCreateAt)
 	}
 	if m.update_at != nil {
-		fields = append(fields, readstate.FieldUpdateAt)
+		fields = append(fields, readuser.FieldUpdateAt)
 	}
 	if m.delete_at != nil {
-		fields = append(fields, readstate.FieldDeleteAt)
+		fields = append(fields, readuser.FieldDeleteAt)
 	}
 	return fields
 }
@@ -2738,19 +2738,19 @@ func (m *ReadStateMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *ReadStateMutation) Field(name string) (ent.Value, bool) {
+func (m *ReadUserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case readstate.FieldAppID:
+	case readuser.FieldAppID:
 		return m.AppID()
-	case readstate.FieldUserID:
+	case readuser.FieldUserID:
 		return m.UserID()
-	case readstate.FieldAlreadyRead:
+	case readuser.FieldAlreadyRead:
 		return m.AlreadyRead()
-	case readstate.FieldCreateAt:
+	case readuser.FieldCreateAt:
 		return m.CreateAt()
-	case readstate.FieldUpdateAt:
+	case readuser.FieldUpdateAt:
 		return m.UpdateAt()
-	case readstate.FieldDeleteAt:
+	case readuser.FieldDeleteAt:
 		return m.DeleteAt()
 	}
 	return nil, false
@@ -2759,65 +2759,65 @@ func (m *ReadStateMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *ReadStateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *ReadUserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case readstate.FieldAppID:
+	case readuser.FieldAppID:
 		return m.OldAppID(ctx)
-	case readstate.FieldUserID:
+	case readuser.FieldUserID:
 		return m.OldUserID(ctx)
-	case readstate.FieldAlreadyRead:
+	case readuser.FieldAlreadyRead:
 		return m.OldAlreadyRead(ctx)
-	case readstate.FieldCreateAt:
+	case readuser.FieldCreateAt:
 		return m.OldCreateAt(ctx)
-	case readstate.FieldUpdateAt:
+	case readuser.FieldUpdateAt:
 		return m.OldUpdateAt(ctx)
-	case readstate.FieldDeleteAt:
+	case readuser.FieldDeleteAt:
 		return m.OldDeleteAt(ctx)
 	}
-	return nil, fmt.Errorf("unknown ReadState field %s", name)
+	return nil, fmt.Errorf("unknown ReadUser field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *ReadStateMutation) SetField(name string, value ent.Value) error {
+func (m *ReadUserMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case readstate.FieldAppID:
+	case readuser.FieldAppID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAppID(v)
 		return nil
-	case readstate.FieldUserID:
+	case readuser.FieldUserID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
 		return nil
-	case readstate.FieldAlreadyRead:
+	case readuser.FieldAlreadyRead:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAlreadyRead(v)
 		return nil
-	case readstate.FieldCreateAt:
+	case readuser.FieldCreateAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreateAt(v)
 		return nil
-	case readstate.FieldUpdateAt:
+	case readuser.FieldUpdateAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdateAt(v)
 		return nil
-	case readstate.FieldDeleteAt:
+	case readuser.FieldDeleteAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -2825,21 +2825,21 @@ func (m *ReadStateMutation) SetField(name string, value ent.Value) error {
 		m.SetDeleteAt(v)
 		return nil
 	}
-	return fmt.Errorf("unknown ReadState field %s", name)
+	return fmt.Errorf("unknown ReadUser field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *ReadStateMutation) AddedFields() []string {
+func (m *ReadUserMutation) AddedFields() []string {
 	var fields []string
 	if m.addcreate_at != nil {
-		fields = append(fields, readstate.FieldCreateAt)
+		fields = append(fields, readuser.FieldCreateAt)
 	}
 	if m.addupdate_at != nil {
-		fields = append(fields, readstate.FieldUpdateAt)
+		fields = append(fields, readuser.FieldUpdateAt)
 	}
 	if m.adddelete_at != nil {
-		fields = append(fields, readstate.FieldDeleteAt)
+		fields = append(fields, readuser.FieldDeleteAt)
 	}
 	return fields
 }
@@ -2847,13 +2847,13 @@ func (m *ReadStateMutation) AddedFields() []string {
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *ReadStateMutation) AddedField(name string) (ent.Value, bool) {
+func (m *ReadUserMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case readstate.FieldCreateAt:
+	case readuser.FieldCreateAt:
 		return m.AddedCreateAt()
-	case readstate.FieldUpdateAt:
+	case readuser.FieldUpdateAt:
 		return m.AddedUpdateAt()
-	case readstate.FieldDeleteAt:
+	case readuser.FieldDeleteAt:
 		return m.AddedDeleteAt()
 	}
 	return nil, false
@@ -2862,23 +2862,23 @@ func (m *ReadStateMutation) AddedField(name string) (ent.Value, bool) {
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *ReadStateMutation) AddField(name string, value ent.Value) error {
+func (m *ReadUserMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case readstate.FieldCreateAt:
+	case readuser.FieldCreateAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddCreateAt(v)
 		return nil
-	case readstate.FieldUpdateAt:
+	case readuser.FieldUpdateAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdateAt(v)
 		return nil
-	case readstate.FieldDeleteAt:
+	case readuser.FieldDeleteAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -2886,98 +2886,98 @@ func (m *ReadStateMutation) AddField(name string, value ent.Value) error {
 		m.AddDeleteAt(v)
 		return nil
 	}
-	return fmt.Errorf("unknown ReadState numeric field %s", name)
+	return fmt.Errorf("unknown ReadUser numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *ReadStateMutation) ClearedFields() []string {
+func (m *ReadUserMutation) ClearedFields() []string {
 	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *ReadStateMutation) FieldCleared(name string) bool {
+func (m *ReadUserMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *ReadStateMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown ReadState nullable field %s", name)
+func (m *ReadUserMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ReadUser nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *ReadStateMutation) ResetField(name string) error {
+func (m *ReadUserMutation) ResetField(name string) error {
 	switch name {
-	case readstate.FieldAppID:
+	case readuser.FieldAppID:
 		m.ResetAppID()
 		return nil
-	case readstate.FieldUserID:
+	case readuser.FieldUserID:
 		m.ResetUserID()
 		return nil
-	case readstate.FieldAlreadyRead:
+	case readuser.FieldAlreadyRead:
 		m.ResetAlreadyRead()
 		return nil
-	case readstate.FieldCreateAt:
+	case readuser.FieldCreateAt:
 		m.ResetCreateAt()
 		return nil
-	case readstate.FieldUpdateAt:
+	case readuser.FieldUpdateAt:
 		m.ResetUpdateAt()
 		return nil
-	case readstate.FieldDeleteAt:
+	case readuser.FieldDeleteAt:
 		m.ResetDeleteAt()
 		return nil
 	}
-	return fmt.Errorf("unknown ReadState field %s", name)
+	return fmt.Errorf("unknown ReadUser field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *ReadStateMutation) AddedEdges() []string {
+func (m *ReadUserMutation) AddedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *ReadStateMutation) AddedIDs(name string) []ent.Value {
+func (m *ReadUserMutation) AddedIDs(name string) []ent.Value {
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *ReadStateMutation) RemovedEdges() []string {
+func (m *ReadUserMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *ReadStateMutation) RemovedIDs(name string) []ent.Value {
+func (m *ReadUserMutation) RemovedIDs(name string) []ent.Value {
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *ReadStateMutation) ClearedEdges() []string {
+func (m *ReadUserMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *ReadStateMutation) EdgeCleared(name string) bool {
+func (m *ReadUserMutation) EdgeCleared(name string) bool {
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *ReadStateMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown ReadState unique edge %s", name)
+func (m *ReadUserMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ReadUser unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *ReadStateMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown ReadState edge %s", name)
+func (m *ReadUserMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ReadUser edge %s", name)
 }

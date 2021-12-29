@@ -11,7 +11,7 @@ import (
 	"github.com/NpoolPlatform/notification/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/mailbox"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"
-	"github.com/NpoolPlatform/notification/pkg/db/ent/readstate"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/readuser"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -35,7 +35,7 @@ func columnChecker(table string) func(string) error {
 		announcement.Table: announcement.ValidColumn,
 		mailbox.Table:      mailbox.ValidColumn,
 		notification.Table: notification.ValidColumn,
-		readstate.Table:    readstate.ValidColumn,
+		readuser.Table:     readuser.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

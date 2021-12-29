@@ -48,15 +48,15 @@ func (f NotificationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return f(ctx, mv)
 }
 
-// The ReadStateFunc type is an adapter to allow the use of ordinary
-// function as ReadState mutator.
-type ReadStateFunc func(context.Context, *ent.ReadStateMutation) (ent.Value, error)
+// The ReadUserFunc type is an adapter to allow the use of ordinary
+// function as ReadUser mutator.
+type ReadUserFunc func(context.Context, *ent.ReadUserMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ReadStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.ReadStateMutation)
+func (f ReadUserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ReadUserMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ReadStateMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ReadUserMutation", m)
 	}
 	return f(ctx, mv)
 }

@@ -18,8 +18,8 @@ type Tx struct {
 	MailBox *MailBoxClient
 	// Notification is the client for interacting with the Notification builders.
 	Notification *NotificationClient
-	// ReadState is the client for interacting with the ReadState builders.
-	ReadState *ReadStateClient
+	// ReadUser is the client for interacting with the ReadUser builders.
+	ReadUser *ReadUserClient
 
 	// lazily loaded.
 	client     *Client
@@ -158,7 +158,7 @@ func (tx *Tx) init() {
 	tx.Announcement = NewAnnouncementClient(tx.config)
 	tx.MailBox = NewMailBoxClient(tx.config)
 	tx.Notification = NewNotificationClient(tx.config)
-	tx.ReadState = NewReadStateClient(tx.config)
+	tx.ReadUser = NewReadUserClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
