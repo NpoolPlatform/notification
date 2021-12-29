@@ -35,9 +35,9 @@ func (ruc *ReadUserCreate) SetUserID(u uuid.UUID) *ReadUserCreate {
 	return ruc
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (ruc *ReadUserCreate) SetAlreadyRead(b bool) *ReadUserCreate {
-	ruc.mutation.SetAlreadyRead(b)
+// SetAnnouncementID sets the "announcement_id" field.
+func (ruc *ReadUserCreate) SetAnnouncementID(u uuid.UUID) *ReadUserCreate {
+	ruc.mutation.SetAnnouncementID(u)
 	return ruc
 }
 
@@ -186,8 +186,8 @@ func (ruc *ReadUserCreate) check() error {
 	if _, ok := ruc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "user_id"`)}
 	}
-	if _, ok := ruc.mutation.AlreadyRead(); !ok {
-		return &ValidationError{Name: "already_read", err: errors.New(`ent: missing required field "already_read"`)}
+	if _, ok := ruc.mutation.AnnouncementID(); !ok {
+		return &ValidationError{Name: "announcement_id", err: errors.New(`ent: missing required field "announcement_id"`)}
 	}
 	if _, ok := ruc.mutation.CreateAt(); !ok {
 		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "create_at"`)}
@@ -247,13 +247,13 @@ func (ruc *ReadUserCreate) createSpec() (*ReadUser, *sqlgraph.CreateSpec) {
 		})
 		_node.UserID = value
 	}
-	if value, ok := ruc.mutation.AlreadyRead(); ok {
+	if value, ok := ruc.mutation.AnnouncementID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeUUID,
 			Value:  value,
-			Column: readuser.FieldAlreadyRead,
+			Column: readuser.FieldAnnouncementID,
 		})
-		_node.AlreadyRead = value
+		_node.AnnouncementID = value
 	}
 	if value, ok := ruc.mutation.CreateAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -357,15 +357,15 @@ func (u *ReadUserUpsert) UpdateUserID() *ReadUserUpsert {
 	return u
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (u *ReadUserUpsert) SetAlreadyRead(v bool) *ReadUserUpsert {
-	u.Set(readuser.FieldAlreadyRead, v)
+// SetAnnouncementID sets the "announcement_id" field.
+func (u *ReadUserUpsert) SetAnnouncementID(v uuid.UUID) *ReadUserUpsert {
+	u.Set(readuser.FieldAnnouncementID, v)
 	return u
 }
 
-// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
-func (u *ReadUserUpsert) UpdateAlreadyRead() *ReadUserUpsert {
-	u.SetExcluded(readuser.FieldAlreadyRead)
+// UpdateAnnouncementID sets the "announcement_id" field to the value that was provided on create.
+func (u *ReadUserUpsert) UpdateAnnouncementID() *ReadUserUpsert {
+	u.SetExcluded(readuser.FieldAnnouncementID)
 	return u
 }
 
@@ -483,17 +483,17 @@ func (u *ReadUserUpsertOne) UpdateUserID() *ReadUserUpsertOne {
 	})
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (u *ReadUserUpsertOne) SetAlreadyRead(v bool) *ReadUserUpsertOne {
+// SetAnnouncementID sets the "announcement_id" field.
+func (u *ReadUserUpsertOne) SetAnnouncementID(v uuid.UUID) *ReadUserUpsertOne {
 	return u.Update(func(s *ReadUserUpsert) {
-		s.SetAlreadyRead(v)
+		s.SetAnnouncementID(v)
 	})
 }
 
-// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
-func (u *ReadUserUpsertOne) UpdateAlreadyRead() *ReadUserUpsertOne {
+// UpdateAnnouncementID sets the "announcement_id" field to the value that was provided on create.
+func (u *ReadUserUpsertOne) UpdateAnnouncementID() *ReadUserUpsertOne {
 	return u.Update(func(s *ReadUserUpsert) {
-		s.UpdateAlreadyRead()
+		s.UpdateAnnouncementID()
 	})
 }
 
@@ -783,17 +783,17 @@ func (u *ReadUserUpsertBulk) UpdateUserID() *ReadUserUpsertBulk {
 	})
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (u *ReadUserUpsertBulk) SetAlreadyRead(v bool) *ReadUserUpsertBulk {
+// SetAnnouncementID sets the "announcement_id" field.
+func (u *ReadUserUpsertBulk) SetAnnouncementID(v uuid.UUID) *ReadUserUpsertBulk {
 	return u.Update(func(s *ReadUserUpsert) {
-		s.SetAlreadyRead(v)
+		s.SetAnnouncementID(v)
 	})
 }
 
-// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
-func (u *ReadUserUpsertBulk) UpdateAlreadyRead() *ReadUserUpsertBulk {
+// UpdateAnnouncementID sets the "announcement_id" field to the value that was provided on create.
+func (u *ReadUserUpsertBulk) UpdateAnnouncementID() *ReadUserUpsertBulk {
 	return u.Update(func(s *ReadUserUpsert) {
-		s.UpdateAlreadyRead()
+		s.UpdateAnnouncementID()
 	})
 }
 

@@ -39,9 +39,9 @@ func (ruu *ReadUserUpdate) SetUserID(u uuid.UUID) *ReadUserUpdate {
 	return ruu
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (ruu *ReadUserUpdate) SetAlreadyRead(b bool) *ReadUserUpdate {
-	ruu.mutation.SetAlreadyRead(b)
+// SetAnnouncementID sets the "announcement_id" field.
+func (ruu *ReadUserUpdate) SetAnnouncementID(u uuid.UUID) *ReadUserUpdate {
+	ruu.mutation.SetAnnouncementID(u)
 	return ruu
 }
 
@@ -200,11 +200,11 @@ func (ruu *ReadUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: readuser.FieldUserID,
 		})
 	}
-	if value, ok := ruu.mutation.AlreadyRead(); ok {
+	if value, ok := ruu.mutation.AnnouncementID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeUUID,
 			Value:  value,
-			Column: readuser.FieldAlreadyRead,
+			Column: readuser.FieldAnnouncementID,
 		})
 	}
 	if value, ok := ruu.mutation.CreateAt(); ok {
@@ -280,9 +280,9 @@ func (ruuo *ReadUserUpdateOne) SetUserID(u uuid.UUID) *ReadUserUpdateOne {
 	return ruuo
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (ruuo *ReadUserUpdateOne) SetAlreadyRead(b bool) *ReadUserUpdateOne {
-	ruuo.mutation.SetAlreadyRead(b)
+// SetAnnouncementID sets the "announcement_id" field.
+func (ruuo *ReadUserUpdateOne) SetAnnouncementID(u uuid.UUID) *ReadUserUpdateOne {
+	ruuo.mutation.SetAnnouncementID(u)
 	return ruuo
 }
 
@@ -465,11 +465,11 @@ func (ruuo *ReadUserUpdateOne) sqlSave(ctx context.Context) (_node *ReadUser, er
 			Column: readuser.FieldUserID,
 		})
 	}
-	if value, ok := ruuo.mutation.AlreadyRead(); ok {
+	if value, ok := ruuo.mutation.AnnouncementID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeUUID,
 			Value:  value,
-			Column: readuser.FieldAlreadyRead,
+			Column: readuser.FieldAnnouncementID,
 		})
 	}
 	if value, ok := ruuo.mutation.CreateAt(); ok {

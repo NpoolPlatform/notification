@@ -2315,22 +2315,22 @@ func (m *NotificationMutation) ResetEdge(name string) error {
 // ReadUserMutation represents an operation that mutates the ReadUser nodes in the graph.
 type ReadUserMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uuid.UUID
-	app_id        *uuid.UUID
-	user_id       *uuid.UUID
-	already_read  *bool
-	create_at     *uint32
-	addcreate_at  *uint32
-	update_at     *uint32
-	addupdate_at  *uint32
-	delete_at     *uint32
-	adddelete_at  *uint32
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*ReadUser, error)
-	predicates    []predicate.ReadUser
+	op              Op
+	typ             string
+	id              *uuid.UUID
+	app_id          *uuid.UUID
+	user_id         *uuid.UUID
+	announcement_id *uuid.UUID
+	create_at       *uint32
+	addcreate_at    *uint32
+	update_at       *uint32
+	addupdate_at    *uint32
+	delete_at       *uint32
+	adddelete_at    *uint32
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*ReadUser, error)
+	predicates      []predicate.ReadUser
 }
 
 var _ ent.Mutation = (*ReadUserMutation)(nil)
@@ -2490,40 +2490,40 @@ func (m *ReadUserMutation) ResetUserID() {
 	m.user_id = nil
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (m *ReadUserMutation) SetAlreadyRead(b bool) {
-	m.already_read = &b
+// SetAnnouncementID sets the "announcement_id" field.
+func (m *ReadUserMutation) SetAnnouncementID(u uuid.UUID) {
+	m.announcement_id = &u
 }
 
-// AlreadyRead returns the value of the "already_read" field in the mutation.
-func (m *ReadUserMutation) AlreadyRead() (r bool, exists bool) {
-	v := m.already_read
+// AnnouncementID returns the value of the "announcement_id" field in the mutation.
+func (m *ReadUserMutation) AnnouncementID() (r uuid.UUID, exists bool) {
+	v := m.announcement_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAlreadyRead returns the old "already_read" field's value of the ReadUser entity.
+// OldAnnouncementID returns the old "announcement_id" field's value of the ReadUser entity.
 // If the ReadUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ReadUserMutation) OldAlreadyRead(ctx context.Context) (v bool, err error) {
+func (m *ReadUserMutation) OldAnnouncementID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldAlreadyRead is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldAnnouncementID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldAlreadyRead requires an ID field in the mutation")
+		return v, fmt.Errorf("OldAnnouncementID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAlreadyRead: %w", err)
+		return v, fmt.Errorf("querying old value for OldAnnouncementID: %w", err)
 	}
-	return oldValue.AlreadyRead, nil
+	return oldValue.AnnouncementID, nil
 }
 
-// ResetAlreadyRead resets all changes to the "already_read" field.
-func (m *ReadUserMutation) ResetAlreadyRead() {
-	m.already_read = nil
+// ResetAnnouncementID resets all changes to the "announcement_id" field.
+func (m *ReadUserMutation) ResetAnnouncementID() {
+	m.announcement_id = nil
 }
 
 // SetCreateAt sets the "create_at" field.
@@ -2720,8 +2720,8 @@ func (m *ReadUserMutation) Fields() []string {
 	if m.user_id != nil {
 		fields = append(fields, readuser.FieldUserID)
 	}
-	if m.already_read != nil {
-		fields = append(fields, readuser.FieldAlreadyRead)
+	if m.announcement_id != nil {
+		fields = append(fields, readuser.FieldAnnouncementID)
 	}
 	if m.create_at != nil {
 		fields = append(fields, readuser.FieldCreateAt)
@@ -2744,8 +2744,8 @@ func (m *ReadUserMutation) Field(name string) (ent.Value, bool) {
 		return m.AppID()
 	case readuser.FieldUserID:
 		return m.UserID()
-	case readuser.FieldAlreadyRead:
-		return m.AlreadyRead()
+	case readuser.FieldAnnouncementID:
+		return m.AnnouncementID()
 	case readuser.FieldCreateAt:
 		return m.CreateAt()
 	case readuser.FieldUpdateAt:
@@ -2765,8 +2765,8 @@ func (m *ReadUserMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldAppID(ctx)
 	case readuser.FieldUserID:
 		return m.OldUserID(ctx)
-	case readuser.FieldAlreadyRead:
-		return m.OldAlreadyRead(ctx)
+	case readuser.FieldAnnouncementID:
+		return m.OldAnnouncementID(ctx)
 	case readuser.FieldCreateAt:
 		return m.OldCreateAt(ctx)
 	case readuser.FieldUpdateAt:
@@ -2796,12 +2796,12 @@ func (m *ReadUserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUserID(v)
 		return nil
-	case readuser.FieldAlreadyRead:
-		v, ok := value.(bool)
+	case readuser.FieldAnnouncementID:
+		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAlreadyRead(v)
+		m.SetAnnouncementID(v)
 		return nil
 	case readuser.FieldCreateAt:
 		v, ok := value.(uint32)
@@ -2918,8 +2918,8 @@ func (m *ReadUserMutation) ResetField(name string) error {
 	case readuser.FieldUserID:
 		m.ResetUserID()
 		return nil
-	case readuser.FieldAlreadyRead:
-		m.ResetAlreadyRead()
+	case readuser.FieldAnnouncementID:
+		m.ResetAnnouncementID()
 		return nil
 	case readuser.FieldCreateAt:
 		m.ResetCreateAt()

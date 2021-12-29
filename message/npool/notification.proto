@@ -29,9 +29,9 @@ service Notification {
             body: "*"
         };
     }
-    rpc GetAnnouncements(GetAnnouncementsRequest) returns (GetAnnouncementsResponse) {
+    rpc GetAnnouncementsByApp(GetAnnouncementsByAppRequest) returns (GetAnnouncementsByAppResponse) {
         option (google.api.http) = {
-            post: "/get/announcements"
+            post: "/get/announcements/by/app"
             body: "*"
         };
     }
@@ -48,9 +48,35 @@ service Notification {
             body: "*"
         };
     }
-    rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse) {
+    rpc GetNotificationsByAppUser(GetNotificationsByAppUserRequest) returns (GetNotificationsByAppUserResponse) {
         option (google.api.http) = {
-            post: "/get/notifications"
+            post: "/get/notifications/by/app/user"
+            body: "*"
+        };
+    }
+
+    rpc CreateReadUser(CreateReadUserRequest) returns (CreateReadUserResponse) {
+        option (google.api.http) = {
+            post: "/create/read/user"
+            body: "*"
+        };
+    }
+    rpc CheckReadUser(CheckReadUserRequest) returns (CheckReadUserResponse) {
+        option (google.api.http) = {
+            post: "/check/read/user"
+            body: "*"
+        };
+    }
+
+    rpc CreateMail(CreateMailRequest) returns (CreateMailResponse) {
+        option (google.api.http) = {
+            post: "/create/mail"
+            body: "*"
+        };
+    }
+    rpc UpdateMail(UpdateMailRequest) returns (UpdateMailResponse) {
+        option (google.api.http) = {
+            post: "/update/mail"
             body: "*"
         };
     }
@@ -59,4 +85,77 @@ service Notification {
 // request body and response
 message VersionResponse {
     string Info = 100;
+}
+
+message Announcement {
+    string ID = 10;
+    string AppID = 20;
+    string Title = 30;
+    string Content = 40;
+    uint32 CreateAt = 50;
+}
+
+message CreateAnnouncementRequest {
+    Announcement Info = 10;
+}
+
+message CreateAnnouncementResponse {
+    Announcement Info = 10;
+}
+
+message UpdateAnnouncementRequest {
+    Announcement Info = 10;
+}
+
+message UpdateAnnouncementResponse {
+    Announcement Info = 10;
+}
+
+message GetAnnouncementsByAppRequest {
+    string AppID = 10;
+}
+
+message GetAnnouncementsByAppRequest {
+    repeated Announcement Infos = 10;
+}
+
+message Notification {
+    string ID = 10;
+    string AppID = 20;
+    string UserID = 30;
+    string Title = 40;
+    string Content = 50;
+    string CreateAt = 60;
+}
+
+message CreateNotificationRequest {
+    Notification Info = 10;
+}
+
+message CreateNotificationResponse {
+    Notification Info = 10;
+}
+
+message UpdateNotificationRequest {
+    Notification Info = 10;
+}
+
+message UpdateNotificationResponse {
+    Notification Info = 10;
+}
+
+message GetNotificationsByAppUserRequest {
+    string AppID = 10;
+    string UserID = 20;
+}
+
+message GetNotificationsByAppUserRequest {
+    repeated Notification Infos = 10;
+}
+
+message ReadUser {
+    string ID = 10;
+    string AppID = 20;
+    string AnnouncementID = 30;
+    string UserID = 40;
 }

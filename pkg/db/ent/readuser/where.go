@@ -105,10 +105,10 @@ func UserID(v uuid.UUID) predicate.ReadUser {
 	})
 }
 
-// AlreadyRead applies equality check predicate on the "already_read" field. It's identical to AlreadyReadEQ.
-func AlreadyRead(v bool) predicate.ReadUser {
+// AnnouncementID applies equality check predicate on the "announcement_id" field. It's identical to AnnouncementIDEQ.
+func AnnouncementID(v uuid.UUID) predicate.ReadUser {
 	return predicate.ReadUser(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlreadyRead), v))
+		s.Where(sql.EQ(s.C(FieldAnnouncementID), v))
 	})
 }
 
@@ -285,17 +285,79 @@ func UserIDLTE(v uuid.UUID) predicate.ReadUser {
 	})
 }
 
-// AlreadyReadEQ applies the EQ predicate on the "already_read" field.
-func AlreadyReadEQ(v bool) predicate.ReadUser {
+// AnnouncementIDEQ applies the EQ predicate on the "announcement_id" field.
+func AnnouncementIDEQ(v uuid.UUID) predicate.ReadUser {
 	return predicate.ReadUser(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlreadyRead), v))
+		s.Where(sql.EQ(s.C(FieldAnnouncementID), v))
 	})
 }
 
-// AlreadyReadNEQ applies the NEQ predicate on the "already_read" field.
-func AlreadyReadNEQ(v bool) predicate.ReadUser {
+// AnnouncementIDNEQ applies the NEQ predicate on the "announcement_id" field.
+func AnnouncementIDNEQ(v uuid.UUID) predicate.ReadUser {
 	return predicate.ReadUser(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAlreadyRead), v))
+		s.Where(sql.NEQ(s.C(FieldAnnouncementID), v))
+	})
+}
+
+// AnnouncementIDIn applies the In predicate on the "announcement_id" field.
+func AnnouncementIDIn(vs ...uuid.UUID) predicate.ReadUser {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ReadUser(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldAnnouncementID), v...))
+	})
+}
+
+// AnnouncementIDNotIn applies the NotIn predicate on the "announcement_id" field.
+func AnnouncementIDNotIn(vs ...uuid.UUID) predicate.ReadUser {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ReadUser(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldAnnouncementID), v...))
+	})
+}
+
+// AnnouncementIDGT applies the GT predicate on the "announcement_id" field.
+func AnnouncementIDGT(v uuid.UUID) predicate.ReadUser {
+	return predicate.ReadUser(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAnnouncementID), v))
+	})
+}
+
+// AnnouncementIDGTE applies the GTE predicate on the "announcement_id" field.
+func AnnouncementIDGTE(v uuid.UUID) predicate.ReadUser {
+	return predicate.ReadUser(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAnnouncementID), v))
+	})
+}
+
+// AnnouncementIDLT applies the LT predicate on the "announcement_id" field.
+func AnnouncementIDLT(v uuid.UUID) predicate.ReadUser {
+	return predicate.ReadUser(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAnnouncementID), v))
+	})
+}
+
+// AnnouncementIDLTE applies the LTE predicate on the "announcement_id" field.
+func AnnouncementIDLTE(v uuid.UUID) predicate.ReadUser {
+	return predicate.ReadUser(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAnnouncementID), v))
 	})
 }
 

@@ -20,8 +20,8 @@ type ReadUser struct {
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
-	// AlreadyRead holds the value of the "already_read" field.
-	AlreadyRead bool `json:"already_read,omitempty"`
+	// AnnouncementID holds the value of the "announcement_id" field.
+	AnnouncementID uuid.UUID `json:"announcement_id,omitempty"`
 	// CreateAt holds the value of the "create_at" field.
 	CreateAt uint32 `json:"create_at,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
@@ -35,11 +35,9 @@ func (*ReadUser) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case readuser.FieldAlreadyRead:
-			values[i] = new(sql.NullBool)
 		case readuser.FieldCreateAt, readuser.FieldUpdateAt, readuser.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
-		case readuser.FieldID, readuser.FieldAppID, readuser.FieldUserID:
+		case readuser.FieldID, readuser.FieldAppID, readuser.FieldUserID, readuser.FieldAnnouncementID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type ReadUser", columns[i])
@@ -74,11 +72,11 @@ func (ru *ReadUser) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				ru.UserID = *value
 			}
-		case readuser.FieldAlreadyRead:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field already_read", values[i])
-			} else if value.Valid {
-				ru.AlreadyRead = value.Bool
+		case readuser.FieldAnnouncementID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field announcement_id", values[i])
+			} else if value != nil {
+				ru.AnnouncementID = *value
 			}
 		case readuser.FieldCreateAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -130,8 +128,8 @@ func (ru *ReadUser) String() string {
 	builder.WriteString(fmt.Sprintf("%v", ru.AppID))
 	builder.WriteString(", user_id=")
 	builder.WriteString(fmt.Sprintf("%v", ru.UserID))
-	builder.WriteString(", already_read=")
-	builder.WriteString(fmt.Sprintf("%v", ru.AlreadyRead))
+	builder.WriteString(", announcement_id=")
+	builder.WriteString(fmt.Sprintf("%v", ru.AnnouncementID))
 	builder.WriteString(", create_at=")
 	builder.WriteString(fmt.Sprintf("%v", ru.CreateAt))
 	builder.WriteString(", update_at=")
