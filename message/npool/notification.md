@@ -416,7 +416,7 @@
 | Title | [string](#string) |  |  |
 | Content | [string](#string) |  |  |
 | AlreadyRead | [bool](#bool) |  |  |
-| CreateAt | [string](#string) |  |  |
+| CreateAt | [uint32](#uint32) |  |  |
 
 
 
