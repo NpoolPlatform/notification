@@ -58,7 +58,7 @@ func Create(ctx context.Context, in *npool.CreateAnnouncementRequest) (*npool.Cr
 		Create().
 		SetAppID(uuid.MustParse(in.GetInfo().GetAppID())).
 		SetTitle(in.GetInfo().GetTitle()).
-		SetContent(in.GetInfo().GetTitle()).
+		SetContent(in.GetInfo().GetContent()).
 		Save(ctx)
 	if err != nil {
 		return nil, xerrors.Errorf("fail create announcement: %v", err)
