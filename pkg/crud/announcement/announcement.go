@@ -70,7 +70,36 @@ func Create(ctx context.Context, in *npool.CreateAnnouncementRequest) (*npool.Cr
 }
 
 func Update(ctx context.Context, in *npool.UpdateAnnouncementRequest) (*npool.UpdateAnnouncementResponse, error) {
-	return nil, nil
+	id, err := uuid.Parse(in.GetInfo().GetID())
+	if err != nil {
+		return nil, xerrors.Errorf("invalid id: %v", err)
+	}
+
+	if err = validateAnnouncement(in.GetInfo()); err != nil {
+		return nil, xerrors.Errorf("invlaid parameter: %v", err)
+	}
+
+	cli, err := db.Client()
+	if err != nil {
+		return nil, xerrors.Errorf("fail get db client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, dbTimeout)
+	defer cancel()
+
+	info, err := cli.
+		Announcement.
+		UpdateOneID(id).
+		SetTitle(in.GetInfo().GetTitle()).
+		SetContent(in.GetInfo().GetContent()).
+		Save(ctx)
+	if err != nil {
+		return nil, xerrors.Errorf("fail update announcement: %v", err)
+	}
+
+	return &npool.UpdateAnnouncementResponse{
+		Info: dbRowToAnnouncement(info),
+	}, nil
 }
 
 func GetAnnouncementsByApp(ctx context.Context, in *npool.GetAnnouncementsByAppRequest) (*npool.GetAnnouncementsByAppResponse, error) {
