@@ -28,6 +28,12 @@ func (tu *TemplateUpdate) Where(ps ...predicate.Template) *TemplateUpdate {
 	return tu
 }
 
+// SetContent sets the "content" field.
+func (tu *TemplateUpdate) SetContent(s string) *TemplateUpdate {
+	tu.mutation.SetContent(s)
+	return tu
+}
+
 // SetAppID sets the "app_id" field.
 func (tu *TemplateUpdate) SetAppID(u uuid.UUID) *TemplateUpdate {
 	tu.mutation.SetAppID(u)
@@ -43,18 +49,6 @@ func (tu *TemplateUpdate) SetLangID(u uuid.UUID) *TemplateUpdate {
 // SetUsedFor sets the "used_for" field.
 func (tu *TemplateUpdate) SetUsedFor(s string) *TemplateUpdate {
 	tu.mutation.SetUsedFor(s)
-	return tu
-}
-
-// SetTitle sets the "title" field.
-func (tu *TemplateUpdate) SetTitle(s string) *TemplateUpdate {
-	tu.mutation.SetTitle(s)
-	return tu
-}
-
-// SetContent sets the "content" field.
-func (tu *TemplateUpdate) SetContent(s string) *TemplateUpdate {
-	tu.mutation.SetContent(s)
 	return tu
 }
 
@@ -110,6 +104,12 @@ func (tu *TemplateUpdate) SetNillableDeleteAt(u *uint32) *TemplateUpdate {
 // AddDeleteAt adds u to the "delete_at" field.
 func (tu *TemplateUpdate) AddDeleteAt(u int32) *TemplateUpdate {
 	tu.mutation.AddDeleteAt(u)
+	return tu
+}
+
+// SetTitle sets the "title" field.
+func (tu *TemplateUpdate) SetTitle(s string) *TemplateUpdate {
+	tu.mutation.SetTitle(s)
 	return tu
 }
 
@@ -199,6 +199,13 @@ func (tu *TemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := tu.mutation.Content(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: template.FieldContent,
+		})
+	}
 	if value, ok := tu.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -218,20 +225,6 @@ func (tu *TemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: template.FieldUsedFor,
-		})
-	}
-	if value, ok := tu.mutation.Title(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: template.FieldTitle,
-		})
-	}
-	if value, ok := tu.mutation.Content(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: template.FieldContent,
 		})
 	}
 	if value, ok := tu.mutation.CreateAt(); ok {
@@ -276,6 +269,13 @@ func (tu *TemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: template.FieldDeleteAt,
 		})
 	}
+	if value, ok := tu.mutation.Title(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: template.FieldTitle,
+		})
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{template.Label}
@@ -295,6 +295,12 @@ type TemplateUpdateOne struct {
 	mutation *TemplateMutation
 }
 
+// SetContent sets the "content" field.
+func (tuo *TemplateUpdateOne) SetContent(s string) *TemplateUpdateOne {
+	tuo.mutation.SetContent(s)
+	return tuo
+}
+
 // SetAppID sets the "app_id" field.
 func (tuo *TemplateUpdateOne) SetAppID(u uuid.UUID) *TemplateUpdateOne {
 	tuo.mutation.SetAppID(u)
@@ -310,18 +316,6 @@ func (tuo *TemplateUpdateOne) SetLangID(u uuid.UUID) *TemplateUpdateOne {
 // SetUsedFor sets the "used_for" field.
 func (tuo *TemplateUpdateOne) SetUsedFor(s string) *TemplateUpdateOne {
 	tuo.mutation.SetUsedFor(s)
-	return tuo
-}
-
-// SetTitle sets the "title" field.
-func (tuo *TemplateUpdateOne) SetTitle(s string) *TemplateUpdateOne {
-	tuo.mutation.SetTitle(s)
-	return tuo
-}
-
-// SetContent sets the "content" field.
-func (tuo *TemplateUpdateOne) SetContent(s string) *TemplateUpdateOne {
-	tuo.mutation.SetContent(s)
 	return tuo
 }
 
@@ -377,6 +371,12 @@ func (tuo *TemplateUpdateOne) SetNillableDeleteAt(u *uint32) *TemplateUpdateOne 
 // AddDeleteAt adds u to the "delete_at" field.
 func (tuo *TemplateUpdateOne) AddDeleteAt(u int32) *TemplateUpdateOne {
 	tuo.mutation.AddDeleteAt(u)
+	return tuo
+}
+
+// SetTitle sets the "title" field.
+func (tuo *TemplateUpdateOne) SetTitle(s string) *TemplateUpdateOne {
+	tuo.mutation.SetTitle(s)
 	return tuo
 }
 
@@ -490,6 +490,13 @@ func (tuo *TemplateUpdateOne) sqlSave(ctx context.Context) (_node *Template, err
 			}
 		}
 	}
+	if value, ok := tuo.mutation.Content(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: template.FieldContent,
+		})
+	}
 	if value, ok := tuo.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -509,20 +516,6 @@ func (tuo *TemplateUpdateOne) sqlSave(ctx context.Context) (_node *Template, err
 			Type:   field.TypeString,
 			Value:  value,
 			Column: template.FieldUsedFor,
-		})
-	}
-	if value, ok := tuo.mutation.Title(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: template.FieldTitle,
-		})
-	}
-	if value, ok := tuo.mutation.Content(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: template.FieldContent,
 		})
 	}
 	if value, ok := tuo.mutation.CreateAt(); ok {
@@ -565,6 +558,13 @@ func (tuo *TemplateUpdateOne) sqlSave(ctx context.Context) (_node *Template, err
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: template.FieldDeleteAt,
+		})
+	}
+	if value, ok := tuo.mutation.Title(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: template.FieldTitle,
 		})
 	}
 	_node = &Template{config: tuo.config}

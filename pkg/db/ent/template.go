@@ -16,22 +16,22 @@ type Template struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
+	// Content holds the value of the "content" field.
+	Content string `json:"content,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// LangID holds the value of the "lang_id" field.
 	LangID uuid.UUID `json:"lang_id,omitempty"`
 	// UsedFor holds the value of the "used_for" field.
 	UsedFor string `json:"used_for,omitempty"`
-	// Title holds the value of the "title" field.
-	Title string `json:"title,omitempty"`
-	// Content holds the value of the "content" field.
-	Content string `json:"content,omitempty"`
 	// CreateAt holds the value of the "create_at" field.
 	CreateAt uint32 `json:"create_at,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
 	UpdateAt uint32 `json:"update_at,omitempty"`
 	// DeleteAt holds the value of the "delete_at" field.
 	DeleteAt uint32 `json:"delete_at,omitempty"`
+	// Title holds the value of the "title" field.
+	Title string `json:"title,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -41,7 +41,7 @@ func (*Template) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case template.FieldCreateAt, template.FieldUpdateAt, template.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
-		case template.FieldUsedFor, template.FieldTitle, template.FieldContent:
+		case template.FieldContent, template.FieldUsedFor, template.FieldTitle:
 			values[i] = new(sql.NullString)
 		case template.FieldID, template.FieldAppID, template.FieldLangID:
 			values[i] = new(uuid.UUID)
@@ -66,6 +66,12 @@ func (t *Template) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				t.ID = *value
 			}
+		case template.FieldContent:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field content", values[i])
+			} else if value.Valid {
+				t.Content = value.String
+			}
 		case template.FieldAppID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field app_id", values[i])
@@ -84,18 +90,6 @@ func (t *Template) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				t.UsedFor = value.String
 			}
-		case template.FieldTitle:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field title", values[i])
-			} else if value.Valid {
-				t.Title = value.String
-			}
-		case template.FieldContent:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field content", values[i])
-			} else if value.Valid {
-				t.Content = value.String
-			}
 		case template.FieldCreateAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field create_at", values[i])
@@ -113,6 +107,12 @@ func (t *Template) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field delete_at", values[i])
 			} else if value.Valid {
 				t.DeleteAt = uint32(value.Int64)
+			}
+		case template.FieldTitle:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field title", values[i])
+			} else if value.Valid {
+				t.Title = value.String
 			}
 		}
 	}
@@ -142,22 +142,22 @@ func (t *Template) String() string {
 	var builder strings.Builder
 	builder.WriteString("Template(")
 	builder.WriteString(fmt.Sprintf("id=%v", t.ID))
+	builder.WriteString(", content=")
+	builder.WriteString(t.Content)
 	builder.WriteString(", app_id=")
 	builder.WriteString(fmt.Sprintf("%v", t.AppID))
 	builder.WriteString(", lang_id=")
 	builder.WriteString(fmt.Sprintf("%v", t.LangID))
 	builder.WriteString(", used_for=")
 	builder.WriteString(t.UsedFor)
-	builder.WriteString(", title=")
-	builder.WriteString(t.Title)
-	builder.WriteString(", content=")
-	builder.WriteString(t.Content)
 	builder.WriteString(", create_at=")
 	builder.WriteString(fmt.Sprintf("%v", t.CreateAt))
 	builder.WriteString(", update_at=")
 	builder.WriteString(fmt.Sprintf("%v", t.UpdateAt))
 	builder.WriteString(", delete_at=")
 	builder.WriteString(fmt.Sprintf("%v", t.DeleteAt))
+	builder.WriteString(", title=")
+	builder.WriteString(t.Title)
 	builder.WriteByte(')')
 	return builder.String()
 }

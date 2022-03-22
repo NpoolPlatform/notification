@@ -3067,17 +3067,17 @@ type TemplateMutation struct {
 	op            Op
 	typ           string
 	id            *uuid.UUID
+	content       *string
 	app_id        *uuid.UUID
 	lang_id       *uuid.UUID
 	used_for      *string
-	title         *string
-	content       *string
 	create_at     *uint32
 	addcreate_at  *int32
 	update_at     *uint32
 	addupdate_at  *int32
 	delete_at     *uint32
 	adddelete_at  *int32
+	title         *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Template, error)
@@ -3188,6 +3188,42 @@ func (m *TemplateMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	}
 }
 
+// SetContent sets the "content" field.
+func (m *TemplateMutation) SetContent(s string) {
+	m.content = &s
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *TemplateMutation) Content() (r string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the Template entity.
+// If the Template object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateMutation) OldContent(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *TemplateMutation) ResetContent() {
+	m.content = nil
+}
+
 // SetAppID sets the "app_id" field.
 func (m *TemplateMutation) SetAppID(u uuid.UUID) {
 	m.app_id = &u
@@ -3294,78 +3330,6 @@ func (m *TemplateMutation) OldUsedFor(ctx context.Context) (v string, err error)
 // ResetUsedFor resets all changes to the "used_for" field.
 func (m *TemplateMutation) ResetUsedFor() {
 	m.used_for = nil
-}
-
-// SetTitle sets the "title" field.
-func (m *TemplateMutation) SetTitle(s string) {
-	m.title = &s
-}
-
-// Title returns the value of the "title" field in the mutation.
-func (m *TemplateMutation) Title() (r string, exists bool) {
-	v := m.title
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTitle returns the old "title" field's value of the Template entity.
-// If the Template object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TemplateMutation) OldTitle(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTitle requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
-	}
-	return oldValue.Title, nil
-}
-
-// ResetTitle resets all changes to the "title" field.
-func (m *TemplateMutation) ResetTitle() {
-	m.title = nil
-}
-
-// SetContent sets the "content" field.
-func (m *TemplateMutation) SetContent(s string) {
-	m.content = &s
-}
-
-// Content returns the value of the "content" field in the mutation.
-func (m *TemplateMutation) Content() (r string, exists bool) {
-	v := m.content
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldContent returns the old "content" field's value of the Template entity.
-// If the Template object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TemplateMutation) OldContent(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldContent is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldContent requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldContent: %w", err)
-	}
-	return oldValue.Content, nil
-}
-
-// ResetContent resets all changes to the "content" field.
-func (m *TemplateMutation) ResetContent() {
-	m.content = nil
 }
 
 // SetCreateAt sets the "create_at" field.
@@ -3536,6 +3500,42 @@ func (m *TemplateMutation) ResetDeleteAt() {
 	m.adddelete_at = nil
 }
 
+// SetTitle sets the "title" field.
+func (m *TemplateMutation) SetTitle(s string) {
+	m.title = &s
+}
+
+// Title returns the value of the "title" field in the mutation.
+func (m *TemplateMutation) Title() (r string, exists bool) {
+	v := m.title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTitle returns the old "title" field's value of the Template entity.
+// If the Template object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateMutation) OldTitle(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
+	}
+	return oldValue.Title, nil
+}
+
+// ResetTitle resets all changes to the "title" field.
+func (m *TemplateMutation) ResetTitle() {
+	m.title = nil
+}
+
 // Where appends a list predicates to the TemplateMutation builder.
 func (m *TemplateMutation) Where(ps ...predicate.Template) {
 	m.predicates = append(m.predicates, ps...)
@@ -3556,6 +3556,9 @@ func (m *TemplateMutation) Type() string {
 // AddedFields().
 func (m *TemplateMutation) Fields() []string {
 	fields := make([]string, 0, 8)
+	if m.content != nil {
+		fields = append(fields, template.FieldContent)
+	}
 	if m.app_id != nil {
 		fields = append(fields, template.FieldAppID)
 	}
@@ -3564,12 +3567,6 @@ func (m *TemplateMutation) Fields() []string {
 	}
 	if m.used_for != nil {
 		fields = append(fields, template.FieldUsedFor)
-	}
-	if m.title != nil {
-		fields = append(fields, template.FieldTitle)
-	}
-	if m.content != nil {
-		fields = append(fields, template.FieldContent)
 	}
 	if m.create_at != nil {
 		fields = append(fields, template.FieldCreateAt)
@@ -3580,6 +3577,9 @@ func (m *TemplateMutation) Fields() []string {
 	if m.delete_at != nil {
 		fields = append(fields, template.FieldDeleteAt)
 	}
+	if m.title != nil {
+		fields = append(fields, template.FieldTitle)
+	}
 	return fields
 }
 
@@ -3588,22 +3588,22 @@ func (m *TemplateMutation) Fields() []string {
 // schema.
 func (m *TemplateMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case template.FieldContent:
+		return m.Content()
 	case template.FieldAppID:
 		return m.AppID()
 	case template.FieldLangID:
 		return m.LangID()
 	case template.FieldUsedFor:
 		return m.UsedFor()
-	case template.FieldTitle:
-		return m.Title()
-	case template.FieldContent:
-		return m.Content()
 	case template.FieldCreateAt:
 		return m.CreateAt()
 	case template.FieldUpdateAt:
 		return m.UpdateAt()
 	case template.FieldDeleteAt:
 		return m.DeleteAt()
+	case template.FieldTitle:
+		return m.Title()
 	}
 	return nil, false
 }
@@ -3613,22 +3613,22 @@ func (m *TemplateMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *TemplateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case template.FieldContent:
+		return m.OldContent(ctx)
 	case template.FieldAppID:
 		return m.OldAppID(ctx)
 	case template.FieldLangID:
 		return m.OldLangID(ctx)
 	case template.FieldUsedFor:
 		return m.OldUsedFor(ctx)
-	case template.FieldTitle:
-		return m.OldTitle(ctx)
-	case template.FieldContent:
-		return m.OldContent(ctx)
 	case template.FieldCreateAt:
 		return m.OldCreateAt(ctx)
 	case template.FieldUpdateAt:
 		return m.OldUpdateAt(ctx)
 	case template.FieldDeleteAt:
 		return m.OldDeleteAt(ctx)
+	case template.FieldTitle:
+		return m.OldTitle(ctx)
 	}
 	return nil, fmt.Errorf("unknown Template field %s", name)
 }
@@ -3638,6 +3638,13 @@ func (m *TemplateMutation) OldField(ctx context.Context, name string) (ent.Value
 // type.
 func (m *TemplateMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case template.FieldContent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
+		return nil
 	case template.FieldAppID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
@@ -3659,20 +3666,6 @@ func (m *TemplateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUsedFor(v)
 		return nil
-	case template.FieldTitle:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTitle(v)
-		return nil
-	case template.FieldContent:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetContent(v)
-		return nil
 	case template.FieldCreateAt:
 		v, ok := value.(uint32)
 		if !ok {
@@ -3693,6 +3686,13 @@ func (m *TemplateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeleteAt(v)
+		return nil
+	case template.FieldTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitle(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Template field %s", name)
@@ -3782,6 +3782,9 @@ func (m *TemplateMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *TemplateMutation) ResetField(name string) error {
 	switch name {
+	case template.FieldContent:
+		m.ResetContent()
+		return nil
 	case template.FieldAppID:
 		m.ResetAppID()
 		return nil
@@ -3791,12 +3794,6 @@ func (m *TemplateMutation) ResetField(name string) error {
 	case template.FieldUsedFor:
 		m.ResetUsedFor()
 		return nil
-	case template.FieldTitle:
-		m.ResetTitle()
-		return nil
-	case template.FieldContent:
-		m.ResetContent()
-		return nil
 	case template.FieldCreateAt:
 		m.ResetCreateAt()
 		return nil
@@ -3805,6 +3802,9 @@ func (m *TemplateMutation) ResetField(name string) error {
 		return nil
 	case template.FieldDeleteAt:
 		m.ResetDeleteAt()
+		return nil
+	case template.FieldTitle:
+		m.ResetTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown Template field %s", name)

@@ -11,22 +11,22 @@ const (
 	Label = "template"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldContent holds the string denoting the content field in the database.
+	FieldContent = "content"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
 	// FieldLangID holds the string denoting the lang_id field in the database.
 	FieldLangID = "lang_id"
 	// FieldUsedFor holds the string denoting the used_for field in the database.
 	FieldUsedFor = "used_for"
-	// FieldTitle holds the string denoting the title field in the database.
-	FieldTitle = "title"
-	// FieldContent holds the string denoting the content field in the database.
-	FieldContent = "content"
 	// FieldCreateAt holds the string denoting the create_at field in the database.
 	FieldCreateAt = "create_at"
 	// FieldUpdateAt holds the string denoting the update_at field in the database.
 	FieldUpdateAt = "update_at"
 	// FieldDeleteAt holds the string denoting the delete_at field in the database.
 	FieldDeleteAt = "delete_at"
+	// FieldTitle holds the string denoting the title field in the database.
+	FieldTitle = "title"
 	// Table holds the table name of the template in the database.
 	Table = "templates"
 )
@@ -34,14 +34,14 @@ const (
 // Columns holds all SQL columns for template fields.
 var Columns = []string{
 	FieldID,
+	FieldContent,
 	FieldAppID,
 	FieldLangID,
 	FieldUsedFor,
-	FieldTitle,
-	FieldContent,
 	FieldCreateAt,
 	FieldUpdateAt,
 	FieldDeleteAt,
+	FieldTitle,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

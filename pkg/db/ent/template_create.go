@@ -23,6 +23,12 @@ type TemplateCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetContent sets the "content" field.
+func (tc *TemplateCreate) SetContent(s string) *TemplateCreate {
+	tc.mutation.SetContent(s)
+	return tc
+}
+
 // SetAppID sets the "app_id" field.
 func (tc *TemplateCreate) SetAppID(u uuid.UUID) *TemplateCreate {
 	tc.mutation.SetAppID(u)
@@ -38,18 +44,6 @@ func (tc *TemplateCreate) SetLangID(u uuid.UUID) *TemplateCreate {
 // SetUsedFor sets the "used_for" field.
 func (tc *TemplateCreate) SetUsedFor(s string) *TemplateCreate {
 	tc.mutation.SetUsedFor(s)
-	return tc
-}
-
-// SetTitle sets the "title" field.
-func (tc *TemplateCreate) SetTitle(s string) *TemplateCreate {
-	tc.mutation.SetTitle(s)
-	return tc
-}
-
-// SetContent sets the "content" field.
-func (tc *TemplateCreate) SetContent(s string) *TemplateCreate {
-	tc.mutation.SetContent(s)
 	return tc
 }
 
@@ -92,6 +86,12 @@ func (tc *TemplateCreate) SetNillableDeleteAt(u *uint32) *TemplateCreate {
 	if u != nil {
 		tc.SetDeleteAt(*u)
 	}
+	return tc
+}
+
+// SetTitle sets the "title" field.
+func (tc *TemplateCreate) SetTitle(s string) *TemplateCreate {
+	tc.mutation.SetTitle(s)
 	return tc
 }
 
@@ -200,6 +200,9 @@ func (tc *TemplateCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TemplateCreate) check() error {
+	if _, ok := tc.mutation.Content(); !ok {
+		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Template.content"`)}
+	}
 	if _, ok := tc.mutation.AppID(); !ok {
 		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "Template.app_id"`)}
 	}
@@ -209,12 +212,6 @@ func (tc *TemplateCreate) check() error {
 	if _, ok := tc.mutation.UsedFor(); !ok {
 		return &ValidationError{Name: "used_for", err: errors.New(`ent: missing required field "Template.used_for"`)}
 	}
-	if _, ok := tc.mutation.Title(); !ok {
-		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Template.title"`)}
-	}
-	if _, ok := tc.mutation.Content(); !ok {
-		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Template.content"`)}
-	}
 	if _, ok := tc.mutation.CreateAt(); !ok {
 		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "Template.create_at"`)}
 	}
@@ -223,6 +220,9 @@ func (tc *TemplateCreate) check() error {
 	}
 	if _, ok := tc.mutation.DeleteAt(); !ok {
 		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "Template.delete_at"`)}
+	}
+	if _, ok := tc.mutation.Title(); !ok {
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Template.title"`)}
 	}
 	return nil
 }
@@ -261,6 +261,14 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
+	if value, ok := tc.mutation.Content(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: template.FieldContent,
+		})
+		_node.Content = value
+	}
 	if value, ok := tc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -284,22 +292,6 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 			Column: template.FieldUsedFor,
 		})
 		_node.UsedFor = value
-	}
-	if value, ok := tc.mutation.Title(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: template.FieldTitle,
-		})
-		_node.Title = value
-	}
-	if value, ok := tc.mutation.Content(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: template.FieldContent,
-		})
-		_node.Content = value
 	}
 	if value, ok := tc.mutation.CreateAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -325,6 +317,14 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 		})
 		_node.DeleteAt = value
 	}
+	if value, ok := tc.mutation.Title(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: template.FieldTitle,
+		})
+		_node.Title = value
+	}
 	return _node, _spec
 }
 
@@ -332,7 +332,7 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Template.Create().
-//		SetAppID(v).
+//		SetContent(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -341,7 +341,7 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TemplateUpsert) {
-//			SetAppID(v+v).
+//			SetContent(v+v).
 //		}).
 //		Exec(ctx)
 //
@@ -379,6 +379,18 @@ type (
 	}
 )
 
+// SetContent sets the "content" field.
+func (u *TemplateUpsert) SetContent(v string) *TemplateUpsert {
+	u.Set(template.FieldContent, v)
+	return u
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *TemplateUpsert) UpdateContent() *TemplateUpsert {
+	u.SetExcluded(template.FieldContent)
+	return u
+}
+
 // SetAppID sets the "app_id" field.
 func (u *TemplateUpsert) SetAppID(v uuid.UUID) *TemplateUpsert {
 	u.Set(template.FieldAppID, v)
@@ -412,30 +424,6 @@ func (u *TemplateUpsert) SetUsedFor(v string) *TemplateUpsert {
 // UpdateUsedFor sets the "used_for" field to the value that was provided on create.
 func (u *TemplateUpsert) UpdateUsedFor() *TemplateUpsert {
 	u.SetExcluded(template.FieldUsedFor)
-	return u
-}
-
-// SetTitle sets the "title" field.
-func (u *TemplateUpsert) SetTitle(v string) *TemplateUpsert {
-	u.Set(template.FieldTitle, v)
-	return u
-}
-
-// UpdateTitle sets the "title" field to the value that was provided on create.
-func (u *TemplateUpsert) UpdateTitle() *TemplateUpsert {
-	u.SetExcluded(template.FieldTitle)
-	return u
-}
-
-// SetContent sets the "content" field.
-func (u *TemplateUpsert) SetContent(v string) *TemplateUpsert {
-	u.Set(template.FieldContent, v)
-	return u
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *TemplateUpsert) UpdateContent() *TemplateUpsert {
-	u.SetExcluded(template.FieldContent)
 	return u
 }
 
@@ -493,6 +481,18 @@ func (u *TemplateUpsert) AddDeleteAt(v uint32) *TemplateUpsert {
 	return u
 }
 
+// SetTitle sets the "title" field.
+func (u *TemplateUpsert) SetTitle(v string) *TemplateUpsert {
+	u.Set(template.FieldTitle, v)
+	return u
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *TemplateUpsert) UpdateTitle() *TemplateUpsert {
+	u.SetExcluded(template.FieldTitle)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -543,6 +543,20 @@ func (u *TemplateUpsertOne) Update(set func(*TemplateUpsert)) *TemplateUpsertOne
 	return u
 }
 
+// SetContent sets the "content" field.
+func (u *TemplateUpsertOne) SetContent(v string) *TemplateUpsertOne {
+	return u.Update(func(s *TemplateUpsert) {
+		s.SetContent(v)
+	})
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *TemplateUpsertOne) UpdateContent() *TemplateUpsertOne {
+	return u.Update(func(s *TemplateUpsert) {
+		s.UpdateContent()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *TemplateUpsertOne) SetAppID(v uuid.UUID) *TemplateUpsertOne {
 	return u.Update(func(s *TemplateUpsert) {
@@ -582,34 +596,6 @@ func (u *TemplateUpsertOne) SetUsedFor(v string) *TemplateUpsertOne {
 func (u *TemplateUpsertOne) UpdateUsedFor() *TemplateUpsertOne {
 	return u.Update(func(s *TemplateUpsert) {
 		s.UpdateUsedFor()
-	})
-}
-
-// SetTitle sets the "title" field.
-func (u *TemplateUpsertOne) SetTitle(v string) *TemplateUpsertOne {
-	return u.Update(func(s *TemplateUpsert) {
-		s.SetTitle(v)
-	})
-}
-
-// UpdateTitle sets the "title" field to the value that was provided on create.
-func (u *TemplateUpsertOne) UpdateTitle() *TemplateUpsertOne {
-	return u.Update(func(s *TemplateUpsert) {
-		s.UpdateTitle()
-	})
-}
-
-// SetContent sets the "content" field.
-func (u *TemplateUpsertOne) SetContent(v string) *TemplateUpsertOne {
-	return u.Update(func(s *TemplateUpsert) {
-		s.SetContent(v)
-	})
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *TemplateUpsertOne) UpdateContent() *TemplateUpsertOne {
-	return u.Update(func(s *TemplateUpsert) {
-		s.UpdateContent()
 	})
 }
 
@@ -673,6 +659,20 @@ func (u *TemplateUpsertOne) AddDeleteAt(v uint32) *TemplateUpsertOne {
 func (u *TemplateUpsertOne) UpdateDeleteAt() *TemplateUpsertOne {
 	return u.Update(func(s *TemplateUpsert) {
 		s.UpdateDeleteAt()
+	})
+}
+
+// SetTitle sets the "title" field.
+func (u *TemplateUpsertOne) SetTitle(v string) *TemplateUpsertOne {
+	return u.Update(func(s *TemplateUpsert) {
+		s.SetTitle(v)
+	})
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *TemplateUpsertOne) UpdateTitle() *TemplateUpsertOne {
+	return u.Update(func(s *TemplateUpsert) {
+		s.UpdateTitle()
 	})
 }
 
@@ -808,7 +808,7 @@ func (tcb *TemplateCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TemplateUpsert) {
-//			SetAppID(v+v).
+//			SetContent(v+v).
 //		}).
 //		Exec(ctx)
 //
@@ -892,6 +892,20 @@ func (u *TemplateUpsertBulk) Update(set func(*TemplateUpsert)) *TemplateUpsertBu
 	return u
 }
 
+// SetContent sets the "content" field.
+func (u *TemplateUpsertBulk) SetContent(v string) *TemplateUpsertBulk {
+	return u.Update(func(s *TemplateUpsert) {
+		s.SetContent(v)
+	})
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *TemplateUpsertBulk) UpdateContent() *TemplateUpsertBulk {
+	return u.Update(func(s *TemplateUpsert) {
+		s.UpdateContent()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *TemplateUpsertBulk) SetAppID(v uuid.UUID) *TemplateUpsertBulk {
 	return u.Update(func(s *TemplateUpsert) {
@@ -931,34 +945,6 @@ func (u *TemplateUpsertBulk) SetUsedFor(v string) *TemplateUpsertBulk {
 func (u *TemplateUpsertBulk) UpdateUsedFor() *TemplateUpsertBulk {
 	return u.Update(func(s *TemplateUpsert) {
 		s.UpdateUsedFor()
-	})
-}
-
-// SetTitle sets the "title" field.
-func (u *TemplateUpsertBulk) SetTitle(v string) *TemplateUpsertBulk {
-	return u.Update(func(s *TemplateUpsert) {
-		s.SetTitle(v)
-	})
-}
-
-// UpdateTitle sets the "title" field to the value that was provided on create.
-func (u *TemplateUpsertBulk) UpdateTitle() *TemplateUpsertBulk {
-	return u.Update(func(s *TemplateUpsert) {
-		s.UpdateTitle()
-	})
-}
-
-// SetContent sets the "content" field.
-func (u *TemplateUpsertBulk) SetContent(v string) *TemplateUpsertBulk {
-	return u.Update(func(s *TemplateUpsert) {
-		s.SetContent(v)
-	})
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *TemplateUpsertBulk) UpdateContent() *TemplateUpsertBulk {
-	return u.Update(func(s *TemplateUpsert) {
-		s.UpdateContent()
 	})
 }
 
@@ -1022,6 +1008,20 @@ func (u *TemplateUpsertBulk) AddDeleteAt(v uint32) *TemplateUpsertBulk {
 func (u *TemplateUpsertBulk) UpdateDeleteAt() *TemplateUpsertBulk {
 	return u.Update(func(s *TemplateUpsert) {
 		s.UpdateDeleteAt()
+	})
+}
+
+// SetTitle sets the "title" field.
+func (u *TemplateUpsertBulk) SetTitle(v string) *TemplateUpsertBulk {
+	return u.Update(func(s *TemplateUpsert) {
+		s.SetTitle(v)
+	})
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *TemplateUpsertBulk) UpdateTitle() *TemplateUpsertBulk {
+	return u.Update(func(s *TemplateUpsert) {
+		s.UpdateTitle()
 	})
 }
 

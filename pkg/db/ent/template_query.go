@@ -255,12 +255,12 @@ func (tq *TemplateQuery) Clone() *TemplateQuery {
 // Example:
 //
 //	var v []struct {
-//		AppID uuid.UUID `json:"app_id,omitempty"`
+//		Content string `json:"content,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Template.Query().
-//		GroupBy(template.FieldAppID).
+//		GroupBy(template.FieldContent).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -282,11 +282,11 @@ func (tq *TemplateQuery) GroupBy(field string, fields ...string) *TemplateGroupB
 // Example:
 //
 //	var v []struct {
-//		AppID uuid.UUID `json:"app_id,omitempty"`
+//		Content string `json:"content,omitempty"`
 //	}
 //
 //	client.Template.Query().
-//		Select(template.FieldAppID).
+//		Select(template.FieldContent).
 //		Scan(ctx, &v)
 //
 func (tq *TemplateQuery) Select(fields ...string) *TemplateSelect {

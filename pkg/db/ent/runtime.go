@@ -99,17 +99,17 @@ func init() {
 	templateFields := schema.Template{}.Fields()
 	_ = templateFields
 	// templateDescCreateAt is the schema descriptor for create_at field.
-	templateDescCreateAt := templateFields[6].Descriptor()
+	templateDescCreateAt := templateFields[5].Descriptor()
 	// template.DefaultCreateAt holds the default value on creation for the create_at field.
 	template.DefaultCreateAt = templateDescCreateAt.Default.(func() uint32)
 	// templateDescUpdateAt is the schema descriptor for update_at field.
-	templateDescUpdateAt := templateFields[7].Descriptor()
+	templateDescUpdateAt := templateFields[6].Descriptor()
 	// template.DefaultUpdateAt holds the default value on creation for the update_at field.
 	template.DefaultUpdateAt = templateDescUpdateAt.Default.(func() uint32)
 	// template.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
 	template.UpdateDefaultUpdateAt = templateDescUpdateAt.UpdateDefault.(func() uint32)
 	// templateDescDeleteAt is the schema descriptor for delete_at field.
-	templateDescDeleteAt := templateFields[8].Descriptor()
+	templateDescDeleteAt := templateFields[7].Descriptor()
 	// template.DefaultDeleteAt holds the default value on creation for the delete_at field.
 	template.DefaultDeleteAt = templateDescDeleteAt.Default.(func() uint32)
 	// templateDescID is the schema descriptor for id field.

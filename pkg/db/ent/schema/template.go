@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"entgo.io/ent/schema/index"
 	"time"
 
 	"entgo.io/ent"
@@ -44,4 +45,11 @@ func (Template) Fields() []ent.Field {
 
 func (Template) Edges() []ent.Edge {
 	return nil
+}
+
+func (Template) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("app_id", "lang_id", "used_for").
+			Unique(),
+	}
 }
