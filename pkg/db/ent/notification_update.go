@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
@@ -73,7 +74,7 @@ func (nu *NotificationUpdate) SetNillableCreateAt(u *uint32) *NotificationUpdate
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (nu *NotificationUpdate) AddCreateAt(u uint32) *NotificationUpdate {
+func (nu *NotificationUpdate) AddCreateAt(u int32) *NotificationUpdate {
 	nu.mutation.AddCreateAt(u)
 	return nu
 }
@@ -86,7 +87,7 @@ func (nu *NotificationUpdate) SetUpdateAt(u uint32) *NotificationUpdate {
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (nu *NotificationUpdate) AddUpdateAt(u uint32) *NotificationUpdate {
+func (nu *NotificationUpdate) AddUpdateAt(u int32) *NotificationUpdate {
 	nu.mutation.AddUpdateAt(u)
 	return nu
 }
@@ -107,7 +108,7 @@ func (nu *NotificationUpdate) SetNillableDeleteAt(u *uint32) *NotificationUpdate
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (nu *NotificationUpdate) AddDeleteAt(u uint32) *NotificationUpdate {
+func (nu *NotificationUpdate) AddDeleteAt(u int32) *NotificationUpdate {
 	nu.mutation.AddDeleteAt(u)
 	return nu
 }
@@ -340,7 +341,7 @@ func (nuo *NotificationUpdateOne) SetNillableCreateAt(u *uint32) *NotificationUp
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (nuo *NotificationUpdateOne) AddCreateAt(u uint32) *NotificationUpdateOne {
+func (nuo *NotificationUpdateOne) AddCreateAt(u int32) *NotificationUpdateOne {
 	nuo.mutation.AddCreateAt(u)
 	return nuo
 }
@@ -353,7 +354,7 @@ func (nuo *NotificationUpdateOne) SetUpdateAt(u uint32) *NotificationUpdateOne {
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (nuo *NotificationUpdateOne) AddUpdateAt(u uint32) *NotificationUpdateOne {
+func (nuo *NotificationUpdateOne) AddUpdateAt(u int32) *NotificationUpdateOne {
 	nuo.mutation.AddUpdateAt(u)
 	return nuo
 }
@@ -374,7 +375,7 @@ func (nuo *NotificationUpdateOne) SetNillableDeleteAt(u *uint32) *NotificationUp
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (nuo *NotificationUpdateOne) AddDeleteAt(u uint32) *NotificationUpdateOne {
+func (nuo *NotificationUpdateOne) AddDeleteAt(u int32) *NotificationUpdateOne {
 	nuo.mutation.AddDeleteAt(u)
 	return nuo
 }
@@ -467,7 +468,7 @@ func (nuo *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificat
 	}
 	id, ok := nuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Notification.ID for update")}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Notification.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := nuo.fields; len(fields) > 0 {

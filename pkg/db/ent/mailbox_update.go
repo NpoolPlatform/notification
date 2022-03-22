@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
@@ -79,7 +80,7 @@ func (mbu *MailBoxUpdate) SetNillableCreateAt(u *uint32) *MailBoxUpdate {
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (mbu *MailBoxUpdate) AddCreateAt(u uint32) *MailBoxUpdate {
+func (mbu *MailBoxUpdate) AddCreateAt(u int32) *MailBoxUpdate {
 	mbu.mutation.AddCreateAt(u)
 	return mbu
 }
@@ -92,7 +93,7 @@ func (mbu *MailBoxUpdate) SetUpdateAt(u uint32) *MailBoxUpdate {
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (mbu *MailBoxUpdate) AddUpdateAt(u uint32) *MailBoxUpdate {
+func (mbu *MailBoxUpdate) AddUpdateAt(u int32) *MailBoxUpdate {
 	mbu.mutation.AddUpdateAt(u)
 	return mbu
 }
@@ -113,7 +114,7 @@ func (mbu *MailBoxUpdate) SetNillableDeleteAt(u *uint32) *MailBoxUpdate {
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (mbu *MailBoxUpdate) AddDeleteAt(u uint32) *MailBoxUpdate {
+func (mbu *MailBoxUpdate) AddDeleteAt(u int32) *MailBoxUpdate {
 	mbu.mutation.AddDeleteAt(u)
 	return mbu
 }
@@ -359,7 +360,7 @@ func (mbuo *MailBoxUpdateOne) SetNillableCreateAt(u *uint32) *MailBoxUpdateOne {
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (mbuo *MailBoxUpdateOne) AddCreateAt(u uint32) *MailBoxUpdateOne {
+func (mbuo *MailBoxUpdateOne) AddCreateAt(u int32) *MailBoxUpdateOne {
 	mbuo.mutation.AddCreateAt(u)
 	return mbuo
 }
@@ -372,7 +373,7 @@ func (mbuo *MailBoxUpdateOne) SetUpdateAt(u uint32) *MailBoxUpdateOne {
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (mbuo *MailBoxUpdateOne) AddUpdateAt(u uint32) *MailBoxUpdateOne {
+func (mbuo *MailBoxUpdateOne) AddUpdateAt(u int32) *MailBoxUpdateOne {
 	mbuo.mutation.AddUpdateAt(u)
 	return mbuo
 }
@@ -393,7 +394,7 @@ func (mbuo *MailBoxUpdateOne) SetNillableDeleteAt(u *uint32) *MailBoxUpdateOne {
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (mbuo *MailBoxUpdateOne) AddDeleteAt(u uint32) *MailBoxUpdateOne {
+func (mbuo *MailBoxUpdateOne) AddDeleteAt(u int32) *MailBoxUpdateOne {
 	mbuo.mutation.AddDeleteAt(u)
 	return mbuo
 }
@@ -486,7 +487,7 @@ func (mbuo *MailBoxUpdateOne) sqlSave(ctx context.Context) (_node *MailBox, err 
 	}
 	id, ok := mbuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing MailBox.ID for update")}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "MailBox.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := mbuo.fields; len(fields) > 0 {

@@ -12,6 +12,7 @@ import (
 	"github.com/NpoolPlatform/notification/pkg/db/ent/mailbox"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/readuser"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/template"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -36,6 +37,7 @@ func columnChecker(table string) func(string) error {
 		mailbox.Table:      mailbox.ValidColumn,
 		notification.Table: notification.ValidColumn,
 		readuser.Table:     readuser.ValidColumn,
+		template.Table:     template.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {
@@ -147,7 +149,7 @@ func Sum(field string) AggregateFunc {
 	}
 }
 
-// ValidationError returns when validating a field fails.
+// ValidationError returns when validating a field or edge fails.
 type ValidationError struct {
 	Name string // Field or edge name.
 	err  error

@@ -107,7 +107,7 @@ func (aq *AnnouncementQuery) FirstIDX(ctx context.Context) uuid.UUID {
 }
 
 // Only returns a single Announcement entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when exactly one Announcement entity is not found.
+// Returns a *NotSingularError when more than one Announcement entity is found.
 // Returns a *NotFoundError when no Announcement entities are found.
 func (aq *AnnouncementQuery) Only(ctx context.Context) (*Announcement, error) {
 	nodes, err := aq.Limit(2).All(ctx)
@@ -134,7 +134,7 @@ func (aq *AnnouncementQuery) OnlyX(ctx context.Context) *Announcement {
 }
 
 // OnlyID is like Only, but returns the only Announcement ID in the query.
-// Returns a *NotSingularError when exactly one Announcement ID is not found.
+// Returns a *NotSingularError when more than one Announcement ID is found.
 // Returns a *NotFoundError when no entities are found.
 func (aq *AnnouncementQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
@@ -243,8 +243,9 @@ func (aq *AnnouncementQuery) Clone() *AnnouncementQuery {
 		order:      append([]OrderFunc{}, aq.order...),
 		predicates: append([]predicate.Announcement{}, aq.predicates...),
 		// clone intermediate query.
-		sql:  aq.sql.Clone(),
-		path: aq.path,
+		sql:    aq.sql.Clone(),
+		path:   aq.path,
+		unique: aq.unique,
 	}
 }
 
@@ -337,6 +338,10 @@ func (aq *AnnouncementQuery) sqlAll(ctx context.Context) ([]*Announcement, error
 
 func (aq *AnnouncementQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := aq.querySpec()
+	_spec.Node.Columns = aq.fields
+	if len(aq.fields) > 0 {
+		_spec.Unique = aq.unique != nil && *aq.unique
+	}
 	return sqlgraph.CountNodes(ctx, aq.driver, _spec)
 }
 
@@ -407,6 +412,9 @@ func (aq *AnnouncementQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if aq.sql != nil {
 		selector = aq.sql
 		selector.Select(selector.Columns(columns...)...)
+	}
+	if aq.unique != nil && *aq.unique {
+		selector.Distinct()
 	}
 	for _, p := range aq.predicates {
 		p(selector)
@@ -686,9 +694,7 @@ func (agb *AnnouncementGroupBy) sqlQuery() *sql.Selector {
 		for _, f := range agb.fields {
 			columns = append(columns, selector.C(f))
 		}
-		for _, c := range aggregation {
-			columns = append(columns, c)
-		}
+		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
 	return selector.GroupBy(selector.Columns(agb.fields...)...)

@@ -1,13 +1,10 @@
 package main
 
 import (
-	"time"
-
 	"github.com/NpoolPlatform/notification/api"
 	db "github.com/NpoolPlatform/notification/pkg/db"
 	msgcli "github.com/NpoolPlatform/notification/pkg/message/client"
 	msglistener "github.com/NpoolPlatform/notification/pkg/message/listener"
-	msg "github.com/NpoolPlatform/notification/pkg/message/message"
 	msgsrv "github.com/NpoolPlatform/notification/pkg/message/server"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -44,7 +41,6 @@ var runCmd = &cli.Command{
 		}
 
 		go msglistener.Listen()
-		go msgSender()
 
 		return grpc2.RunGRPCGateWay(rpcGatewayRegister)
 	},
@@ -64,21 +60,4 @@ func rpcGatewayRegister(mux *runtime.ServeMux, endpoint string, opts []grpc.Dial
 	apimgrcli.Register(mux)
 
 	return nil
-}
-
-func msgSender() {
-	id := 0
-	for {
-		logger.Sugar().Infof("send example")
-		err := msgsrv.PublishExample(&msg.Example{
-			ID:      id,
-			Example: "hello world",
-		})
-		if err != nil {
-			logger.Sugar().Errorf("fail to send example: %v", err)
-			return
-		}
-		id++
-		time.Sleep(3 * time.Second)
-	}
 }

@@ -28,6 +28,7 @@ type hooks struct {
 	MailBox      []ent.Hook
 	Notification []ent.Hook
 	ReadUser     []ent.Hook
+	Template     []ent.Hook
 }
 
 // Options applies the options on the config object.

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
@@ -61,7 +62,7 @@ func (au *AnnouncementUpdate) SetNillableCreateAt(u *uint32) *AnnouncementUpdate
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (au *AnnouncementUpdate) AddCreateAt(u uint32) *AnnouncementUpdate {
+func (au *AnnouncementUpdate) AddCreateAt(u int32) *AnnouncementUpdate {
 	au.mutation.AddCreateAt(u)
 	return au
 }
@@ -74,7 +75,7 @@ func (au *AnnouncementUpdate) SetUpdateAt(u uint32) *AnnouncementUpdate {
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (au *AnnouncementUpdate) AddUpdateAt(u uint32) *AnnouncementUpdate {
+func (au *AnnouncementUpdate) AddUpdateAt(u int32) *AnnouncementUpdate {
 	au.mutation.AddUpdateAt(u)
 	return au
 }
@@ -95,7 +96,7 @@ func (au *AnnouncementUpdate) SetNillableDeleteAt(u *uint32) *AnnouncementUpdate
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (au *AnnouncementUpdate) AddDeleteAt(u uint32) *AnnouncementUpdate {
+func (au *AnnouncementUpdate) AddDeleteAt(u int32) *AnnouncementUpdate {
 	au.mutation.AddDeleteAt(u)
 	return au
 }
@@ -302,7 +303,7 @@ func (auo *AnnouncementUpdateOne) SetNillableCreateAt(u *uint32) *AnnouncementUp
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (auo *AnnouncementUpdateOne) AddCreateAt(u uint32) *AnnouncementUpdateOne {
+func (auo *AnnouncementUpdateOne) AddCreateAt(u int32) *AnnouncementUpdateOne {
 	auo.mutation.AddCreateAt(u)
 	return auo
 }
@@ -315,7 +316,7 @@ func (auo *AnnouncementUpdateOne) SetUpdateAt(u uint32) *AnnouncementUpdateOne {
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (auo *AnnouncementUpdateOne) AddUpdateAt(u uint32) *AnnouncementUpdateOne {
+func (auo *AnnouncementUpdateOne) AddUpdateAt(u int32) *AnnouncementUpdateOne {
 	auo.mutation.AddUpdateAt(u)
 	return auo
 }
@@ -336,7 +337,7 @@ func (auo *AnnouncementUpdateOne) SetNillableDeleteAt(u *uint32) *AnnouncementUp
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (auo *AnnouncementUpdateOne) AddDeleteAt(u uint32) *AnnouncementUpdateOne {
+func (auo *AnnouncementUpdateOne) AddDeleteAt(u int32) *AnnouncementUpdateOne {
 	auo.mutation.AddDeleteAt(u)
 	return auo
 }
@@ -429,7 +430,7 @@ func (auo *AnnouncementUpdateOne) sqlSave(ctx context.Context) (_node *Announcem
 	}
 	id, ok := auo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Announcement.ID for update")}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Announcement.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := auo.fields; len(fields) > 0 {

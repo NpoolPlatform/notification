@@ -89,6 +89,14 @@ func (ruc *ReadUserCreate) SetID(u uuid.UUID) *ReadUserCreate {
 	return ruc
 }
 
+// SetNillableID sets the "id" field if the given value is not nil.
+func (ruc *ReadUserCreate) SetNillableID(u *uuid.UUID) *ReadUserCreate {
+	if u != nil {
+		ruc.SetID(*u)
+	}
+	return ruc
+}
+
 // Mutation returns the ReadUserMutation object of the builder.
 func (ruc *ReadUserCreate) Mutation() *ReadUserMutation {
 	return ruc.mutation
@@ -181,22 +189,22 @@ func (ruc *ReadUserCreate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (ruc *ReadUserCreate) check() error {
 	if _, ok := ruc.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "app_id"`)}
+		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "ReadUser.app_id"`)}
 	}
 	if _, ok := ruc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "user_id"`)}
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "ReadUser.user_id"`)}
 	}
 	if _, ok := ruc.mutation.AnnouncementID(); !ok {
-		return &ValidationError{Name: "announcement_id", err: errors.New(`ent: missing required field "announcement_id"`)}
+		return &ValidationError{Name: "announcement_id", err: errors.New(`ent: missing required field "ReadUser.announcement_id"`)}
 	}
 	if _, ok := ruc.mutation.CreateAt(); !ok {
-		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "create_at"`)}
+		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "ReadUser.create_at"`)}
 	}
 	if _, ok := ruc.mutation.UpdateAt(); !ok {
-		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "update_at"`)}
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "ReadUser.update_at"`)}
 	}
 	if _, ok := ruc.mutation.DeleteAt(); !ok {
-		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "delete_at"`)}
+		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "ReadUser.delete_at"`)}
 	}
 	return nil
 }
@@ -210,7 +218,11 @@ func (ruc *ReadUserCreate) sqlSave(ctx context.Context) (*ReadUser, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		_node.ID = _spec.ID.Value.(uuid.UUID)
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
 	}
 	return _node, nil
 }
@@ -229,7 +241,7 @@ func (ruc *ReadUserCreate) createSpec() (*ReadUser, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = ruc.conflict
 	if id, ok := ruc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = id
+		_spec.ID.Value = &id
 	}
 	if value, ok := ruc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -381,6 +393,12 @@ func (u *ReadUserUpsert) UpdateCreateAt() *ReadUserUpsert {
 	return u
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *ReadUserUpsert) AddCreateAt(v uint32) *ReadUserUpsert {
+	u.Add(readuser.FieldCreateAt, v)
+	return u
+}
+
 // SetUpdateAt sets the "update_at" field.
 func (u *ReadUserUpsert) SetUpdateAt(v uint32) *ReadUserUpsert {
 	u.Set(readuser.FieldUpdateAt, v)
@@ -390,6 +408,12 @@ func (u *ReadUserUpsert) SetUpdateAt(v uint32) *ReadUserUpsert {
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *ReadUserUpsert) UpdateUpdateAt() *ReadUserUpsert {
 	u.SetExcluded(readuser.FieldUpdateAt)
+	return u
+}
+
+// AddUpdateAt adds v to the "update_at" field.
+func (u *ReadUserUpsert) AddUpdateAt(v uint32) *ReadUserUpsert {
+	u.Add(readuser.FieldUpdateAt, v)
 	return u
 }
 
@@ -405,7 +429,13 @@ func (u *ReadUserUpsert) UpdateDeleteAt() *ReadUserUpsert {
 	return u
 }
 
-// UpdateNewValues updates the fields using the new values that were set on create except the ID field.
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *ReadUserUpsert) AddDeleteAt(v uint32) *ReadUserUpsert {
+	u.Add(readuser.FieldDeleteAt, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.ReadUser.Create().
@@ -504,6 +534,13 @@ func (u *ReadUserUpsertOne) SetCreateAt(v uint32) *ReadUserUpsertOne {
 	})
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *ReadUserUpsertOne) AddCreateAt(v uint32) *ReadUserUpsertOne {
+	return u.Update(func(s *ReadUserUpsert) {
+		s.AddCreateAt(v)
+	})
+}
+
 // UpdateCreateAt sets the "create_at" field to the value that was provided on create.
 func (u *ReadUserUpsertOne) UpdateCreateAt() *ReadUserUpsertOne {
 	return u.Update(func(s *ReadUserUpsert) {
@@ -518,6 +555,13 @@ func (u *ReadUserUpsertOne) SetUpdateAt(v uint32) *ReadUserUpsertOne {
 	})
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *ReadUserUpsertOne) AddUpdateAt(v uint32) *ReadUserUpsertOne {
+	return u.Update(func(s *ReadUserUpsert) {
+		s.AddUpdateAt(v)
+	})
+}
+
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *ReadUserUpsertOne) UpdateUpdateAt() *ReadUserUpsertOne {
 	return u.Update(func(s *ReadUserUpsert) {
@@ -529,6 +573,13 @@ func (u *ReadUserUpsertOne) UpdateUpdateAt() *ReadUserUpsertOne {
 func (u *ReadUserUpsertOne) SetDeleteAt(v uint32) *ReadUserUpsertOne {
 	return u.Update(func(s *ReadUserUpsert) {
 		s.SetDeleteAt(v)
+	})
+}
+
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *ReadUserUpsertOne) AddDeleteAt(v uint32) *ReadUserUpsertOne {
+	return u.Update(func(s *ReadUserUpsert) {
+		s.AddDeleteAt(v)
 	})
 }
 
@@ -702,7 +753,7 @@ type ReadUserUpsertBulk struct {
 	create *ReadUserCreateBulk
 }
 
-// UpdateNewValues updates the fields using the new values that
+// UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
 //	client.ReadUser.Create().
@@ -804,6 +855,13 @@ func (u *ReadUserUpsertBulk) SetCreateAt(v uint32) *ReadUserUpsertBulk {
 	})
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *ReadUserUpsertBulk) AddCreateAt(v uint32) *ReadUserUpsertBulk {
+	return u.Update(func(s *ReadUserUpsert) {
+		s.AddCreateAt(v)
+	})
+}
+
 // UpdateCreateAt sets the "create_at" field to the value that was provided on create.
 func (u *ReadUserUpsertBulk) UpdateCreateAt() *ReadUserUpsertBulk {
 	return u.Update(func(s *ReadUserUpsert) {
@@ -818,6 +876,13 @@ func (u *ReadUserUpsertBulk) SetUpdateAt(v uint32) *ReadUserUpsertBulk {
 	})
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *ReadUserUpsertBulk) AddUpdateAt(v uint32) *ReadUserUpsertBulk {
+	return u.Update(func(s *ReadUserUpsert) {
+		s.AddUpdateAt(v)
+	})
+}
+
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *ReadUserUpsertBulk) UpdateUpdateAt() *ReadUserUpsertBulk {
 	return u.Update(func(s *ReadUserUpsert) {
@@ -829,6 +894,13 @@ func (u *ReadUserUpsertBulk) UpdateUpdateAt() *ReadUserUpsertBulk {
 func (u *ReadUserUpsertBulk) SetDeleteAt(v uint32) *ReadUserUpsertBulk {
 	return u.Update(func(s *ReadUserUpsert) {
 		s.SetDeleteAt(v)
+	})
+}
+
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *ReadUserUpsertBulk) AddDeleteAt(v uint32) *ReadUserUpsertBulk {
+	return u.Update(func(s *ReadUserUpsert) {
+		s.AddDeleteAt(v)
 	})
 }
 

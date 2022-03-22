@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/readuser"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/schema"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/template"
 	"github.com/google/uuid"
 )
 
@@ -95,4 +96,24 @@ func init() {
 	readuserDescID := readuserFields[0].Descriptor()
 	// readuser.DefaultID holds the default value on creation for the id field.
 	readuser.DefaultID = readuserDescID.Default.(func() uuid.UUID)
+	templateFields := schema.Template{}.Fields()
+	_ = templateFields
+	// templateDescCreateAt is the schema descriptor for create_at field.
+	templateDescCreateAt := templateFields[5].Descriptor()
+	// template.DefaultCreateAt holds the default value on creation for the create_at field.
+	template.DefaultCreateAt = templateDescCreateAt.Default.(func() uint32)
+	// templateDescUpdateAt is the schema descriptor for update_at field.
+	templateDescUpdateAt := templateFields[6].Descriptor()
+	// template.DefaultUpdateAt holds the default value on creation for the update_at field.
+	template.DefaultUpdateAt = templateDescUpdateAt.Default.(func() uint32)
+	// template.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
+	template.UpdateDefaultUpdateAt = templateDescUpdateAt.UpdateDefault.(func() uint32)
+	// templateDescDeleteAt is the schema descriptor for delete_at field.
+	templateDescDeleteAt := templateFields[7].Descriptor()
+	// template.DefaultDeleteAt holds the default value on creation for the delete_at field.
+	template.DefaultDeleteAt = templateDescDeleteAt.Default.(func() uint32)
+	// templateDescID is the schema descriptor for id field.
+	templateDescID := templateFields[0].Descriptor()
+	// template.DefaultID holds the default value on creation for the id field.
+	template.DefaultID = templateDescID.Default.(func() uuid.UUID)
 }

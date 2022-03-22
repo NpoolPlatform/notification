@@ -107,7 +107,7 @@ func (mbq *MailBoxQuery) FirstIDX(ctx context.Context) uuid.UUID {
 }
 
 // Only returns a single MailBox entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when exactly one MailBox entity is not found.
+// Returns a *NotSingularError when more than one MailBox entity is found.
 // Returns a *NotFoundError when no MailBox entities are found.
 func (mbq *MailBoxQuery) Only(ctx context.Context) (*MailBox, error) {
 	nodes, err := mbq.Limit(2).All(ctx)
@@ -134,7 +134,7 @@ func (mbq *MailBoxQuery) OnlyX(ctx context.Context) *MailBox {
 }
 
 // OnlyID is like Only, but returns the only MailBox ID in the query.
-// Returns a *NotSingularError when exactly one MailBox ID is not found.
+// Returns a *NotSingularError when more than one MailBox ID is found.
 // Returns a *NotFoundError when no entities are found.
 func (mbq *MailBoxQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
@@ -243,8 +243,9 @@ func (mbq *MailBoxQuery) Clone() *MailBoxQuery {
 		order:      append([]OrderFunc{}, mbq.order...),
 		predicates: append([]predicate.MailBox{}, mbq.predicates...),
 		// clone intermediate query.
-		sql:  mbq.sql.Clone(),
-		path: mbq.path,
+		sql:    mbq.sql.Clone(),
+		path:   mbq.path,
+		unique: mbq.unique,
 	}
 }
 
@@ -337,6 +338,10 @@ func (mbq *MailBoxQuery) sqlAll(ctx context.Context) ([]*MailBox, error) {
 
 func (mbq *MailBoxQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mbq.querySpec()
+	_spec.Node.Columns = mbq.fields
+	if len(mbq.fields) > 0 {
+		_spec.Unique = mbq.unique != nil && *mbq.unique
+	}
 	return sqlgraph.CountNodes(ctx, mbq.driver, _spec)
 }
 
@@ -407,6 +412,9 @@ func (mbq *MailBoxQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if mbq.sql != nil {
 		selector = mbq.sql
 		selector.Select(selector.Columns(columns...)...)
+	}
+	if mbq.unique != nil && *mbq.unique {
+		selector.Distinct()
 	}
 	for _, p := range mbq.predicates {
 		p(selector)
@@ -686,9 +694,7 @@ func (mbgb *MailBoxGroupBy) sqlQuery() *sql.Selector {
 		for _, f := range mbgb.fields {
 			columns = append(columns, selector.C(f))
 		}
-		for _, c := range aggregation {
-			columns = append(columns, c)
-		}
+		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
 	return selector.GroupBy(selector.Columns(mbgb.fields...)...)
