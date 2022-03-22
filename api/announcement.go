@@ -6,7 +6,7 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/NpoolPlatform/notification/message/npool"
+	npool "github.com/NpoolPlatform/message/npool/notification"
 	crud "github.com/NpoolPlatform/notification/pkg/crud/announcement"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

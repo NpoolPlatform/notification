@@ -17,3 +17,6 @@ type Notification func(*sql.Selector)
 
 // ReadUser is the predicate function for readuser builders.
 type ReadUser func(*sql.Selector)
+
+// Template is the predicate function for template builders.
+type Template func(*sql.Selector)

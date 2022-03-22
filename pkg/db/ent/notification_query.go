@@ -107,7 +107,7 @@ func (nq *NotificationQuery) FirstIDX(ctx context.Context) uuid.UUID {
 }
 
 // Only returns a single Notification entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when exactly one Notification entity is not found.
+// Returns a *NotSingularError when more than one Notification entity is found.
 // Returns a *NotFoundError when no Notification entities are found.
 func (nq *NotificationQuery) Only(ctx context.Context) (*Notification, error) {
 	nodes, err := nq.Limit(2).All(ctx)
@@ -134,7 +134,7 @@ func (nq *NotificationQuery) OnlyX(ctx context.Context) *Notification {
 }
 
 // OnlyID is like Only, but returns the only Notification ID in the query.
-// Returns a *NotSingularError when exactly one Notification ID is not found.
+// Returns a *NotSingularError when more than one Notification ID is found.
 // Returns a *NotFoundError when no entities are found.
 func (nq *NotificationQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
@@ -243,8 +243,9 @@ func (nq *NotificationQuery) Clone() *NotificationQuery {
 		order:      append([]OrderFunc{}, nq.order...),
 		predicates: append([]predicate.Notification{}, nq.predicates...),
 		// clone intermediate query.
-		sql:  nq.sql.Clone(),
-		path: nq.path,
+		sql:    nq.sql.Clone(),
+		path:   nq.path,
+		unique: nq.unique,
 	}
 }
 
@@ -337,6 +338,10 @@ func (nq *NotificationQuery) sqlAll(ctx context.Context) ([]*Notification, error
 
 func (nq *NotificationQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := nq.querySpec()
+	_spec.Node.Columns = nq.fields
+	if len(nq.fields) > 0 {
+		_spec.Unique = nq.unique != nil && *nq.unique
+	}
 	return sqlgraph.CountNodes(ctx, nq.driver, _spec)
 }
 
@@ -407,6 +412,9 @@ func (nq *NotificationQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if nq.sql != nil {
 		selector = nq.sql
 		selector.Select(selector.Columns(columns...)...)
+	}
+	if nq.unique != nil && *nq.unique {
+		selector.Distinct()
 	}
 	for _, p := range nq.predicates {
 		p(selector)
@@ -686,9 +694,7 @@ func (ngb *NotificationGroupBy) sqlQuery() *sql.Selector {
 		for _, f := range ngb.fields {
 			columns = append(columns, selector.C(f))
 		}
-		for _, c := range aggregation {
-			columns = append(columns, c)
-		}
+		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
 	return selector.GroupBy(selector.Columns(ngb.fields...)...)

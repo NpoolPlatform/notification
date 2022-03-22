@@ -77,12 +77,31 @@ var (
 		Columns:    ReadUsersColumns,
 		PrimaryKey: []*schema.Column{ReadUsersColumns[0]},
 	}
+	// TemplatesColumns holds the columns for the "templates" table.
+	TemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID},
+		{Name: "lang_id", Type: field.TypeUUID},
+		{Name: "used_for", Type: field.TypeString},
+		{Name: "title", Type: field.TypeString},
+		{Name: "content", Type: field.TypeString},
+		{Name: "create_at", Type: field.TypeUint32},
+		{Name: "update_at", Type: field.TypeUint32},
+		{Name: "delete_at", Type: field.TypeUint32},
+	}
+	// TemplatesTable holds the schema information for the "templates" table.
+	TemplatesTable = &schema.Table{
+		Name:       "templates",
+		Columns:    TemplatesColumns,
+		PrimaryKey: []*schema.Column{TemplatesColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AnnouncementsTable,
 		MailBoxesTable,
 		NotificationsTable,
 		ReadUsersTable,
+		TemplatesTable,
 	}
 )
 

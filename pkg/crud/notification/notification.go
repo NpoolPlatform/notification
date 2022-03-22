@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/NpoolPlatform/notification/message/npool"
+	npool "github.com/NpoolPlatform/message/npool/notification"
 	"github.com/NpoolPlatform/notification/pkg/db"
 	"github.com/NpoolPlatform/notification/pkg/db/ent"
 	"github.com/NpoolPlatform/notification/pkg/db/ent/notification"

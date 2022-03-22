@@ -107,7 +107,7 @@ func (ruq *ReadUserQuery) FirstIDX(ctx context.Context) uuid.UUID {
 }
 
 // Only returns a single ReadUser entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when exactly one ReadUser entity is not found.
+// Returns a *NotSingularError when more than one ReadUser entity is found.
 // Returns a *NotFoundError when no ReadUser entities are found.
 func (ruq *ReadUserQuery) Only(ctx context.Context) (*ReadUser, error) {
 	nodes, err := ruq.Limit(2).All(ctx)
@@ -134,7 +134,7 @@ func (ruq *ReadUserQuery) OnlyX(ctx context.Context) *ReadUser {
 }
 
 // OnlyID is like Only, but returns the only ReadUser ID in the query.
-// Returns a *NotSingularError when exactly one ReadUser ID is not found.
+// Returns a *NotSingularError when more than one ReadUser ID is found.
 // Returns a *NotFoundError when no entities are found.
 func (ruq *ReadUserQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
@@ -243,8 +243,9 @@ func (ruq *ReadUserQuery) Clone() *ReadUserQuery {
 		order:      append([]OrderFunc{}, ruq.order...),
 		predicates: append([]predicate.ReadUser{}, ruq.predicates...),
 		// clone intermediate query.
-		sql:  ruq.sql.Clone(),
-		path: ruq.path,
+		sql:    ruq.sql.Clone(),
+		path:   ruq.path,
+		unique: ruq.unique,
 	}
 }
 
@@ -337,6 +338,10 @@ func (ruq *ReadUserQuery) sqlAll(ctx context.Context) ([]*ReadUser, error) {
 
 func (ruq *ReadUserQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := ruq.querySpec()
+	_spec.Node.Columns = ruq.fields
+	if len(ruq.fields) > 0 {
+		_spec.Unique = ruq.unique != nil && *ruq.unique
+	}
 	return sqlgraph.CountNodes(ctx, ruq.driver, _spec)
 }
 
@@ -407,6 +412,9 @@ func (ruq *ReadUserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if ruq.sql != nil {
 		selector = ruq.sql
 		selector.Select(selector.Columns(columns...)...)
+	}
+	if ruq.unique != nil && *ruq.unique {
+		selector.Distinct()
 	}
 	for _, p := range ruq.predicates {
 		p(selector)
@@ -686,9 +694,7 @@ func (rugb *ReadUserGroupBy) sqlQuery() *sql.Selector {
 		for _, f := range rugb.fields {
 			columns = append(columns, selector.C(f))
 		}
-		for _, c := range aggregation {
-			columns = append(columns, c)
-		}
+		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
 	return selector.GroupBy(selector.Columns(rugb.fields...)...)

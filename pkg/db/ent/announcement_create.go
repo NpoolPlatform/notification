@@ -89,6 +89,14 @@ func (ac *AnnouncementCreate) SetID(u uuid.UUID) *AnnouncementCreate {
 	return ac
 }
 
+// SetNillableID sets the "id" field if the given value is not nil.
+func (ac *AnnouncementCreate) SetNillableID(u *uuid.UUID) *AnnouncementCreate {
+	if u != nil {
+		ac.SetID(*u)
+	}
+	return ac
+}
+
 // Mutation returns the AnnouncementMutation object of the builder.
 func (ac *AnnouncementCreate) Mutation() *AnnouncementMutation {
 	return ac.mutation
@@ -181,22 +189,22 @@ func (ac *AnnouncementCreate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (ac *AnnouncementCreate) check() error {
 	if _, ok := ac.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "app_id"`)}
+		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "Announcement.app_id"`)}
 	}
 	if _, ok := ac.mutation.Title(); !ok {
-		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Announcement.title"`)}
 	}
 	if _, ok := ac.mutation.Content(); !ok {
-		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "content"`)}
+		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Announcement.content"`)}
 	}
 	if _, ok := ac.mutation.CreateAt(); !ok {
-		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "create_at"`)}
+		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "Announcement.create_at"`)}
 	}
 	if _, ok := ac.mutation.UpdateAt(); !ok {
-		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "update_at"`)}
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "Announcement.update_at"`)}
 	}
 	if _, ok := ac.mutation.DeleteAt(); !ok {
-		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "delete_at"`)}
+		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "Announcement.delete_at"`)}
 	}
 	return nil
 }
@@ -210,7 +218,11 @@ func (ac *AnnouncementCreate) sqlSave(ctx context.Context) (*Announcement, error
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		_node.ID = _spec.ID.Value.(uuid.UUID)
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
 	}
 	return _node, nil
 }
@@ -229,7 +241,7 @@ func (ac *AnnouncementCreate) createSpec() (*Announcement, *sqlgraph.CreateSpec)
 	_spec.OnConflict = ac.conflict
 	if id, ok := ac.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = id
+		_spec.ID.Value = &id
 	}
 	if value, ok := ac.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -381,6 +393,12 @@ func (u *AnnouncementUpsert) UpdateCreateAt() *AnnouncementUpsert {
 	return u
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *AnnouncementUpsert) AddCreateAt(v uint32) *AnnouncementUpsert {
+	u.Add(announcement.FieldCreateAt, v)
+	return u
+}
+
 // SetUpdateAt sets the "update_at" field.
 func (u *AnnouncementUpsert) SetUpdateAt(v uint32) *AnnouncementUpsert {
 	u.Set(announcement.FieldUpdateAt, v)
@@ -390,6 +408,12 @@ func (u *AnnouncementUpsert) SetUpdateAt(v uint32) *AnnouncementUpsert {
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *AnnouncementUpsert) UpdateUpdateAt() *AnnouncementUpsert {
 	u.SetExcluded(announcement.FieldUpdateAt)
+	return u
+}
+
+// AddUpdateAt adds v to the "update_at" field.
+func (u *AnnouncementUpsert) AddUpdateAt(v uint32) *AnnouncementUpsert {
+	u.Add(announcement.FieldUpdateAt, v)
 	return u
 }
 
@@ -405,7 +429,13 @@ func (u *AnnouncementUpsert) UpdateDeleteAt() *AnnouncementUpsert {
 	return u
 }
 
-// UpdateNewValues updates the fields using the new values that were set on create except the ID field.
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *AnnouncementUpsert) AddDeleteAt(v uint32) *AnnouncementUpsert {
+	u.Add(announcement.FieldDeleteAt, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.Announcement.Create().
@@ -504,6 +534,13 @@ func (u *AnnouncementUpsertOne) SetCreateAt(v uint32) *AnnouncementUpsertOne {
 	})
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *AnnouncementUpsertOne) AddCreateAt(v uint32) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.AddCreateAt(v)
+	})
+}
+
 // UpdateCreateAt sets the "create_at" field to the value that was provided on create.
 func (u *AnnouncementUpsertOne) UpdateCreateAt() *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
@@ -518,6 +555,13 @@ func (u *AnnouncementUpsertOne) SetUpdateAt(v uint32) *AnnouncementUpsertOne {
 	})
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *AnnouncementUpsertOne) AddUpdateAt(v uint32) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.AddUpdateAt(v)
+	})
+}
+
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *AnnouncementUpsertOne) UpdateUpdateAt() *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
@@ -529,6 +573,13 @@ func (u *AnnouncementUpsertOne) UpdateUpdateAt() *AnnouncementUpsertOne {
 func (u *AnnouncementUpsertOne) SetDeleteAt(v uint32) *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
 		s.SetDeleteAt(v)
+	})
+}
+
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *AnnouncementUpsertOne) AddDeleteAt(v uint32) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.AddDeleteAt(v)
 	})
 }
 
@@ -702,7 +753,7 @@ type AnnouncementUpsertBulk struct {
 	create *AnnouncementCreateBulk
 }
 
-// UpdateNewValues updates the fields using the new values that
+// UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
 //	client.Announcement.Create().
@@ -804,6 +855,13 @@ func (u *AnnouncementUpsertBulk) SetCreateAt(v uint32) *AnnouncementUpsertBulk {
 	})
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *AnnouncementUpsertBulk) AddCreateAt(v uint32) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.AddCreateAt(v)
+	})
+}
+
 // UpdateCreateAt sets the "create_at" field to the value that was provided on create.
 func (u *AnnouncementUpsertBulk) UpdateCreateAt() *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
@@ -818,6 +876,13 @@ func (u *AnnouncementUpsertBulk) SetUpdateAt(v uint32) *AnnouncementUpsertBulk {
 	})
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *AnnouncementUpsertBulk) AddUpdateAt(v uint32) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.AddUpdateAt(v)
+	})
+}
+
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *AnnouncementUpsertBulk) UpdateUpdateAt() *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
@@ -829,6 +894,13 @@ func (u *AnnouncementUpsertBulk) UpdateUpdateAt() *AnnouncementUpsertBulk {
 func (u *AnnouncementUpsertBulk) SetDeleteAt(v uint32) *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
 		s.SetDeleteAt(v)
+	})
+}
+
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *AnnouncementUpsertBulk) AddDeleteAt(v uint32) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.AddDeleteAt(v)
 	})
 }
 

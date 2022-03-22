@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
@@ -61,7 +62,7 @@ func (ruu *ReadUserUpdate) SetNillableCreateAt(u *uint32) *ReadUserUpdate {
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (ruu *ReadUserUpdate) AddCreateAt(u uint32) *ReadUserUpdate {
+func (ruu *ReadUserUpdate) AddCreateAt(u int32) *ReadUserUpdate {
 	ruu.mutation.AddCreateAt(u)
 	return ruu
 }
@@ -74,7 +75,7 @@ func (ruu *ReadUserUpdate) SetUpdateAt(u uint32) *ReadUserUpdate {
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (ruu *ReadUserUpdate) AddUpdateAt(u uint32) *ReadUserUpdate {
+func (ruu *ReadUserUpdate) AddUpdateAt(u int32) *ReadUserUpdate {
 	ruu.mutation.AddUpdateAt(u)
 	return ruu
 }
@@ -95,7 +96,7 @@ func (ruu *ReadUserUpdate) SetNillableDeleteAt(u *uint32) *ReadUserUpdate {
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (ruu *ReadUserUpdate) AddDeleteAt(u uint32) *ReadUserUpdate {
+func (ruu *ReadUserUpdate) AddDeleteAt(u int32) *ReadUserUpdate {
 	ruu.mutation.AddDeleteAt(u)
 	return ruu
 }
@@ -302,7 +303,7 @@ func (ruuo *ReadUserUpdateOne) SetNillableCreateAt(u *uint32) *ReadUserUpdateOne
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (ruuo *ReadUserUpdateOne) AddCreateAt(u uint32) *ReadUserUpdateOne {
+func (ruuo *ReadUserUpdateOne) AddCreateAt(u int32) *ReadUserUpdateOne {
 	ruuo.mutation.AddCreateAt(u)
 	return ruuo
 }
@@ -315,7 +316,7 @@ func (ruuo *ReadUserUpdateOne) SetUpdateAt(u uint32) *ReadUserUpdateOne {
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (ruuo *ReadUserUpdateOne) AddUpdateAt(u uint32) *ReadUserUpdateOne {
+func (ruuo *ReadUserUpdateOne) AddUpdateAt(u int32) *ReadUserUpdateOne {
 	ruuo.mutation.AddUpdateAt(u)
 	return ruuo
 }
@@ -336,7 +337,7 @@ func (ruuo *ReadUserUpdateOne) SetNillableDeleteAt(u *uint32) *ReadUserUpdateOne
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (ruuo *ReadUserUpdateOne) AddDeleteAt(u uint32) *ReadUserUpdateOne {
+func (ruuo *ReadUserUpdateOne) AddDeleteAt(u int32) *ReadUserUpdateOne {
 	ruuo.mutation.AddDeleteAt(u)
 	return ruuo
 }
@@ -429,7 +430,7 @@ func (ruuo *ReadUserUpdateOne) sqlSave(ctx context.Context) (_node *ReadUser, er
 	}
 	id, ok := ruuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing ReadUser.ID for update")}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ReadUser.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := ruuo.fields; len(fields) > 0 {

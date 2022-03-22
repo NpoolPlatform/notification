@@ -101,6 +101,14 @@ func (nc *NotificationCreate) SetID(u uuid.UUID) *NotificationCreate {
 	return nc
 }
 
+// SetNillableID sets the "id" field if the given value is not nil.
+func (nc *NotificationCreate) SetNillableID(u *uuid.UUID) *NotificationCreate {
+	if u != nil {
+		nc.SetID(*u)
+	}
+	return nc
+}
+
 // Mutation returns the NotificationMutation object of the builder.
 func (nc *NotificationCreate) Mutation() *NotificationMutation {
 	return nc.mutation
@@ -193,28 +201,28 @@ func (nc *NotificationCreate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (nc *NotificationCreate) check() error {
 	if _, ok := nc.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "app_id"`)}
+		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "Notification.app_id"`)}
 	}
 	if _, ok := nc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "user_id"`)}
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Notification.user_id"`)}
 	}
 	if _, ok := nc.mutation.AlreadyRead(); !ok {
-		return &ValidationError{Name: "already_read", err: errors.New(`ent: missing required field "already_read"`)}
+		return &ValidationError{Name: "already_read", err: errors.New(`ent: missing required field "Notification.already_read"`)}
 	}
 	if _, ok := nc.mutation.Title(); !ok {
-		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Notification.title"`)}
 	}
 	if _, ok := nc.mutation.Content(); !ok {
-		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "content"`)}
+		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Notification.content"`)}
 	}
 	if _, ok := nc.mutation.CreateAt(); !ok {
-		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "create_at"`)}
+		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "Notification.create_at"`)}
 	}
 	if _, ok := nc.mutation.UpdateAt(); !ok {
-		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "update_at"`)}
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "Notification.update_at"`)}
 	}
 	if _, ok := nc.mutation.DeleteAt(); !ok {
-		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "delete_at"`)}
+		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "Notification.delete_at"`)}
 	}
 	return nil
 }
@@ -228,7 +236,11 @@ func (nc *NotificationCreate) sqlSave(ctx context.Context) (*Notification, error
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		_node.ID = _spec.ID.Value.(uuid.UUID)
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
 	}
 	return _node, nil
 }
@@ -247,7 +259,7 @@ func (nc *NotificationCreate) createSpec() (*Notification, *sqlgraph.CreateSpec)
 	_spec.OnConflict = nc.conflict
 	if id, ok := nc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = id
+		_spec.ID.Value = &id
 	}
 	if value, ok := nc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -439,6 +451,12 @@ func (u *NotificationUpsert) UpdateCreateAt() *NotificationUpsert {
 	return u
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *NotificationUpsert) AddCreateAt(v uint32) *NotificationUpsert {
+	u.Add(notification.FieldCreateAt, v)
+	return u
+}
+
 // SetUpdateAt sets the "update_at" field.
 func (u *NotificationUpsert) SetUpdateAt(v uint32) *NotificationUpsert {
 	u.Set(notification.FieldUpdateAt, v)
@@ -448,6 +466,12 @@ func (u *NotificationUpsert) SetUpdateAt(v uint32) *NotificationUpsert {
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *NotificationUpsert) UpdateUpdateAt() *NotificationUpsert {
 	u.SetExcluded(notification.FieldUpdateAt)
+	return u
+}
+
+// AddUpdateAt adds v to the "update_at" field.
+func (u *NotificationUpsert) AddUpdateAt(v uint32) *NotificationUpsert {
+	u.Add(notification.FieldUpdateAt, v)
 	return u
 }
 
@@ -463,7 +487,13 @@ func (u *NotificationUpsert) UpdateDeleteAt() *NotificationUpsert {
 	return u
 }
 
-// UpdateNewValues updates the fields using the new values that were set on create except the ID field.
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *NotificationUpsert) AddDeleteAt(v uint32) *NotificationUpsert {
+	u.Add(notification.FieldDeleteAt, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.Notification.Create().
@@ -590,6 +620,13 @@ func (u *NotificationUpsertOne) SetCreateAt(v uint32) *NotificationUpsertOne {
 	})
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *NotificationUpsertOne) AddCreateAt(v uint32) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.AddCreateAt(v)
+	})
+}
+
 // UpdateCreateAt sets the "create_at" field to the value that was provided on create.
 func (u *NotificationUpsertOne) UpdateCreateAt() *NotificationUpsertOne {
 	return u.Update(func(s *NotificationUpsert) {
@@ -604,6 +641,13 @@ func (u *NotificationUpsertOne) SetUpdateAt(v uint32) *NotificationUpsertOne {
 	})
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *NotificationUpsertOne) AddUpdateAt(v uint32) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.AddUpdateAt(v)
+	})
+}
+
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *NotificationUpsertOne) UpdateUpdateAt() *NotificationUpsertOne {
 	return u.Update(func(s *NotificationUpsert) {
@@ -615,6 +659,13 @@ func (u *NotificationUpsertOne) UpdateUpdateAt() *NotificationUpsertOne {
 func (u *NotificationUpsertOne) SetDeleteAt(v uint32) *NotificationUpsertOne {
 	return u.Update(func(s *NotificationUpsert) {
 		s.SetDeleteAt(v)
+	})
+}
+
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *NotificationUpsertOne) AddDeleteAt(v uint32) *NotificationUpsertOne {
+	return u.Update(func(s *NotificationUpsert) {
+		s.AddDeleteAt(v)
 	})
 }
 
@@ -788,7 +839,7 @@ type NotificationUpsertBulk struct {
 	create *NotificationCreateBulk
 }
 
-// UpdateNewValues updates the fields using the new values that
+// UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
 //	client.Notification.Create().
@@ -918,6 +969,13 @@ func (u *NotificationUpsertBulk) SetCreateAt(v uint32) *NotificationUpsertBulk {
 	})
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *NotificationUpsertBulk) AddCreateAt(v uint32) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.AddCreateAt(v)
+	})
+}
+
 // UpdateCreateAt sets the "create_at" field to the value that was provided on create.
 func (u *NotificationUpsertBulk) UpdateCreateAt() *NotificationUpsertBulk {
 	return u.Update(func(s *NotificationUpsert) {
@@ -932,6 +990,13 @@ func (u *NotificationUpsertBulk) SetUpdateAt(v uint32) *NotificationUpsertBulk {
 	})
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *NotificationUpsertBulk) AddUpdateAt(v uint32) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.AddUpdateAt(v)
+	})
+}
+
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *NotificationUpsertBulk) UpdateUpdateAt() *NotificationUpsertBulk {
 	return u.Update(func(s *NotificationUpsert) {
@@ -943,6 +1008,13 @@ func (u *NotificationUpsertBulk) UpdateUpdateAt() *NotificationUpsertBulk {
 func (u *NotificationUpsertBulk) SetDeleteAt(v uint32) *NotificationUpsertBulk {
 	return u.Update(func(s *NotificationUpsert) {
 		s.SetDeleteAt(v)
+	})
+}
+
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *NotificationUpsertBulk) AddDeleteAt(v uint32) *NotificationUpsertBulk {
+	return u.Update(func(s *NotificationUpsert) {
+		s.AddDeleteAt(v)
 	})
 }
 

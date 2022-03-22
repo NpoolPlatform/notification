@@ -107,6 +107,14 @@ func (mbc *MailBoxCreate) SetID(u uuid.UUID) *MailBoxCreate {
 	return mbc
 }
 
+// SetNillableID sets the "id" field if the given value is not nil.
+func (mbc *MailBoxCreate) SetNillableID(u *uuid.UUID) *MailBoxCreate {
+	if u != nil {
+		mbc.SetID(*u)
+	}
+	return mbc
+}
+
 // Mutation returns the MailBoxMutation object of the builder.
 func (mbc *MailBoxCreate) Mutation() *MailBoxMutation {
 	return mbc.mutation
@@ -199,31 +207,31 @@ func (mbc *MailBoxCreate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (mbc *MailBoxCreate) check() error {
 	if _, ok := mbc.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "app_id"`)}
+		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "MailBox.app_id"`)}
 	}
 	if _, ok := mbc.mutation.FromUserID(); !ok {
-		return &ValidationError{Name: "from_user_id", err: errors.New(`ent: missing required field "from_user_id"`)}
+		return &ValidationError{Name: "from_user_id", err: errors.New(`ent: missing required field "MailBox.from_user_id"`)}
 	}
 	if _, ok := mbc.mutation.ToUserID(); !ok {
-		return &ValidationError{Name: "to_user_id", err: errors.New(`ent: missing required field "to_user_id"`)}
+		return &ValidationError{Name: "to_user_id", err: errors.New(`ent: missing required field "MailBox.to_user_id"`)}
 	}
 	if _, ok := mbc.mutation.AlreadyRead(); !ok {
-		return &ValidationError{Name: "already_read", err: errors.New(`ent: missing required field "already_read"`)}
+		return &ValidationError{Name: "already_read", err: errors.New(`ent: missing required field "MailBox.already_read"`)}
 	}
 	if _, ok := mbc.mutation.Title(); !ok {
-		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "MailBox.title"`)}
 	}
 	if _, ok := mbc.mutation.Content(); !ok {
-		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "content"`)}
+		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "MailBox.content"`)}
 	}
 	if _, ok := mbc.mutation.CreateAt(); !ok {
-		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "create_at"`)}
+		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "MailBox.create_at"`)}
 	}
 	if _, ok := mbc.mutation.UpdateAt(); !ok {
-		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "update_at"`)}
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "MailBox.update_at"`)}
 	}
 	if _, ok := mbc.mutation.DeleteAt(); !ok {
-		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "delete_at"`)}
+		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "MailBox.delete_at"`)}
 	}
 	return nil
 }
@@ -237,7 +245,11 @@ func (mbc *MailBoxCreate) sqlSave(ctx context.Context) (*MailBox, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		_node.ID = _spec.ID.Value.(uuid.UUID)
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
 	}
 	return _node, nil
 }
@@ -256,7 +268,7 @@ func (mbc *MailBoxCreate) createSpec() (*MailBox, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = mbc.conflict
 	if id, ok := mbc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = id
+		_spec.ID.Value = &id
 	}
 	if value, ok := mbc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -468,6 +480,12 @@ func (u *MailBoxUpsert) UpdateCreateAt() *MailBoxUpsert {
 	return u
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *MailBoxUpsert) AddCreateAt(v uint32) *MailBoxUpsert {
+	u.Add(mailbox.FieldCreateAt, v)
+	return u
+}
+
 // SetUpdateAt sets the "update_at" field.
 func (u *MailBoxUpsert) SetUpdateAt(v uint32) *MailBoxUpsert {
 	u.Set(mailbox.FieldUpdateAt, v)
@@ -477,6 +495,12 @@ func (u *MailBoxUpsert) SetUpdateAt(v uint32) *MailBoxUpsert {
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *MailBoxUpsert) UpdateUpdateAt() *MailBoxUpsert {
 	u.SetExcluded(mailbox.FieldUpdateAt)
+	return u
+}
+
+// AddUpdateAt adds v to the "update_at" field.
+func (u *MailBoxUpsert) AddUpdateAt(v uint32) *MailBoxUpsert {
+	u.Add(mailbox.FieldUpdateAt, v)
 	return u
 }
 
@@ -492,7 +516,13 @@ func (u *MailBoxUpsert) UpdateDeleteAt() *MailBoxUpsert {
 	return u
 }
 
-// UpdateNewValues updates the fields using the new values that were set on create except the ID field.
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *MailBoxUpsert) AddDeleteAt(v uint32) *MailBoxUpsert {
+	u.Add(mailbox.FieldDeleteAt, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.MailBox.Create().
@@ -633,6 +663,13 @@ func (u *MailBoxUpsertOne) SetCreateAt(v uint32) *MailBoxUpsertOne {
 	})
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *MailBoxUpsertOne) AddCreateAt(v uint32) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.AddCreateAt(v)
+	})
+}
+
 // UpdateCreateAt sets the "create_at" field to the value that was provided on create.
 func (u *MailBoxUpsertOne) UpdateCreateAt() *MailBoxUpsertOne {
 	return u.Update(func(s *MailBoxUpsert) {
@@ -647,6 +684,13 @@ func (u *MailBoxUpsertOne) SetUpdateAt(v uint32) *MailBoxUpsertOne {
 	})
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *MailBoxUpsertOne) AddUpdateAt(v uint32) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.AddUpdateAt(v)
+	})
+}
+
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *MailBoxUpsertOne) UpdateUpdateAt() *MailBoxUpsertOne {
 	return u.Update(func(s *MailBoxUpsert) {
@@ -658,6 +702,13 @@ func (u *MailBoxUpsertOne) UpdateUpdateAt() *MailBoxUpsertOne {
 func (u *MailBoxUpsertOne) SetDeleteAt(v uint32) *MailBoxUpsertOne {
 	return u.Update(func(s *MailBoxUpsert) {
 		s.SetDeleteAt(v)
+	})
+}
+
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *MailBoxUpsertOne) AddDeleteAt(v uint32) *MailBoxUpsertOne {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.AddDeleteAt(v)
 	})
 }
 
@@ -831,7 +882,7 @@ type MailBoxUpsertBulk struct {
 	create *MailBoxCreateBulk
 }
 
-// UpdateNewValues updates the fields using the new values that
+// UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
 //	client.MailBox.Create().
@@ -975,6 +1026,13 @@ func (u *MailBoxUpsertBulk) SetCreateAt(v uint32) *MailBoxUpsertBulk {
 	})
 }
 
+// AddCreateAt adds v to the "create_at" field.
+func (u *MailBoxUpsertBulk) AddCreateAt(v uint32) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.AddCreateAt(v)
+	})
+}
+
 // UpdateCreateAt sets the "create_at" field to the value that was provided on create.
 func (u *MailBoxUpsertBulk) UpdateCreateAt() *MailBoxUpsertBulk {
 	return u.Update(func(s *MailBoxUpsert) {
@@ -989,6 +1047,13 @@ func (u *MailBoxUpsertBulk) SetUpdateAt(v uint32) *MailBoxUpsertBulk {
 	})
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *MailBoxUpsertBulk) AddUpdateAt(v uint32) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.AddUpdateAt(v)
+	})
+}
+
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *MailBoxUpsertBulk) UpdateUpdateAt() *MailBoxUpsertBulk {
 	return u.Update(func(s *MailBoxUpsert) {
@@ -1000,6 +1065,13 @@ func (u *MailBoxUpsertBulk) UpdateUpdateAt() *MailBoxUpsertBulk {
 func (u *MailBoxUpsertBulk) SetDeleteAt(v uint32) *MailBoxUpsertBulk {
 	return u.Update(func(s *MailBoxUpsert) {
 		s.SetDeleteAt(v)
+	})
+}
+
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *MailBoxUpsertBulk) AddDeleteAt(v uint32) *MailBoxUpsertBulk {
+	return u.Update(func(s *MailBoxUpsert) {
+		s.AddDeleteAt(v)
 	})
 }
 
