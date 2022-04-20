@@ -13,7 +13,11 @@ import (
 )
 
 func (s *Server) CreateMail(ctx context.Context, in *npool.CreateMailRequest) (*npool.CreateMailResponse, error) {
-	resp, err := crud.CreateMail(ctx, in)
+	info := in.GetInfo()
+	info.FromUserID = in.GetUserID()
+	resp, err := crud.CreateMail(ctx, &npool.CreateMailRequest{
+		Info: info,
+	})
 	if err != nil {
 		logger.Sugar().Errorf("create mailbox error: %v", err)
 		return &npool.CreateMailResponse{}, status.Error(codes.Internal, err.Error())
@@ -21,18 +25,35 @@ func (s *Server) CreateMail(ctx context.Context, in *npool.CreateMailRequest) (*
 	return resp, nil
 }
 
-func (s *Server) CreateMailForOtherApp(ctx context.Context, in *npool.CreateMailForOtherAppRequest) (*npool.CreateMailForOtherAppResponse, error) {
+func (s *Server) CreateMailForOtherAppUser(ctx context.Context, in *npool.CreateMailForOtherAppUserRequest) (*npool.CreateMailForOtherAppUserResponse, error) {
 	info := in.GetInfo()
 	info.AppID = in.GetTargetAppID()
+	info.FromUserID = in.GetTargetUserID()
 
 	resp, err := crud.CreateMail(ctx, &npool.CreateMailRequest{
 		Info: info,
 	})
 	if err != nil {
 		logger.Sugar().Errorf("create mailbox error: %v", err)
-		return &npool.CreateMailForOtherAppResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.CreateMailForOtherAppUserResponse{}, status.Error(codes.Internal, err.Error())
 	}
-	return &npool.CreateMailForOtherAppResponse{
+	return &npool.CreateMailForOtherAppUserResponse{
+		Info: resp.Info,
+	}, nil
+}
+
+func (s *Server) CreateMailForAppOtherUser(ctx context.Context, in *npool.CreateMailForAppOtherUserRequest) (*npool.CreateMailForAppOtherUserResponse, error) {
+	info := in.GetInfo()
+	info.FromUserID = in.GetTargetUserID()
+
+	resp, err := crud.CreateMail(ctx, &npool.CreateMailRequest{
+		Info: info,
+	})
+	if err != nil {
+		logger.Sugar().Errorf("create mailbox error: %v", err)
+		return &npool.CreateMailForAppOtherUserResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	return &npool.CreateMailForAppOtherUserResponse{
 		Info: resp.Info,
 	}, nil
 }

@@ -151,7 +151,7 @@ func GetByAppUser(ctx context.Context, in *npool.GetMailsRequest) (*npool.GetMai
 		return nil, xerrors.Errorf("fail query mails: %v", err)
 	}
 
-	var mails []*npool.Mail
+	mails := []*npool.Mail{}
 	for _, info := range infos {
 		mails = append(mails, dbRowToMail(info))
 	}
@@ -186,7 +186,7 @@ func GetByApp(ctx context.Context, in *npool.GetMailsByAppRequest) (*npool.GetMa
 		return nil, xerrors.Errorf("fail query mails: %v", err)
 	}
 
-	var mails []*npool.Mail
+	mails := []*npool.Mail{}
 	for _, info := range infos {
 		mails = append(mails, dbRowToMail(info))
 	}
