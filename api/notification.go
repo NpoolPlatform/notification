@@ -18,7 +18,7 @@ func (s *Server) CreateNotification(ctx context.Context, in *npool.CreateNotific
 	resp, err := mv.CreateNotification(ctx, in)
 	if err != nil {
 		logger.Sugar().Errorw("create notification error: %v", err)
-		return &npool.CreateNotificationResponse{}, status.Error(codes.Internal, "internal server error")
+		return &npool.CreateNotificationResponse{}, status.Error(codes.Internal, err.Error())
 	}
 	return resp, nil
 }
@@ -32,7 +32,7 @@ func (s *Server) CreateNotificationForAppOtherUser(ctx context.Context, in *npoo
 	})
 	if err != nil {
 		logger.Sugar().Errorw("create notification error: %v", err)
-		return &npool.CreateNotificationForAppOtherUserResponse{}, status.Error(codes.Internal, "internal server error")
+		return &npool.CreateNotificationForAppOtherUserResponse{}, status.Error(codes.Internal, err.Error())
 	}
 	return &npool.CreateNotificationForAppOtherUserResponse{
 		Info: resp.Info,
@@ -48,7 +48,7 @@ func (s *Server) CreateNotificationForOtherAppUser(ctx context.Context, in *npoo
 	})
 	if err != nil {
 		logger.Sugar().Errorw("create notification error: %v", err)
-		return &npool.CreateNotificationForOtherAppUserResponse{}, status.Error(codes.Internal, "internal server error")
+		return &npool.CreateNotificationForOtherAppUserResponse{}, status.Error(codes.Internal, err.Error())
 	}
 	return &npool.CreateNotificationForOtherAppUserResponse{
 		Info: resp.Info,
@@ -59,7 +59,7 @@ func (s *Server) UpdateNotification(ctx context.Context, in *npool.UpdateNotific
 	resp, err := crud.Update(ctx, in)
 	if err != nil {
 		logger.Sugar().Errorw("update notification error: %v", err)
-		return &npool.UpdateNotificationResponse{}, status.Error(codes.Internal, "internal server error")
+		return &npool.UpdateNotificationResponse{}, status.Error(codes.Internal, err.Error())
 	}
 	return resp, nil
 }
@@ -68,7 +68,7 @@ func (s *Server) GetNotificationsByAppUser(ctx context.Context, in *npool.GetNot
 	resp, err := crud.GetNotificationsByAppUser(ctx, in)
 	if err != nil {
 		logger.Sugar().Errorw("get notifications by app user error: %v", err)
-		return &npool.GetNotificationsByAppUserResponse{}, status.Error(codes.Internal, "internal server error")
+		return &npool.GetNotificationsByAppUserResponse{}, status.Error(codes.Internal, err.Error())
 	}
 	return resp, nil
 }
@@ -77,7 +77,7 @@ func (s *Server) GetNotificationsByApp(ctx context.Context, in *npool.GetNotific
 	resp, err := crud.GetNotificationsByApp(ctx, in)
 	if err != nil {
 		logger.Sugar().Errorw("get notifications by app user error: %v", err)
-		return &npool.GetNotificationsByAppResponse{}, status.Error(codes.Internal, "internal server error")
+		return &npool.GetNotificationsByAppResponse{}, status.Error(codes.Internal, err.Error())
 	}
 	return resp, nil
 }
@@ -88,7 +88,7 @@ func (s *Server) GetNotificationsByOtherApp(ctx context.Context, in *npool.GetNo
 	})
 	if err != nil {
 		logger.Sugar().Errorw("get notifications by app user error: %v", err)
-		return &npool.GetNotificationsByOtherAppResponse{}, status.Error(codes.Internal, "internal server error")
+		return &npool.GetNotificationsByOtherAppResponse{}, status.Error(codes.Internal, err.Error())
 	}
 	return &npool.GetNotificationsByOtherAppResponse{
 		Infos: resp.Infos,
