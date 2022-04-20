@@ -152,3 +152,38 @@ func GetNotificationsByAppUser(ctx context.Context, in *npool.GetNotificationsBy
 		Infos: notifications,
 	}, nil
 }
+
+func GetNotificationsByApp(ctx context.Context, in *npool.GetNotificationsByAppRequest) (*npool.GetNotificationsByAppResponse, error) {
+	cli, err := db.Client()
+	if err != nil {
+		return nil, xerrors.Errorf("fail get db client: %v", err)
+	}
+
+	appID, err := uuid.Parse(in.GetAppID())
+	if err != nil {
+		return nil, xerrors.Errorf("invalid app id: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, dbTimeout)
+	defer cancel()
+
+	infos, err := cli.
+		Notification.
+		Query().
+		Where(
+			notification.AppID(appID),
+		).
+		All(ctx)
+	if err != nil {
+		return nil, xerrors.Errorf("fail query notification: %v", err)
+	}
+
+	notifications := []*npool.UserNotification{}
+	for _, info := range infos {
+		notifications = append(notifications, dbRowToNotification(info))
+	}
+
+	return &npool.GetNotificationsByAppResponse{
+		Infos: notifications,
+	}, nil
+}
