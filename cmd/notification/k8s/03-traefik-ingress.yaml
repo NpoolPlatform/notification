@@ -63,6 +63,10 @@ spec:
             backend:
               serviceName: notification
               servicePort: 50200
+          - path: /api/notification/v1/get
+            backend:
+              serviceName: notification
+              servicePort: 50200
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top
