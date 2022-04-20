@@ -42,22 +42,6 @@ func (s *Server) CreateMailForOtherAppUser(ctx context.Context, in *npool.Create
 	}, nil
 }
 
-func (s *Server) CreateMailForAppOtherUser(ctx context.Context, in *npool.CreateMailForAppOtherUserRequest) (*npool.CreateMailForAppOtherUserResponse, error) {
-	info := in.GetInfo()
-	info.FromUserID = in.GetTargetUserID()
-
-	resp, err := crud.CreateMail(ctx, &npool.CreateMailRequest{
-		Info: info,
-	})
-	if err != nil {
-		logger.Sugar().Errorf("create mailbox error: %v", err)
-		return &npool.CreateMailForAppOtherUserResponse{}, status.Error(codes.Internal, err.Error())
-	}
-	return &npool.CreateMailForAppOtherUserResponse{
-		Info: resp.Info,
-	}, nil
-}
-
 func (s *Server) UpdateMail(ctx context.Context, in *npool.UpdateMailRequest) (*npool.UpdateMailResponse, error) {
 	resp, err := crud.UpdateMail(ctx, in)
 	if err != nil {
