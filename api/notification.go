@@ -27,7 +27,7 @@ func (s *Server) CreateNotificationForAppOtherUser(ctx context.Context, in *npoo
 	info := in.GetInfo()
 	info.UserID = in.GetTargetUserID()
 
-	resp, err := mv.CreateNotification(ctx, &npool.CreateNotificationRequest{
+	resp, err := crud.Create(ctx, &npool.CreateNotificationRequest{
 		Info: info,
 	})
 	if err != nil {
@@ -43,7 +43,7 @@ func (s *Server) CreateNotificationForOtherAppUser(ctx context.Context, in *npoo
 	info := in.GetInfo()
 	info.UserID = in.GetTargetUserID()
 
-	resp, err := mv.CreateNotification(ctx, &npool.CreateNotificationRequest{
+	resp, err := crud.Create(ctx, &npool.CreateNotificationRequest{
 		Info: info,
 	})
 	if err != nil {
