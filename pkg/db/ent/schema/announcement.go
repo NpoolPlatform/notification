@@ -22,7 +22,7 @@ func (Announcement) Fields() []ent.Field {
 			Unique(),
 		field.UUID("app_id", uuid.UUID{}),
 		field.String("title"),
-		field.String("content"),
+		field.String("content").MaxLen(4096),
 		field.Uint32("create_at").
 			DefaultFunc(func() uint32 {
 				return uint32(time.Now().Unix())

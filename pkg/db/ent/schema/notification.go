@@ -24,7 +24,7 @@ func (Notification) Fields() []ent.Field {
 		field.UUID("user_id", uuid.UUID{}),
 		field.Bool("already_read"),
 		field.String("title"),
-		field.String("content"),
+		field.String("content").MaxLen(4096),
 		field.Uint32("create_at").
 			DefaultFunc(func() uint32 {
 				return uint32(time.Now().Unix())
