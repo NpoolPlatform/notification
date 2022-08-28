@@ -13,19 +13,71 @@ import (
 )
 
 func (s *Server) CreateMail(ctx context.Context, in *npool.CreateMailRequest) (*npool.CreateMailResponse, error) {
-	resp, err := crud.CreateMail(ctx, in)
+	info := in.GetInfo()
+	info.FromUserID = in.GetUserID()
+	resp, err := crud.CreateMail(ctx, &npool.CreateMailRequest{
+		Info: info,
+	})
 	if err != nil {
-		logger.Sugar().Errorw("create mailbox error: %v", err)
-		return &npool.CreateMailResponse{}, status.Error(codes.Internal, "internal server error")
+		logger.Sugar().Errorf("create mailbox error: %v", err)
+		return &npool.CreateMailResponse{}, status.Error(codes.Internal, err.Error())
 	}
 	return resp, nil
+}
+
+func (s *Server) CreateMailForOtherAppUser(ctx context.Context, in *npool.CreateMailForOtherAppUserRequest) (*npool.CreateMailForOtherAppUserResponse, error) {
+	info := in.GetInfo()
+	info.AppID = in.GetTargetAppID()
+	info.FromUserID = in.GetTargetUserID()
+
+	resp, err := crud.CreateMail(ctx, &npool.CreateMailRequest{
+		Info: info,
+	})
+	if err != nil {
+		logger.Sugar().Errorf("create mailbox error: %v", err)
+		return &npool.CreateMailForOtherAppUserResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	return &npool.CreateMailForOtherAppUserResponse{
+		Info: resp.Info,
+	}, nil
 }
 
 func (s *Server) UpdateMail(ctx context.Context, in *npool.UpdateMailRequest) (*npool.UpdateMailResponse, error) {
 	resp, err := crud.UpdateMail(ctx, in)
 	if err != nil {
-		logger.Sugar().Errorw("check mailbox error: %v", err)
-		return &npool.UpdateMailResponse{}, status.Error(codes.Internal, "internal server error")
+		logger.Sugar().Errorf("check mailbox error: %v", err)
+		return &npool.UpdateMailResponse{}, status.Error(codes.Internal, err.Error())
 	}
 	return resp, nil
+}
+
+func (s *Server) GetMails(ctx context.Context, in *npool.GetMailsRequest) (*npool.GetMailsResponse, error) {
+	resp, err := crud.GetByAppUser(ctx, in)
+	if err != nil {
+		logger.Sugar().Errorf("get mails error %v", err)
+		return &npool.GetMailsResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	return resp, nil
+}
+
+func (s *Server) GetMailsByApp(ctx context.Context, in *npool.GetMailsByAppRequest) (*npool.GetMailsByAppResponse, error) {
+	resp, err := crud.GetByApp(ctx, in)
+	if err != nil {
+		logger.Sugar().Errorf("get mails error %v", err)
+		return &npool.GetMailsByAppResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	return resp, nil
+}
+
+func (s *Server) GetMailsByOtherApp(ctx context.Context, in *npool.GetMailsByOtherAppRequest) (*npool.GetMailsByOtherAppResponse, error) {
+	resp, err := crud.GetByApp(ctx, &npool.GetMailsByAppRequest{
+		AppID: in.GetTargetAppID(),
+	})
+	if err != nil {
+		logger.Sugar().Errorf("get mails error %v", err)
+		return &npool.GetMailsByOtherAppResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	return &npool.GetMailsByOtherAppResponse{
+		Infos: resp.Infos,
+	}, nil
 }

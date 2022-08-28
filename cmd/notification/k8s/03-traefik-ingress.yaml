@@ -30,6 +30,18 @@ spec:
       http: *http_rules
     - host: api.ohhash.com
       http: *http_rules
+    - host: api.ohhash-production.npool.top
+      http: *http_rules
+    - host: api.japan-procyon-production.npool.top
+      http: *http_rules
+    - host: api.jh-testing.npool.top
+      http: *http_rules
+    - host: api.jh-development.npool.top
+      http: *http_rules
+    - host: api.singapore-testing.npool.top
+      http: *http_rules
+    - host: api.development.npool.top
+      http: *http_rules
 
 ---
 
@@ -63,10 +75,26 @@ spec:
             backend:
               serviceName: notification
               servicePort: 50200
+          - path: /api/notification/v1/get
+            backend:
+              serviceName: notification
+              servicePort: 50200
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top
       http: *http_rules
     - host: api.ohhash.com
+      http: *http_rules
+    - host: api.ohhash-production.npool.top
+      http: *http_rules
+    - host: api.japan-procyon-production.npool.top
+      http: *http_rules
+    - host: api.jh-testing.npool.top
+      http: *http_rules
+    - host: api.jh-development.npool.top
+      http: *http_rules
+    - host: api.singapore-testing.npool.top
+      http: *http_rules
+    - host: api.development.npool.top
       http: *http_rules
 

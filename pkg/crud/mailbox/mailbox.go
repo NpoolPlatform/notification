@@ -7,6 +7,7 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/notification"
 	"github.com/NpoolPlatform/notification/pkg/db"
 	"github.com/NpoolPlatform/notification/pkg/db/ent"
+	"github.com/NpoolPlatform/notification/pkg/db/ent/mailbox"
 
 	"github.com/google/uuid"
 
@@ -111,5 +112,86 @@ func UpdateMail(ctx context.Context, in *npool.UpdateMailRequest) (*npool.Update
 
 	return &npool.UpdateMailResponse{
 		Info: dbRowToMail(info),
+	}, nil
+}
+
+func GetByAppUser(ctx context.Context, in *npool.GetMailsRequest) (*npool.GetMailsResponse, error) {
+	appID, err := uuid.Parse(in.GetAppID())
+	if err != nil {
+		return nil, xerrors.Errorf("invalid app id")
+	}
+
+	userID, err := uuid.Parse(in.GetUserID())
+	if err != nil {
+		return nil, xerrors.Errorf("invalid user id")
+	}
+
+	cli, err := db.Client()
+	if err != nil {
+		return nil, xerrors.Errorf("fail get db client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, dbTimeout)
+	defer cancel()
+
+	infos, err := cli.
+		MailBox.
+		Query().
+		Where(
+			mailbox.And(
+				mailbox.AppID(appID),
+				mailbox.Or(
+					mailbox.ToUserID(userID),
+					mailbox.FromUserID(userID),
+				),
+			),
+		).
+		All(ctx)
+	if err != nil {
+		return nil, xerrors.Errorf("fail query mails: %v", err)
+	}
+
+	mails := []*npool.Mail{}
+	for _, info := range infos {
+		mails = append(mails, dbRowToMail(info))
+	}
+
+	return &npool.GetMailsResponse{
+		Infos: mails,
+	}, nil
+}
+
+func GetByApp(ctx context.Context, in *npool.GetMailsByAppRequest) (*npool.GetMailsByAppResponse, error) {
+	appID, err := uuid.Parse(in.GetAppID())
+	if err != nil {
+		return nil, xerrors.Errorf("invalid app id")
+	}
+
+	cli, err := db.Client()
+	if err != nil {
+		return nil, xerrors.Errorf("fail get db client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, dbTimeout)
+	defer cancel()
+
+	infos, err := cli.
+		MailBox.
+		Query().
+		Where(
+			mailbox.AppID(appID),
+		).
+		All(ctx)
+	if err != nil {
+		return nil, xerrors.Errorf("fail query mails: %v", err)
+	}
+
+	mails := []*npool.Mail{}
+	for _, info := range infos {
+		mails = append(mails, dbRowToMail(info))
+	}
+
+	return &npool.GetMailsByAppResponse{
+		Infos: mails,
 	}, nil
 }

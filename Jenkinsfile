@@ -15,19 +15,6 @@ pipeline {
 
     stage('Prepare') {
       steps {
-        // Get linter and other build tools.
-        sh 'go get golang.org/x/lint/golint'
-        sh 'go install golang.org/x/lint/golint'
-        sh 'go get github.com/tebeka/go2xunit'
-        sh 'go install github.com/tebeka/go2xunit'
-        sh 'go get github.com/t-yuki/gocover-cobertura'
-        sh 'go install github.com/t-yuki/gocover-cobertura'
-
-        // Get dependencies
-        sh 'go get golang.org/x/image/tiff/lzw'
-        sh 'go install golang.org/x/image/tiff/lzw'
-        sh 'go get github.com/boombuler/barcode'
-        sh 'go install github.com/boombuler/barcode'
         sh 'make deps'
       }
     }
@@ -98,7 +85,7 @@ pipeline {
       }
       steps {
         sh (returnStdout: false, script: '''
-          devboxpod=`kubectl get pods -A | grep development-box | awk '{print $2}'`
+          devboxpod=`kubectl get pods -A | grep development-box | awk '{print $2}' | head -n1`
           servicename="notification"
 
           kubectl exec --namespace kube-system $devboxpod -- make -C /tmp/$servicename after-test || true
@@ -313,7 +300,7 @@ pipeline {
     stage('Deploy for development') {
       when {
         expression { DEPLOY_TARGET == 'true' }
-        expression { TARGET_ENV == 'development' }
+        expression { TARGET_ENV ==~ /.*development.*/ }
       }
       steps {
         sh 'sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/notification/k8s/01-notification.yaml'
@@ -324,7 +311,7 @@ pipeline {
     stage('Deploy for testing') {
       when {
         expression { DEPLOY_TARGET == 'true' }
-        expression { TARGET_ENV == 'testing' }
+        expression { TARGET_ENV ==~ /.*testing.*/ }
       }
       steps {
         sh(returnStdout: true, script: '''
