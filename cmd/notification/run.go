@@ -3,9 +3,6 @@ package main
 import (
 	"github.com/NpoolPlatform/notification/api"
 	db "github.com/NpoolPlatform/notification/pkg/db"
-	msgcli "github.com/NpoolPlatform/notification/pkg/message/client"
-	msglistener "github.com/NpoolPlatform/notification/pkg/message/listener"
-	msgsrv "github.com/NpoolPlatform/notification/pkg/message/server"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -32,15 +29,6 @@ var runCmd = &cli.Command{
 				logger.Sugar().Errorf("fail to run grpc server: %v", err)
 			}
 		}()
-
-		if err := msgsrv.Init(); err != nil {
-			return err
-		}
-		if err := msgcli.Init(); err != nil {
-			return err
-		}
-
-		go msglistener.Listen()
 
 		return grpc2.RunGRPCGateWay(rpcGatewayRegister)
 	},
